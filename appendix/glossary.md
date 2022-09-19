@@ -14,6 +14,10 @@ Lorem ipsum
 
 Lorem ipsum
 
+#### Backend
+
+Lorem ipsum
+
 #### Block
 
 Lorem ipsum
@@ -27,6 +31,10 @@ Lorem ipsum
 Lorem ipsum
 
 #### Event
+
+Lorem ipsum
+
+#### Frontend
 
 Lorem ipsum
 
@@ -51,6 +59,10 @@ Lorem ipsum
 Lorem ipsum
 
 #### Rule
+
+Lorem ipsum
+
+#### Store
 
 Lorem ipsum
 
