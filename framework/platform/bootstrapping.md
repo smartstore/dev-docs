@@ -1,0 +1,4 @@
+# Bootstrapping
+
+* Initializers
+* ITypeScanner
