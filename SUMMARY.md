@@ -4,6 +4,7 @@
   * [Source code organization](readme/source-code-organization.md)
   * [Architecture overview](readme/architecture-overview.md)
   * [Dependency injection](readme/dependency-injection.md)
+  * [Domain](readme/domain.md)
   * [Data access](readme/data-access.md)
   * [Coding standards](readme/coding-standards.md)
   * [Deployment & Build](readme/deployment-and-build.md)
@@ -23,6 +24,7 @@
   * [Identity](framework/platform/identity.md)
   * [IO abstraction](framework/platform/io-abstraction.md)
   * [Logging](framework/platform/logging.md)
+  * [Model mapping](framework/platform/model-mapping.md)
   * [Modularity & Providers](framework/platform/modularity-and-providers.md)
   * [Output Cache](framework/platform/output-cache.md)
   * [Packaging](framework/platform/packaging.md)
@@ -59,6 +61,19 @@
   * [Working with the Customer entity](framework/web-api/working-with-the-customer-entity.md)
   * [Bridge to data import](framework/web-api/bridge-to-data-import.md)
   * [More examples](framework/web-api/more-examples.md)
+* [Advanced](framework/advanced/README.md)
+  * [Performance guide](framework/advanced/performance-guide.md)
+  * [Service tier best practices](framework/advanced/service-tier-best-practices.md)
+  * [DI best practices](framework/advanced/di-best-practices.md)
+  * [Search query expressions](framework/advanced/search-query-expressions.md)
+  * [View precompilation](framework/advanced/view-precompilation.md)
+  * [Distributed locking](framework/advanced/distributed-locking.md)
+  * [Async state](framework/advanced/async-state.md)
+  * [Generic attributes](framework/advanced/generic-attributes.md)
+  * [Sync mapping](framework/advanced/sync-mapping.md)
+  * [DbContextFactory](framework/advanced/dbcontextfactory.md)
+  * [LinkResolver](framework/advanced/linkresolver.md)
+  * [QR codes](framework/advanced/qr-codes.md)
 
 ## Compose
 
@@ -86,16 +101,6 @@
   * [Asset bundling](compose/theming/asset-bundling.md)
   * [Injecting content](compose/theming/injecting-content.md)
   * [Tag Helpers](compose/theming/tag-helpers.md)
-
-## Advanced
-
-* [Performance guide](advanced/performance-guide.md)
-* [Service tier best practices](advanced/service-tier-best-practices.md)
-* [DI best practices](advanced/di-best-practices.md)
-* [Search query expressions](advanced/search-query-expressions.md)
-* [View precompilation](advanced/view-precompilation.md)
-* [Distributed locking](advanced/distributed-locking.md)
-* [Async state](advanced/async-state.md)
 
 ## Appendix
 
