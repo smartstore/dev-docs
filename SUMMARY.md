@@ -95,6 +95,7 @@
 * [Search query expressions](advanced/search-query-expressions.md)
 * [View precompilation](advanced/view-precompilation.md)
 * [Distributed locking](advanced/distributed-locking.md)
+* [Async state](advanced/async-state.md)
 
 ## Appendix
 

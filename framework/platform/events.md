@@ -47,3 +47,4 @@ description: pub/sub system for loosely coupled communication
 * Falls back to `NullMessageBus` by default (which does nothing)
 * Message can only be of `string` type, no complex types allowed
 * It is guaranteed that the server, which published the message, will not consume it.
+* _SAMPLE_ (publish and subscribe)
