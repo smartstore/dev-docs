@@ -25,7 +25,7 @@ description: Special pub/sub system for database save operations
 
 * It is a specialized pub/sub system without the _pub_ part.
 * You only can subscribe to database events, but not publish them.
-* Publishing is performed implicitly during a database save operation... when `DbContext.SaveChanges()` is executed. This is always the case when `SmartDbContext` - the application main context - commits data.... because `SmartDbContext` derives from [`HookingDbContext`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/HookingDbContext.cs), which contains all the hooking logic.
+* Publishing is performed implicitly during a database save operation... when `DbContext.SaveChanges()` is executed. This is always the case when `SmartDbContext` - the application main context - commits data.... because `SmartDbContext` derives from [HookingDbContext](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/HookingDbContext.cs), which contains all the hooking logic.
 * WARN: bypassing EF and accessing the database directly (with raw SQL) --> No events, no hooking!
 * Every hook has a _PreSave_ and a _PostSave_ handler.
   * _PreSave_ handler is executed for every entity in the EF change tracker right BEFORE a save operation
@@ -44,9 +44,9 @@ description: Special pub/sub system for database save operations
 ## Implementing hooks
 
 * Create a concrete class...:
-  * that implements [`IDbSaveHook`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Hooks/IDbSaveHook.cs), or
+  * that implements [IDbSaveHook](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Hooks/IDbSaveHook.cs), or
   * that implements `IDbSaveHook<TContext>` (to bind the hook to a particular `DbContext` type), or
-  * that derives from [`Smartstore.Data.Hooks.AsyncDbSaveHook<TContext, TEntity`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Hooks/AsyncDbSaveHook.cs)`>` (to bind the hook to a particular `DbContext` and given `TEntity` type), or
+  * that derives from [Smartstore.Data.Hooks.AsyncDbSaveHook\<TContext, TEntity](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Hooks/AsyncDbSaveHook.cs)> (to bind the hook to a particular `DbContext` and given `TEntity` type), or
   * that derives from `Smartstore.Core.Data.AsyncDbSaveHook<TEntity>` (to bind the hook to the main `SmartDbContext` type and given `TEntity` type)
   * INFO: The abstract base classes are nothing special, they just implement `IDbSaveHook` to make your life easier. Also: there are sync counterparts for the base classes with sync method signatures.
   * INFO: If bound to entity type `TEntity`: matches all saved entities that are equal to or are subclasses of `TEntity`.
@@ -237,7 +237,7 @@ internal class MyCacheInvalidatorHook : AsyncDbSaveHook<BaseEntity>
 * By default, hook importance is specified as `Normal`.
 * For performance reasons, some callers may reduce the amount of executed hooks by specifying the so-called `MinHookImportance` for particular unit of works.&#x20;
 * E.g., the product import task, which is a long-running process, turns off the execution of `Normal` hooks by setting `MinHookImportance` to `Important`.
-* This is done by wrapping a [`DbContextScope`](../advanced/dbcontextscope.md) around a unit of work
+* This is done by wrapping a [dbcontextscope.md](../advanced/dbcontextscope.md "mention") around a unit of work
 * To customize your hook's importance, decorate your hook class with `ImportantAttribute`:
   * `Normal` (default): Hook can be ignored during long running processes, e.g. imports. Usually simple hooks that invalidate cache entries or clean some resources.
   * `Important`: Hook is important and should also run during long running processes. Not running the hook **may** result in stale or invalid data.
@@ -246,11 +246,11 @@ internal class MyCacheInvalidatorHook : AsyncDbSaveHook<BaseEntity>
 ### Specify execution order
 
 * Default execution order is 0.
-* Decorate your hook class with [`OrderAttribute`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Modularity/OrderAttribute.cs) and pass an integer value.
+* Decorate your hook class with [OrderAttribute](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Modularity/OrderAttribute.cs) and pass an integer value.
 
 ### Mark entities as unhookable
 
-* Some entity types should not be hooked at all, e.g. the [`Log`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Logging/Domain/Log.cs) entity.
+* Some entity types should not be hooked at all, e.g. the [Log](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Logging/Domain/Log.cs) entity.
 * Decorate your entity class with `HookableAttribute` and pass _false_.
 * The hooking framework will never pass these entities to any hook
 

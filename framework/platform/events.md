@@ -53,9 +53,10 @@ description: pub/sub system for loosely coupled communication
 
 ## List of all core events
 
-* In alphabetical order
+* Alle event messages in alphabetical order
 * _Event_ suffix omitted for brevity
 * Modules may provide more events than listed here
+* This is not a complete reference. Analyze the corresponding classes in source code to learn more about properties and usage.
 
 | Event                            | When?                                                                                                                                                                                                                                                                                                        |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -95,6 +96,6 @@ description: pub/sub system for loosely coupled communication
 | **ThemeSwitched**                | After the main theme has been switched                                                                                                                                                                                                                                                                       |
 | **ThemeTouched**                 | After any change that affects a theme's stylesheet has been made (edited theme.config, any Sass file, any variable etc.)                                                                                                                                                                                     |
 | **ValidatingCart**               | Before validating the shopping cart                                                                                                                                                                                                                                                                          |
-| **ViewComponentExecuting\<T>**   | Before a view component is about to create/prepare its model (of type T)                                                                                                                                                                                                                                     |
-| **ViewComponentResultExecuting** | Before a view component is about to render the view                                                                                                                                                                                                                                                          |
+| **ViewComponentExecuting\<T>**   | A view component is about to create/prepare its model (of type T)                                                                                                                                                                                                                                            |
+| **ViewComponentResultExecuting** | A view component is about to render the view                                                                                                                                                                                                                                                                 |
 | **ZoneRendering**                | A mail template zone is about to be rendered                                                                                                                                                                                                                                                                 |
