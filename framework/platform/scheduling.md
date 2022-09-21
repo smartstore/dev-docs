@@ -14,13 +14,13 @@ description: Schedules automated tasks to be executed periodically
 * ...a timer polls the web scheduler HTTP endpoint every minute
 * The endpoint determines all overdue tasks and executes them within the scope of a HTTP request
 * This guarantees that the dependency scope is always up and running. No need to create custom scopes.
-* The task context virtualizer ([`ITaskContextVirtualizer`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/ITaskContextVirtualizer.cs)) will virtualize some environment parameters during task execution (unless specified otherwise):
+* The task context virtualizer ([ITaskContextVirtualizer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/ITaskContextVirtualizer.cs)) will virtualize some environment parameters during task execution (unless specified otherwise):
   * `IWorkContext.CurrentCustomer` --> BackgroundTask system customer
   * `IStoreContext.CurrentStore` --> Primary (first) store
 
 ## Task descriptor
 
-* The [`TaskDescriptor`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Domain/TaskDescriptor.cs) domain entity defines the task metadata: name, cron expression, whether it is enabled or not, priority, task type to execute etc.
+* The [TaskDescriptor](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Domain/TaskDescriptor.cs) domain entity defines the task metadata: name, cron expression, whether it is enabled or not, priority, task type to execute etc.
 * This entity is saved in database
 * Some parts can be edited by the user in the backend, e.g. cron expression, enabled etc.
 * A task's cron expression specifies the next run time
@@ -30,12 +30,12 @@ description: Schedules automated tasks to be executed periodically
 
 ## Implementing a task
 
-* Any concrete class implementing the [`ITask`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/ITask.cs) interface
+* Any concrete class implementing the [ITask](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/ITask.cs) interface
 * No need to register in DI, it is auto-discovered and registered as a scoped service on app startup. So: task types can take any dependency.
 * `Run` method is the task handler. No sync-counterpart!
 * The task executor will call this method asynchronously and await it
 * Any exception raised during execution (either unhandled or explicity) will stop execution. The error will be logged. If the task descriptor's `StopOnError` property is `true`, task will be disabled and will not run anymore (unless user turns it on again).
-* By default, the task type's name (without namespace) is `TaskDescriptor.Type`. To specify another name - e.g. to avoid potential type name conflicts with other tasks - decorate your class with [`TaskNameAttribute`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/TaskNameAttribute.cs) and pass a custom name.
+* By default, the task type's name (without namespace) is `TaskDescriptor.Type`. To specify another name - e.g. to avoid potential type name conflicts with other tasks - decorate your class with [TaskNameAttribute](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/TaskNameAttribute.cs) and pass a custom name.
 * INFO: if the task resolver determined more than one overdue task within a single poll operation, they will NOT be executed in parallel, but one after another. If a task's execution is not finished on the next poll (next minute), the executor will skip it.
 * INFO: Because of the minutely polling, it makes no sense to define cron expression with less fraction, e.g. "every 30 seconds".
 * _SAMPLE_
@@ -55,7 +55,7 @@ description: Schedules automated tasks to be executed periodically
 
 * The task scheduler UI in backend can display task progress (either message, percent or both)
 * But you must provide this info
-* The [`TaskExecutionContext`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/TaskExecutionContext.cs) parameter passed to the `Run` method contains the `SetProgress` method (with different overloads and sync/async variants).
+* The [TaskExecutionContext](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/TaskExecutionContext.cs) parameter passed to the `Run` method contains the `SetProgress` method (with different overloads and sync/async variants).
 * Call it to propagate progress. Your progress is saved to database immediately.
 * The UI fetches refreshed progress info every seconds and can now display it
 
@@ -141,7 +141,7 @@ internal class Module : ModuleBase
 
 ## Implementing a custom Task Store provider
 
-* ``[`ITaskStore`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/ITaskStore.cs)``
+* [ITaskStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/ITaskStore.cs)
 * The default implementation stores task info and progress in database
 * We cannot think of any scenario where it makes sense to override this :-)
 * But for the sake of completeness:
