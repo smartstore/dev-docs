@@ -10,7 +10,7 @@ description: pub/sub system for loosely coupled communication
 * Event message can be any complex type, no restrictions, no interface, no base class
 * ``[`IEventPublisher`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Events/IEventPublisher.cs) publishes events
 * ``[`IConsumer`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Events/IConsumer.cs) interface marks a class as consumer/handler/subscriber for one or multiple events
-* No message queuing or persistance: if the app stops working, message gets lost.
+* INFO: No message queuing or persistance: if the app stops working, message gets lost.
 
 ## Consuming Events
 

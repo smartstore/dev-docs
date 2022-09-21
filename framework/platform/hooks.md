@@ -4,7 +4,7 @@ description: Special pub/sub system for database save operations
 
 # Hooks
 
-* .Like database _triggers_, hooks are subscribers that are automatically executed in response to certain save/commit events on a particular `DbContext` instance.
+* Like database _triggers_, hooks are subscribers that are automatically executed in response to certain save/commit events on a particular `DbContext` instance.
 * But unlike triggers, hooks are high-level, data provider agnostic, and pure managed code.
 * Extremely powerful and very flexible when it comes to composable, granular application design.
 * They are similar to MVC action filters
