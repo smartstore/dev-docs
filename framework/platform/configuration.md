@@ -6,12 +6,12 @@ description: Application configuration framework
 
 * Application configuration is usually performed by the user in the backend via **Configuration / Settings** UI
 * Modules may provide their own settings and a form to edit them
-* At the lowest tier, each individual setting is just a record in the database represented by the [Setting](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Configuration/Domain/Setting.cs) entity. A setting's value is saved in the `Value` field as plain text.
+* At the lowest tier, each individual setting is just a record in the database represented by the [`Setting`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Configuration/Domain/Setting.cs) entity. A setting's value is saved in the `Value` field as plain text.
 * But to make things easy to work with, settings are grouped and combined into POCO classes, e.g.:
-  * [TaxSettings](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Checkout/Tax/Settings/TaxSettings.cs)
-  * [ThemeSettings](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Theming/Settings/ThemeSettings.cs)
-  * [MediaSettings](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Content/Media/Configuration/MediaSettings.cs)
-  * [CatalogSettings](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/CatalogSettings.cs) (a really big one :smile:)
+  * ``[`TaxSettings`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Checkout/Tax/Settings/TaxSettings.cs)``
+  * ``[`ThemeSettings`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Theming/Settings/ThemeSettings.cs)``
+  * ``[`MediaSettings`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Content/Media/Configuration/MediaSettings.cs)``
+  * ``[`CatalogSettings`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/CatalogSettings.cs) (a really big one :smile:)
   * and many more
 
 ## Technical concept
@@ -39,7 +39,7 @@ description: Application configuration framework
 
 ### By ISettingFactory
 
-* ``[ISettingFactory](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Configuration/Services/ISettingFactory.cs) (which is also singleton) is responsible for activating and populating setting class instances that implement `ISettings`
+* ``[`ISettingFactory`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Configuration/Services/ISettingFactory.cs) (which is also singleton) is responsible for activating and populating setting class instances that implement `ISettings`
 * Loading settings
   * `LoadSettingsAsync<TSettings>()`: tries to load `TSettings` for a given store from cache or from database (if not cached yet)
 * Saving settings
@@ -48,7 +48,7 @@ description: Application configuration framework
 
 ### Accessing individual setting entries
 
-* You can also access individual entries by using [ISettingService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Configuration/Services/ISettingService.cs)
+* You can also access individual entries by using [`ISettingService`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Configuration/Services/ISettingService.cs)``
 * Updating individual entries automatically invalidates the class cache. E.g. updating or deleting the `ThemeSettings.DefaultTheme` entry removes all `ThemeSettings` instances from cache.
 * INFO: you are not restricted to setting classes. Any setting entry can be created and accessed, without being part of a setting class.
 
