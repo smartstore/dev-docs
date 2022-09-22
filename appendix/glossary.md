@@ -22,7 +22,19 @@ Lorem ipsum
 
 Lorem ipsum
 
+#### Bootstrapping
+
+Lorem ipsum
+
 #### Bundle
+
+Lorem ipsum
+
+#### DI
+
+Lorem ipsum
+
+#### Domain
 
 Lorem ipsum
 
@@ -35,6 +47,10 @@ Lorem ipsum
 Lorem ipsum
 
 #### Frontend
+
+Lorem ipsum
+
+#### Mapper
 
 Lorem ipsum
 
@@ -59,6 +75,10 @@ Lorem ipsum
 Lorem ipsum
 
 #### Rule
+
+Lorem ipsum
+
+#### Service
 
 Lorem ipsum
 

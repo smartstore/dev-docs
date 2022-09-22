@@ -2,7 +2,7 @@
 description: Schedules automated tasks to be executed periodically
 ---
 
-# 👍 Scheduling
+# Scheduling
 
 * Executes automated tasks, e.g.: cleanup files, cleanup database, send emails, rebuild XML sitemap, periodic imports or exports etc.
 * Perfect for long-running processes or expensive stuff.

@@ -2,7 +2,7 @@
 description: pub/sub system for loosely coupled communication
 ---
 
-# 👍 Events
+# Events
 
 * The application publishes event messages on different occasions
 * e.g.: CustomerSignedIn, CustomerRegistered, OrderPlaced, OrderPaid, Searching, Indexing etc.
