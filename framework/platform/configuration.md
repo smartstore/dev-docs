@@ -2,7 +2,7 @@
 description: Application configuration framework
 ---
 
-# Configuration
+# 👍 Configuration
 
 * Application configuration is usually performed by the user in the backend via **Configuration / Settings** UI
 * Modules may provide their own settings and a form to edit them

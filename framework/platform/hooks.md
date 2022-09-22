@@ -2,7 +2,7 @@
 description: Special pub/sub system for database save operations
 ---
 
-# Hooks
+# 👍 Hooks
 
 * Like database _triggers_, hooks are subscribers that are automatically executed in response to certain save/commit events on a particular `DbContext` instance.
 * But unlike triggers, hooks are high-level, data provider agnostic, and pure managed code.
@@ -237,7 +237,7 @@ internal class MyCacheInvalidatorHook : AsyncDbSaveHook<BaseEntity>
 * By default, hook importance is specified as `Normal`.
 * For performance reasons, some callers may reduce the amount of executed hooks by specifying the so-called `MinHookImportance` for particular unit of works.&#x20;
 * E.g., the product import task, which is a long-running process, turns off the execution of `Normal` hooks by setting `MinHookImportance` to `Important`.
-* This is done by wrapping a [dbcontextscope.md](../advanced/database/dbcontextscope.md "mention") around a unit of work
+* This is done by wrapping a [dbcontextscope.md](../advanced/dbcontextscope.md "mention") around a unit of work
 * To customize your hook's importance, decorate your hook class with `ImportantAttribute`:
   * `Normal` (default): Hook can be ignored during long running processes, e.g. imports. Usually simple hooks that invalidate cache entries or clean some resources.
   * `Important`: Hook is important and should also run during long running processes. Not running the hook **may** result in stale or invalid data.

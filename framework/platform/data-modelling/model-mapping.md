@@ -2,7 +2,7 @@
 description: Object mapping made easy
 ---
 
-# Model mapping
+# 👍 Model mapping
 
 * Smartstore comes with ultra-lightweight and fast object mapping utilities
 * Automatic object mapping comes handy whenever you need to convert from type A to B, e.g. an entity type (like `Product`) to a view model type (like `ProductModel`) or vice-versa.
