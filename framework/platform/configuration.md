@@ -247,5 +247,5 @@ public class BlogAdminController : AdminController
 
 ### Create menu item
 
-* There are many ways _hook_ your settings page into the backend
+* There are many ways to _hook_ your settings page into the backend
 * Please refer to [menus.md](../content/menus.md "mention") to learn about the menu system and how to hook in.
