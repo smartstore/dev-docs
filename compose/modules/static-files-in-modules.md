@@ -1,2 +1,0 @@
-# Static files in modules
-
