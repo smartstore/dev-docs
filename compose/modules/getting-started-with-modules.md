@@ -1,9 +1,3 @@
----
-description: >-
-  Where are modules located and how are they deployed?, Starters, IModule,
-  module.json
----
-
 # Getting started with modules
 
 ## Overview
@@ -73,8 +67,10 @@ description: >-
 
 ### module.json manifest
 
-* Lorem ipsum
-* TODO: move comments to table
+* This file is describing your module to the system
+* The information contained in this file will be used for example in the _Plugin Manager_ administration screen
+* Here is how a _module.json_ may look like
+* `SystemName`, `FriendlyName` and `Version` are required.
 
 {% code title="module.json" %}
 ```json
@@ -117,14 +113,59 @@ description: >-
 | **Order**             | integer | The display order in the module manager group.                                                                                                                                                                                                                                                                                    |
 | **PrivateReferences** | array   | Optional array of private dependency package names that a module references. By default, referenced packages are not copied to the module's output directory because it is assumed that the application core references them already. Any module private package should be listed here (including the complete dependency chain). |
 | **ProjectUrl**        | string  | Link to project's or author's homepage.                                                                                                                                                                                                                                                                                           |
-| **ResourceRootKey**   | string  | Root key for language resources.                                                                                                                                                                                                                                                                                                  |
+| **ResourceRootKey**   | string  | Root key for language resources (see [localizing-modules.md](localizing-modules.md "mention")).                                                                                                                                                                                                                                   |
 | **SystemName \***     | string  | Module system name (usually the assembly name without extension).                                                                                                                                                                                                                                                                 |
 | **Tags**              | string  | Comma-separated tags.                                                                                                                                                                                                                                                                                                             |
 | **Version \***        | string  | The current version of module, e.g. '5.1.0'.                                                                                                                                                                                                                                                                                      |
 
 ### Module entry class
 
-* Lorem ipsum
+* Every module needs an entry class which (at least) contains methods to install and uninstall the module.
+* The class must implement `IModule`
+* By convention, we place this file in the root of the project, name it `Module.cs` and make it internal
+* We also recommend to derive from abstract [ModuleBase](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Modularity/ModuleBase.cs) instead of implementing `IModule,` because `ModuleBase` contains some common implementation already.
+* Your module entry class may also implement any provider interface directly (like e.g. `IPaymentMethod`). This is the recommended approach if your module contains exactly one feature provider.
+* It may also implement `IConfigurable` to expose the route to a module configuration page that should be linked in the _Plugin Manager_ UI.
+* Every time the module is installed, `IModule.InstallAsync()` method will be called...
+* ...and if the module is uninstalled, `IModule.UninstallAsync()` method will be called
+* TIPP: It is good practice NOT to delete any custom module data from database during uninstallation in case the user wants to re-install the module later. But it's up to you.
+
+{% code title="Module.cs" %}
+```csharp
+internal class Module : ModuleBase, IConfigurable
+{
+    public RouteInfo GetConfigurationRoute()
+        => new("Configure", "MyGreatAdmin", new { area = "Admin" });
+
+    public override async Task InstallAsync(ModuleInstallationContext context)
+    {
+        // Saves the default state of a settings class to the database 
+        // without overwriting existing values.
+        await TrySaveSettingsAsync<MyGreatModuleSettings>();
+        
+        // Imports all language resources for the current module from 
+        // xml files in "Localization" directory (if any found).
+        await ImportLanguageResourcesAsync();
+        
+        // VERY IMPORTANT! Don't forget to call.
+        await base.InstallAsync(context);
+    }
+
+    public override async Task UninstallAsync()
+    {
+        // Deletes all "MyGreatModuleSettings" properties settings from the database.
+        await DeleteSettingsAsync<MyGreatModuleSettings>();
+        
+        // Deletes all language resource for the current module 
+        // if "ResourceRootKey" is module.json is not empty.
+        await DeleteLanguageResourcesAsync();
+        
+        // VERY IMPORTANT! Don't forget to call.
+        await base.UninstallAsync();
+    }
+}
+```
+{% endcode %}
 
 ## Files & Folders Best Practices
 
@@ -132,7 +173,7 @@ description: >-
 * There is no obligation for you to comply to it, but it makes things more - well, organized - and predictable
 * The following is a list of files & folders (maxed out)
 
-|                                    |                                                                                                                                      |
+| Entry                              | Description                                                                                                                          |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | :file\_folder: **App\_Data**       | App specific (cargo) data like templates, sample files etc. that needs to be published.                                              |
 | :file\_folder: **Blocks**          | Page Builder Block implementations (see [page-builder-and-blocks.md](../../framework/content/page-builder-and-blocks.md "mention")). |

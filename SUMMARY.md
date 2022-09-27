@@ -98,7 +98,7 @@
     * [Adding menu items](compose/modules/examples/adding-menu-items.md)
     * [Creating a Payment provider](compose/modules/examples/creating-a-payment-provider.md)
     * [Creating a Widget provider](compose/modules/examples/creating-a-widget-provider.md)
-    * [Creating an Export provider](compose/modules/tutorials/creating-an-export-provider.md)
+    * [Creating an Export provider](compose/modules/examples/creating-a-export-provider.md)
 * [Theming](compose/theming/README.md)
   * [Getting started with themes](compose/theming/getting-started-with-themes.md)
   * [Theme inheritance](compose/theming/theme-inheritance.md)
