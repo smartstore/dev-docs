@@ -80,6 +80,7 @@
     * [Database batch operations](framework/advanced/database-batch-operations.md)
   * [LinkResolver](framework/advanced/linkresolver.md)
   * [QR codes](framework/advanced/qr-codes.md)
+  * [Native libraries](framework/advanced/native-libraries.md)
 
 ## Compose
 
@@ -91,13 +92,13 @@
   * [Licensable modules](compose/modules/licensable-modules.md)
   * [Deploying modules](compose/modules/deploying-modules.md)
   * [Visual Studio extension](compose/modules/visual-studio-extension.md)
-  * [Tutorials](compose/modules/tutorials/README.md)
+  * [Tutorials](compose/modules/examples/README.md)
     * [Building a simple "Hello World" module](compose/modules/tutorials/building-a-simple-hello-world-module.md)
-    * [Adding tabs](compose/modules/tutorials/adding-tabs.md)
-    * [Adding menu items](compose/modules/tutorials/adding-menu-items.md)
-    * [Creating a Payment provider](compose/modules/tutorials/creating-a-payment-provider.md)
-    * [Creating a Widget provider](compose/modules/tutorials/creating-a-widget-provider.md)
-    * [Creating a Export provider](compose/modules/tutorials/creating-a-export-provider.md)
+    * [Adding tabs](compose/modules/examples/adding-tabs.md)
+    * [Adding menu items](compose/modules/examples/adding-menu-items.md)
+    * [Creating a Payment provider](compose/modules/examples/creating-a-payment-provider.md)
+    * [Creating a Widget provider](compose/modules/examples/creating-a-widget-provider.md)
+    * [Creating an Export provider](compose/modules/tutorials/creating-an-export-provider.md)
 * [Theming](compose/theming/README.md)
   * [Getting started with themes](compose/theming/getting-started-with-themes.md)
   * [Theme inheritance](compose/theming/theme-inheritance.md)

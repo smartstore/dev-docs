@@ -80,42 +80,25 @@ description: >-
 ```json
 {
   "$schema": "../module.schema.json",
-  // Author name.
   "Author": "MyOrg",
-  // Conceptual group name. Used to visually categorize module in module listings.
-  // Possible values: 
-  // Admin, Marketing, Payment, Shipping, Tax, Analytics, CMS
-  // Media, SEO, Data, Globalization, Api, Mobile, Social, Security,
-  // Developer, Sales, Design, Performance, B2B, Storefront, Law
   "Group": "Payment",
-  // Required. Module system name (usually the assembly name without extension).
+  // Required. Module system name.
   "SystemName": "MyOrg.MyGreatModule",
-  // Optional assembly name. By default '{SystemName}.dll' is assumed to be the assembly name
-  "AssemblyName": "MyOrg.MyGreatModule.dll",
   // Required. English friendly name.
   "FriendlyName": "A great module for Smartstore",
-  // English description.
   "Description": "Lorem ipsum",
-  // Required. The current version of module, e.g. '5.0'.
+  // Required. The current version of module.
   "Version": "5.0",
-  // The minimum compatible application version, e.g. '5.0.0'.
   "MinAppVersion": "5.0",
-  // The display order in the module manager group.
   "Order": 1,
-  // Root key for language resources.
-  "ResourceRootKey": "Plugins.Payments.AmazonPay",
-  // Link to project or author homepage.
-  "ProjectUrl": "http://myorg.com",
-  // Comma-separated tags.
-  "Tags": "tag1, tag2",
-  // Optional array of private dependency package names that this module references. 
-  // By default, referenced packages are not copied to the module's output directory 
-  // because it is assumed that the application core references them already. 
-  // Any module private package should be listed here
-  // (including the complete dependency chain).
-  "PrivateReferences": [ "Amazon.Pay.API.SDK" ],
-  // Optional array of module system names that this module depends on.
-  "DependsOn": [ "Smartstore.Tax" ]
+  "ResourceRootKey": "Plugins.Payments.MyGreatModule",
+  "ProjectUrl": "https://myorg.com",
+  "PrivateReferences": [
+    "MiniProfiler.Shared",
+    "MiniProfiler.AspNetCore",
+    "MiniProfiler.AspNetCore.Mvc",
+    "MiniProfiler.EntityFrameworkCore"
+  ]
 }
 ```
 {% endcode %}
@@ -124,13 +107,13 @@ description: >-
 
 | Name                  | Type    | Description                                                                                                                                                                                                                                                                                                                       |
 | --------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **AssemblyName**      | string  | Optional assembly name. By default '{SystemName}.dll' is assumed to be the assembly name.                                                                                                                                                                                                                                         |
+| **AssemblyName**      | string  | Optional assembly name. By default, '{SystemName}.dll' is assumed to be the assembly name.                                                                                                                                                                                                                                        |
 | **Author**            | string  | Author name.                                                                                                                                                                                                                                                                                                                      |
-| **FriendlyName \***   | string  | English (unlocalized) friendly name.                                                                                                                                                                                                                                                                                              |
+| **FriendlyName \***   | string  | English friendly name.                                                                                                                                                                                                                                                                                                            |
 | **Group**             | enum    | Conceptual group name. Used to visually categorize module in module listings.  Possible values: _Admin, Marketing, Payment, Shipping, Tax, Analytics, CMS, Media, SEO, Data, Globalization, Api, Mobile, Social, Security, Developer, Sales, Design, Performance, B2B, Storefront, Law_.                                          |
 | **DependsOn**         | array   | Optional array of module system names that a module depends on.                                                                                                                                                                                                                                                                   |
-| **Description**       | string  | English (unlocalized) description.                                                                                                                                                                                                                                                                                                |
-| **MinAppVersion**     | string  | The minimum compatible application version, e.g. '5.0.0'.                                                                                                                                                                                                                                                                         |
+| **Description**       | string  | English description.                                                                                                                                                                                                                                                                                                              |
+| **MinAppVersion**     | string  | The minimum compatible application version, e.g. '5.0.0'. The module will be unavailable if the current app version is less than this value.                                                                                                                                                                                      |
 | **Order**             | integer | The display order in the module manager group.                                                                                                                                                                                                                                                                                    |
 | **PrivateReferences** | array   | Optional array of private dependency package names that a module references. By default, referenced packages are not copied to the module's output directory because it is assumed that the application core references them already. Any module private package should be listed here (including the complete dependency chain). |
 | **ProjectUrl**        | string  | Link to project's or author's homepage.                                                                                                                                                                                                                                                                                           |
@@ -142,3 +125,42 @@ description: >-
 ### Module entry class
 
 * Lorem ipsum
+
+## Files & Folders Best Practices
+
+* There are some conventions how we organize the file structure within a project
+* There is no obligation for you to comply to it, but it makes things more - well, organized - and predictable
+* The following is a list of files & folders (maxed out)
+
+|                                    |                                                                                                                                      |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| :file\_folder: **App\_Data**       | App specific (cargo) data like templates, sample files etc. that needs to be published.                                              |
+| :file\_folder: **Blocks**          | Page Builder Block implementations (see [page-builder-and-blocks.md](../../framework/content/page-builder-and-blocks.md "mention")). |
+| :file\_folder: **Bootstrapping**   | Bootstrapping code like _Autofac_ modules, DI extensions etc.                                                                        |
+| :file\_folder: **Client**          | RESTful API clients                                                                                                                  |
+| ****:file\_folder: **Components**  | MVC View Components (see [controllers-and-viewcomponents.md](controllers-and-viewcomponents.md "mention"))                           |
+| :file\_folder: **Configuration**   | Settings class implementations (see [configuration.md](../../framework/platform/configuration.md "mention"))                         |
+| :file\_folder: **Controllers**     | MVC Controllers (see [controllers-and-viewcomponents.md](controllers-and-viewcomponents.md "mention"))                               |
+| :file\_folder: **Domain**          | Domain entities (see [domain.md](../../readme/domain.md "mention"))                                                                  |
+| :file\_folder: **Extensions**      | Static extension method classes                                                                                                      |
+| :file\_folder: **Filters**         | MVC Filters (see [filters.md](filters.md "mention"))                                                                                 |
+| :file\_folder: **Hooks**           | Hook implementations (see [hooks.md](../../framework/platform/hooks.md "mention"))                                                   |
+| :file\_folder: **Localization**    | Localization files (see [localizing-modules.md](localizing-modules.md "mention"))                                                    |
+| :file\_folder: **Media**           | Media system related classes                                                                                                         |
+| :file\_folder: **Migrations**      | Fluent data migrations (see [database-migrations.md](../../framework/platform/database-migrations.md "mention"))                     |
+| :file\_folder: **Models**          | View model classes (see [data-modelling](../../framework/platform/data-modelling/ "mention"))                                        |
+| :file\_folder: **Providers**       | Provider implementations                                                                                                             |
+| :file\_folder: **Security**        | Security related classes                                                                                                             |
+| :file\_folder: **Services**        | Service classes                                                                                                                      |
+| :file\_folder: **Utils**           | Utilities                                                                                                                            |
+| :file\_folder: **Tasks**           | Task scheduler jobs (see [scheduling.md](../../framework/platform/scheduling.md "mention"))                                          |
+| :file\_folder: **TagHelpers**      | Tag Helpers                                                                                                                          |
+| :file\_folder: **Views**           | Razor view/template files                                                                                                            |
+| :file\_folder: **wwwroot**         | Static files (including Sass)                                                                                                        |
+| :file\_cabinet: AdminMenu.cs       | Admin menu hook (see [menus.md](../../framework/content/menus.md "mention"))                                                         |
+| :file\_cabinet: CacheableRoutes.cs | Route registrar for output cache (see [output-cache.md](../../framework/platform/output-cache.md "mention"))                         |
+| :file\_cabinet: Events.cs          | Event handler methods (see [events.md](../../framework/platform/events.md "mention"))                                                |
+| :file\_cabinet: Module.cs \*       | Required. Module entry class (implements `IModule`).                                                                                 |
+| :file\_cabinet: module.json \*     | Required. Module metadata manifest.                                                                                                  |
+| :file\_cabinet: Permissions.cs     | Module permissions (see [security.md](../../framework/platform/security.md "mention"))                                               |
+| :file\_cabinet: Startup.cs         | Module bootstrapper (see [bootstrapping.md](../../framework/platform/bootstrapping.md "mention"))                                    |
