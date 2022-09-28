@@ -21,17 +21,62 @@
 
 ### Multi-level cache
 
-* Lorem ipsum
-* ICacheStore
-* ICacheFactory
+* `ICacheManager` is a container for multiple cache stores represented by [ICacheStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheStore.cs).
+* Every CRUD method traverses all registered stores to find, update or delete items (memory stores come first, then distributed).
+* By default, only one store exists: [MemoryCacheStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/MemoryCacheStore.cs).
+* But modules may provide new stores. Like the REDIS module which provides the `RedisCacheStore`.
+* The multi-level cache design guarantees:
+  * Unified API for both memory and distributed store
+  * **Performance**! A memory store is MUCH faster than a distributed store. `ICacheManager` will always query memory store first and will only fallback to distributed store if an item does not exist in memory. After retrieval from distributed store, the item is also put in memory store, so subsequent reads return the object which is in memory.
+  * `IMessageBus` is responsible for syncing all memory stores across web-farm nodes:
+    * If server B caused the deletion of an item in the distributed store, a notification will be sent to server A to delete the item from its memory store as well.
+* WARN: Because of the unified API, you must be careful when it comes to object types. Your cached objects must be serializable by JSON (_Newtonsoft_, not _System.Text.Json_). You must ensure that your object:
+  * Has a public parameterless constructor
+  * Does not have circular references
+  * Does not produce a large object graph
+  * Does not contain property types that are not serializable
+  * Is **not** an entity type deriving from `BaseEntity`. Never do that, really... it's dangerous.
+* To resolve the primary memory or distributed store explicitly (without relying on the composite multi-level manager): use [ICacheFactory](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheFactory.cs):&#x20;
+  * `GetMemoryCache()`: resolves an `ICacheManager` instance that only interacts with the current `IMemoryCacheStore` implementation
+  * `GetDistributedCache()`: resolves an `ICacheManager` instance that only interacts with the current `IDistributedCacheStore` implementation. If no distributed store exists, a memory store manager will be returned instead.
+
+#### Implementing a custom cache store
+
+* To implement a custom cache store create a class that implements [ICacheStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheStore.cs).
+* Follow the contract and implement all members
+* Register your store impl in service container:
+
+```csharp
+internal class Startup : StarterBase
+{
+    public override void ConfigureContainer(ContainerBuilder builder, IApplicationContext appContext)
+    {
+        builder.RegisterType<MyDistributedCacheStore>()
+            .As<ICacheStore>()
+            .As<IDistributedCacheStore>() // OR as IMemoryCacheStore
+            .SingleInstance();
+    }
+}
+```
 
 ### Accessing the cache
 
-* Accessing the static application cache in Smartstore is fairly easy
+* Accessing the static application cache in Smartstore is fairly easy.
 * Just get yourself the `ICacheManager` dependency (which is a singleton):
 
 ```csharp
-// Some code
+ICacheManager cache;
+
+return cache.GetAsync("MyCacheItemKey", async options =>
+{
+    // Set the entry absolute expiration relative to now
+    options.ExpiresIn(TimeSpan.FromHours(2));
+    
+    // ... prepare some model
+    var model = await PrepareSomeModelAsync();
+    
+    return model;
+});
 ```
 
 * All calls are thread-safe and may be used concurrently from multiple threads.
