@@ -182,7 +182,7 @@ internal class Module : ModuleBase, IConfigurable
 | ****:file\_folder: **Components**  | MVC View Components (see [controllers-and-viewcomponents.md](controllers-and-viewcomponents.md "mention"))                           |
 | :file\_folder: **Configuration**   | Settings class implementations (see [configuration.md](../../framework/platform/configuration.md "mention"))                         |
 | :file\_folder: **Controllers**     | MVC Controllers (see [controllers-and-viewcomponents.md](controllers-and-viewcomponents.md "mention"))                               |
-| :file\_folder: **Domain**          | Domain entities (see [domain.md](../../readme/domain.md "mention"))                                                                  |
+| :file\_folder: **Domain**          | Domain entities (see [domain.md](../../getting-started/domain.md "mention"))                                                         |
 | :file\_folder: **Extensions**      | Static extension method classes                                                                                                      |
 | :file\_folder: **Filters**         | MVC Filters (see [filters.md](filters.md "mention"))                                                                                 |
 | :file\_folder: **Hooks**           | Hook implementations (see [hooks.md](../../framework/platform/hooks.md "mention"))                                                   |

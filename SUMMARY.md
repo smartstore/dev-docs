@@ -1,13 +1,13 @@
 # Table of contents
 
 * [Getting Started](README.md)
-  * [Source code organization](readme/source-code-organization.md)
-  * [Architecture overview](readme/architecture-overview.md)
-  * [Dependency injection](readme/dependency-injection.md)
-  * [👎 Data access](readme/data-access.md)
-  * [👍 Domain](readme/domain.md)
-  * [👍 Deployment & Build](readme/deployment-and-build.md)
-  * [✔ How to contribute](readme/how-to-contribute.md)
+  * [Source code organization](getting-started/source-code-organization.md)
+  * [Architecture overview](getting-started/architecture-overview.md)
+  * [Dependency injection](getting-started/dependency-injection.md)
+  * [👎 Data access](getting-started/data-access.md)
+  * [👍 Domain](getting-started/domain.md)
+  * [👍 Deployment & Build](getting-started/deployment-and-build.md)
+  * [✔ How to contribute](getting-started/how-to-contribute.md)
 
 ## Framework
 
