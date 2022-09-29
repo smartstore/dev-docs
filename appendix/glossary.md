@@ -8,31 +8,31 @@ These terms appear throughout the Smartstore developer documentation. Terms are 
 
 #### Asset
 
-Lorem ipsum
+A static file, like image, script, stylesheet, web font etc.
 
 #### Application
 
-Lorem ipsum
+The Smartstore application as a whole, including all modules.
 
 #### Backend
 
-Lorem ipsum
+The administration backend where store owners manage the shop.
 
 #### Block
 
-Lorem ipsum
+A kind of a widget provided by the _Page Builder_ module.
 
 #### Bootstrapping
 
-Lorem ipsum
+The process of starting and warming up the application.
 
 #### Bundle
 
-Lorem ipsum
+A composite script or stylesheet that combines and minifies multiple asset files into one.
 
 #### DI
 
-Lorem ipsum
+Dependency Injection
 
 #### Domain
 
@@ -40,7 +40,7 @@ Lorem ipsum
 
 #### EF
 
-Lorem ipsum
+Entity Framework
 
 #### Entity
 
