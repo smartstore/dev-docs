@@ -69,7 +69,7 @@ public class MySingletonService : IMySingletonService
         // Lease context instance from pool
         using (var db = _dbFactory.CreateDbContext())
         {
-            return db.Set<MyEntity>().ToListAsync();
+            // do something in this "unit of work"
         } // --> Dispose: return context instance to pool
     }
 }
