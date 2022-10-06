@@ -65,7 +65,7 @@ using Smartstore.Http;
 internal class Module : ModuleBase, IConfigurable
 {
     public RouteInfo GetConfigurationRoute()
-        => new("Configure", "HelloWorld", new { area = "Admin" });
+        => new("Configure", "HelloWorldAdmin", new { area = "Admin" });
 
     public override async Task InstallAsync(ModuleInstallationContext context)
     {
@@ -102,7 +102,7 @@ If we compile the project now, we have got a plugin which will be recognized by 
 Note two things here:
 
 1. If you click on **Configure** now you will be led to a 404-Page because we havn't added a controller and an action to handle the configuration route we have added to our module class.
-2. The methods to add the default settings to the settings table in the database are commented out because we haven't created a setting class yet.
+2. The method to add the default settings to the settings table in the database and the method to remove them are commented out because we haven't created a setting class yet.
 
 ## Adding a Settings class
 
@@ -120,13 +120,13 @@ namespace MyOrg.HelloWorld.Settings
 {
     public class HelloWorldSettings : ISettings
     {
-        public string SomeText { get; set; } = "Hello World";
+        public string Name { get; set; } = "John Smith";
     }
 }
 ```
 {% endcode %}
 
-Now we can uncomment the corresponding lines in our `Module.cs`, which saves the initial setting values when installing the module or removes them if the module becomes uninstalled. When the plugin is now installed anew the setting `HelloWorldSettings.SomeText` will be saved to the database along with the default value "Hello World".
+Now we can uncomment the corresponding lines in our `Module.cs`, which saves the initial setting values when installing the module or removes them if the module becomes uninstalled. When the plugin is now installed anew the setting `HelloWorldSettings.Name` will be saved to the database along with the default value "John Smith".
 
 ## Configuration
 
@@ -135,11 +135,11 @@ Now that we have a setting for our module lets add the code to make this setting
 {% code title="Module.cs" %}
 ```csharp
     public RouteInfo GetConfigurationRoute()
-        => new("Configure", "HelloWorld", new { area = "Admin" });
+        => new("Configure", "HelloWorldAdmin", new { area = "Admin" });
 ```
 {% endcode %}
 
-With the `RouteInfo` were returning here, we tell _Smartstore_ to look for an action called `Configure` in a Controller named `HelloWorldController` in the area `Admin`.
+With the `RouteInfo` were returning here, we tell _Smartstore_ to look for an action called `Configure` in a Controller named `HelloWorldAdminController` in the area `Admin`.
 
 ## MVC
 
@@ -149,9 +149,9 @@ So lets add the controller.
 
 1. Right click on the project in the Solution Explorer.
 2. Add a new folder. According to our guidelines we call it _Controllers_.
-3. Place a new class called `HelloWorldController.cs` in this folder.
+3. Place a new class called `HelloWorldAdminController.cs` in this folder.
 
-{% code title="HelloWorldController.cs" %}
+{% code title="HelloWorldAdminController.cs" %}
 ```csharp
 using Microsoft.AspNetCore.Mvc;
 using Smartstore.ComponentModel;
@@ -164,7 +164,7 @@ using Smartstore.Web.Modelling.Settings;
 namespace MyOrg.HelloWorld.Controllers
 {
     [Area("Admin")]
-    public class HelloWorldController : ModuleController
+    public class HelloWorldAdminController : ModuleController
     {
         [LoadSetting, AuthorizeAdmin]
         public IActionResult Configure(HelloWorldSettings settings)
@@ -201,7 +201,7 @@ The `AuthorizeAdmin` attribute makes sure the current user has the right to acce
 
 The `LoadSetting` attribute loads the setting values of the the settings class passed as the action parameter automatically from the database.
 
-The `SaveSetting` attribute saves the setting values of the the settings class passed as the action parameter automatically to the database after the action was executed. So we have the opportunity to store our model values into the settings object. We'll do this here with the MiniMapper which can map simple properties with the same name to each other. The call of MiniMapper.Map(model, settings); will map the SomeText property of the setting to the SomeText property of the model.
+The `SaveSetting` attribute saves the setting values of the the settings class passed as the action parameter automatically to the database after the action was executed. So we have the opportunity to store our model values into the settings object. We'll do this here with the MiniMapper which can map simple properties with the same name to each other. The call of MiniMapper.Map(model, settings); will map the _Name_ property of the setting to the `Name` property of the model.
 
 If the `ModelState` is not valid we must do a Postback by returning Configure(settings) in order to display model validation errors. Else we rather redirect to get action in order to prevent unnecessary form posts.
 
@@ -213,7 +213,7 @@ As already stated the model will be a simple equivalent to the settings class. L
 2. Add a new folder. According to our guidelines we call it _Models_.
 3. Place a new class called `ConfigurationModel.cs` in this folder.
 
-{% code title="HelloWorldController.cs" %}
+{% code title="ConfigurationModel.cs" %}
 ```csharp
 using Smartstore.Web.Modelling;
 
@@ -222,8 +222,8 @@ namespace MyOrg.HelloWorld.Models
     [LocalizedDisplay("Plugins.MyOrg.HelloWorld.")]
     public class ConfigurationModel : ModelBase
     {
-        [LocalizedDisplay("*SomeText")]
-        public string SomeText { get; set; }
+        [LocalizedDisplay("*Name")]
+        public string Name { get; set; }
     }
 }
 ```
@@ -268,11 +268,11 @@ Lets add the view which is returned by the GET action of the controller.
     <div class="adminContent">
         <div class="adminRow">
             <div class="adminTitle">
-                <smart-label asp-for="SomeText" />
+                <smart-label asp-for="Name" />
             </div>
             <div class="adminData">
-                <setting-editor asp-for="SomeText"></setting-editor>
-                <span asp-validation-for="SomeText"></span>
+                <setting-editor asp-for="Name"></setting-editor>
+                <span asp-validation-for="Name"></span>
             </div>
         </div>
     </div>
@@ -280,9 +280,9 @@ Lets add the view which is returned by the GET action of the controller.
 ```
 {% endcode %}
 
-### \_ViewImports.cshtml
 
-To spare some using directives in the view it's recommended to add a \_ViewImports.cshtml file directly in views directory. It'll add the most important namesspaces. The model namespace as every view has to deal with a model somehow. Also included in this sample are the Microsoft built in Taghelpers as well as the Taghelpers that are included in Smartstore.
+
+To spare some using directives in the view it's recommended to add a `_ViewImports.cshtml` file directly in views directory. It'll add the most important namesspaces. The model namespace as every view has to deal with a model somehow. Also included in this sample are the Microsoft built in Taghelpers as well as the Taghelpers that are included in Smartstore.
 
 {% code title="_ViewImports.cshtml" %}
 ```cshtml
@@ -300,11 +300,11 @@ To spare some using directives in the view it's recommended to add a \_ViewImpor
 ```
 {% endcode %}
 
-If the module will be built now, you can click on the configure button and will be able to store a value for the setting _HelloWorldSettings.SomeText_ into the database by just entering it in the provided input field of the configuration view.
+If the module will be built now, you can click on the configure button and will be able to store a value for the setting _HelloWorldSettings.Name_ into the database by just entering it in the provided input field of the configuration view.
 
 ## Localization
 
-If you look at the ConfigurationModel you'll see the properties of the model are decorated with the `LocalizedDisplay` attribute. By doing so you can add localized values that describe the property. The attribute on property level can either contain the full resource-ID `[LocalizedDisplay("Plugins.MyOrg.HelloWorld.SomeText")]` or inherit a part from the containing class also decorated with this attribute like it's done in our example.
+If you look at the ConfigurationModel you'll see the properties of the model are decorated with the `LocalizedDisplay` attribute. By doing so you can add localized values that describe the property. The attribute on property level can either contain the full resource-ID `[LocalizedDisplay("Plugins.MyOrg.HelloWorld.Name")]` or inherit a part from the containing class also decorated with this attribute like it's done in our example.
 
 The resource values itself must be added by XML-Files. Lets do this.
 
@@ -324,11 +324,11 @@ The resource values itself must be added by XML-Files. Lets do this.
 
     <LocaleResource Name="Plugins.MyOrg.HelloWorld" AppendRootKey="false">
         <Children>
-            <LocaleResource Name="SomeText">
-                <Value>Text to save</Value>
+            <LocaleResource Name="Name">
+                <Value>Name to greet</Value>
             </LocaleResource>
-            <LocaleResource Name="SomeText.Hint">
-                <Value>Enter the text to be saved in the setting.</Value>
+            <LocaleResource Name="Name.Hint">
+                <Value>Enter the name of the person to be greeted.</Value>
             </LocaleResource>
         </Children>
     </LocaleResource>
@@ -336,6 +336,10 @@ The resource values itself must be added by XML-Files. Lets do this.
 ```
 
 If you compile the plugin now you can press the button **Update resources** to update the newly added localized resources from your XML-File.
+
+## Say Hello
+
+Now that we can configure the name of the person that should be greeted by the plugin lets do some public rendering.
 
 ## Finally
 
@@ -346,8 +350,6 @@ Open the project file and remove all ItemGroup properties as they aren't needed 
 Link according to or guidelines.
 
 Add a public controller with a simple action index which really says Hello World
-
-Change SomeText Setting to Name
 
 Add HelloWorld project zip file
 
