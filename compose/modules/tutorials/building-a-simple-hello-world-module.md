@@ -357,7 +357,7 @@ We add another controller, a model and a view for the public action.&#x20;
 1. Right click on the _Controllers_ directory in the Solution Explorer.
 2. Add a new class called `HelloWorldController.cs`&#x20;
 
-{% code title="Controllers\HelloWorldController.cs" %}
+{% code title="Controllers/HelloWorldController.cs" %}
 ```csharp
 using Microsoft.AspNetCore.Mvc;
 using MyOrg.HelloWorld.Models;
@@ -384,7 +384,7 @@ namespace MyOrg.HelloWorld.Controllers
 1. Right click on the _Models_ directory in the Solution Explorer.
 2. Add a new class called `PublicInfoModel.cs`&#x20;
 
-{% code title="Models\PublicInfoModel.cs" %}
+{% code title="Models/PublicInfoModel.cs" %}
 ```csharp
 using Smartstore.Web.Modelling;
 
