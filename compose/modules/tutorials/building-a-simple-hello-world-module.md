@@ -1,18 +1,18 @@
 # 🐣 Building a simple "Hello World" module
 
-Before we get into the topic, please take a look at the introduction to creating modules [getting-started-with-modules.md](../getting-started-with-modules.md "mention"). The basic files needed to create a module are already described here.
+Before we get into the topic, please take a look at the introduction to creating modules [getting-started-with-modules.md](../getting-started-with-modules.md "mention"). The basic files required to create a module are already described here.
 
 ## Creating a project file
 
 We start by creating a project file for our modules.
 
 1. Open the Smartstore Solution _Smartstore.sln_
-2. Right click on the _Modules_ Folder in the Solution-Explorer
+2. Right click on the _Modules_ Folder in the Solution Explorer
 3. Add a **New Project** of type _Class Library_
 4. Name it _MyOrg.HelloWorld_
-5. Make sure the physical path of the project is `Smartstore\src\Smartstore.Modules`
+5. Make sure the physical path of the project is _Smartstore/src/Smartstore.Modules_
 
-Now we alter `MyOrg.HelloWorld.csproj` to the following.
+Now we alter `MyOrg.HelloWorld.csproj` to the following:
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Razor">
@@ -24,14 +24,14 @@ Now we alter `MyOrg.HelloWorld.csproj` to the following.
 </Project>
 ```
 
-## Adding Module Metadata (module.json)
+## Adding module metadata (module.json)
 
-Lets add `module.json` now. For more information on this file refer to [getting-started-with-modules.md](../getting-started-with-modules.md "mention")
+Let's add `module.json` now. For more information on this file refer to [getting-started-with-modules.md](../getting-started-with-modules.md "mention")
 
 1. Right click on the project in the Solution Explorer.
 2. **Add / New Item / Javascript JSON Configuration File**.
 3. Name it `module.json`
-4. Make another right click, select the **Properties** context item and change
+4. Make another right click, select the **Properties** context item and change:
 
 | Property                 | Value         |
 | ------------------------ | ------------- |
@@ -58,7 +58,7 @@ Lets add `module.json` now. For more information on this file refer to [getting-
 ```
 {% endcode %}
 
-## Creating the Module
+## Creating the module
 
 Now we change the name of `Class1.cs` to `Module.cs` and add the following code:
 
@@ -103,19 +103,19 @@ internal class Module : ModuleBase, IConfigurable
 ```
 {% endcode %}
 
-If we compile the project now, we have got a modules which will be recognized by Smartstore and can be installed by going to **Admin / Plugins / Manage Plugins / Hello World / Install**.
+If we now compile the project, we have a module that is recognized by Smartstore and can be installed via **Admin / Plugins / Manage Plugins / Hello World / Install**.
 
 Note two things here:
 
-1. If you click on **Configure** now you will be led to a 404-Page because we havn't added a controller and an action to handle the configuration route we have added to our module class.
-2. The method to add the default settings to the settings table in the database and the method to remove them are commented out because we haven't created a setting class yet.
+1. If you click on **Configure** you will be led to a 404 page because we haven't added a controller and an action to handle the configuration route.
+2. The method to add the default settings to the settings table in the database and the method to remove them are commented out because we haven't created a _Settings_ class yet.
 
 ## Adding a Settings class
 
 For more detailed information on _Settings_ visit the section [configuration.md](../../../framework/platform/configuration.md "mention"). For this tutorial we add a simple _Setting_ class with just one string property.
 
 1. Right click on the project in the Solution Explorer.
-2. Add a new folder. According to our guidlines we call it _Configuration_.
+2. Add a new folder. According to our guidelines we call it _Configuration_.
 3. Place a new class called `HelloWorldSettings.cs` in this folder.
 
 {% code title="Module.cs" %}
@@ -132,26 +132,26 @@ namespace MyOrg.HelloWorld.Settings
 ```
 {% endcode %}
 
-Now we can uncomment the corresponding lines in our `Module.cs`, which saves the initial setting values when installing the module or removes them if the module becomes uninstalled. When the module is now installed anew the setting `HelloWorldSettings.Name` will be saved to the database along with the default value "John Smith".
+Now we can uncomment the corresponding lines in our `Module.cs`, which saves the initial setting values when installing the module or removes them if the module becomes uninstalled. Now when the module is reinstalled, the `HelloWorldSettings.Name` setting is stored in the database with the default value of "John Smith".
 
-## Adding Configuration
+## Adding configuration
 
-Now that we have a setting for our module lets add the code to make this setting configurable. In our Module.cs we've implemented the interface `IConfigurable` which forces us to implement the method `GetConfigurationRoute` with the return type `RouteInfo`. This method will be called if the Shop-Administrator clicks on **Config** button next to the Module in the Plugin Management section of the shop administration area.
+Now that we have a setting for our module lets add the code to make this setting configurable. In our `Module.cs` we have implemented the interface `IConfigurable` which forces us to implement the method `GetConfigurationRoute` with the return type `RouteInfo`. This method will be called if the store owner clicks on the **Config** button next to the module in the **Plugin Management** section of the shop administration area.
 
 {% code title="Module.cs" %}
 ```csharp
-    public RouteInfo GetConfigurationRoute()
-        => new("Configure", "HelloWorldAdmin", new { area = "Admin" });
+public RouteInfo GetConfigurationRoute()
+    => new("Configure", "HelloWorldAdmin", new { area = "Admin" });
 ```
 {% endcode %}
 
-With the `RouteInfo` were returning here, we tell _Smartstore_ to look for an action called `Configure` in a Controller named `HelloWorldAdminController` in the area `Admin`.
+With the `RouteInfo` we are returning here, we tell Smartstore __ to look for an action called `Configure` in a Controller named `HelloWorldAdminController` in the area `Admin`.
 
-## MVC
+## MVC parts
 
 ### Controller
 
-So lets add the controller.
+So lets add the controller:
 
 1. Right click on the project in the Solution Explorer.
 2. Add a new folder. According to our guidelines we call it _Controllers_.
@@ -169,8 +169,7 @@ using Smartstore.Web.Modelling.Settings;
 
 namespace MyOrg.HelloWorld.Controllers
 {
-    [Area("Admin")]
-    public class HelloWorldAdminController : ModuleController
+    public class HelloWorldAdminController : AdminController
     {
         [LoadSetting, AuthorizeAdmin]
         public IActionResult Configure(HelloWorldSettings settings)
@@ -197,23 +196,23 @@ namespace MyOrg.HelloWorld.Controllers
 ```
 {% endcode %}
 
-We havn't added a configuration model yet so there will be 3 errors right now. This will be the next step.
+We haven't added a configuration model yet so there will be 3 errors right now. This will be the next step.
 
 Notice the area attribute the controller is decorated with. This means all actions of this controller will be reachable within this area only. If you want to add actions to the module within another area don't forget to decorate these actions with the desired area or add another controller.
 
-According to the MVC pattern, we have two actions in this controller to handle the configure view we're about to add. The first action is for the GET request and the second will handle POST requests.
+According to the MVC pattern, we have two actions in this controller to handle the configure view we are about to add. The first action is for the `GET` request and the second will handle `POST` requests.
 
 The `AuthorizeAdmin` attribute makes sure the current user has the right to access this view.
 
 The `LoadSetting` attribute loads the setting values of the the settings class passed as the action parameter automatically from the database.
 
-The `SaveSetting` attribute saves the setting values of the the settings class passed as the action parameter automatically to the database after the action was executed. So we have the opportunity to store our model values into the settings object. We'll do this here with the MiniMapper which can map simple properties with the same name to each other. The call of MiniMapper.Map(model, settings); will map the _Name_ property of the setting to the `Name` property of the model.
+The `SaveSetting` attribute saves the setting values of the the settings class passed as the action parameter automatically to the database after the action was executed. So we have the opportunity to store our model values into the settings object. We'll do this here with the `MiniMapper` which can map simple properties with the same name to each other. Calling `MiniMapper.Map(model, settings)` will map the _Name_ property of the setting class to the `Name` property of the model class.
 
-If the `ModelState` is not valid we must do a Postback by returning Configure(settings) in order to display model validation errors. Else we rather redirect to get action in order to prevent unnecessary form posts.
+If the `ModelState` is not valid we must do a postback by returning `Configure(settings)` in order to display model validation errors. Else we redirect to the `GET` action in order to prevent unnecessary form posts.
 
 ### Model
 
-As already stated the model will be a simple equivalent to the settings class. Lets add it.
+As already stated the model will be a simple equivalent to the settings class. Lets add it:
 
 1. Right click on the project in the Solution Explorer.
 2. Add a new folder. According to our guidelines we call it _Models_.
@@ -237,12 +236,11 @@ namespace MyOrg.HelloWorld.Models
 
 ### View
 
-Lets add the view which is returned by the GET action of the controller.
+Lets add the view which is rendered by the `GET` action of the controller.
 
 1. Right click on the project in the Solution Explorer.
-2. Add a new folder and call it _Views_.
-3. Add another new folder and call it _HelloWorldAdmin_.
-4. Place a new Empty Razor View called `Configure.cshtml` in this folder.
+2. Add a new folder and call it _Views/HelloWorldAdmin_.
+3. Place a new **Empty Razor View** called `Configure.cshtml` in this folder.
 
 {% code title="Configure.cshtml" %}
 ```cshtml
@@ -286,9 +284,7 @@ Lets add the view which is returned by the GET action of the controller.
 ```
 {% endcode %}
 
-
-
-To spare some using directives in the view it's recommended to add a `_ViewImports.cshtml` file directly in views directory. It'll add the most important namesspaces. The model namespace as every view has to deal with a model somehow. Also included in this sample are the Microsoft built in Taghelpers as well as the Taghelpers that are included in Smartstore.
+To spare some using directives in the view it is recommended to add a `_ViewImports.cshtml` file directly in the _Views_ directory. It'll add the most important namespaces and the model namespace because every view has to deal with a model somehow. Also included in this sample are the Microsoft built in Tag Helpers as well as the Tag Helpers that are included in Smartstore.
 
 {% code title="_ViewImports.cshtml" %}
 ```cshtml
@@ -306,17 +302,17 @@ To spare some using directives in the view it's recommended to add a `_ViewImpor
 ```
 {% endcode %}
 
-If the module will be built now, you can click on the configure button and will be able to store a value for the setting _HelloWorldSettings.Name_ into the database by just entering it in the provided input field of the configuration view.
+After the the module has been built, you can click on the **Configure** button and will be able to store a value for the setting `HelloWorldSettings.Name` __ to the database by just entering it in the provided input field of the configuration view.
 
-## Adding Localization
+## Adding localization
 
-If you look at the ConfigurationModel you'll see the properties of the model are decorated with the `LocalizedDisplay` attribute. By doing so you can add localized values that describe the property. The attribute on property level can either contain the full resource-ID `[LocalizedDisplay("Plugins.MyOrg.HelloWorld.Name")]` or inherit a part from the containing class also decorated with this attribute like it's done in our example.
+If you look at the `ConfigurationModel` you'll see that the properties of the model are decorated with the `LocalizedDisplay` attribute. By doing so you can add localized display values that describe the property. The attribute on property level can either contain the full resource key `[LocalizedDisplay("Plugins.MyOrg.HelloWorld.Name")]` or inherit a part from the declaring class that is also decorated with this attribute like it is done in our example.
 
-The resource values itself must be added by XML-Files. Lets do this.
+The resource values itself must be added by XML files. Let's do this:
 
 1. Right click on the project in the Solution Explorer.
-2. Add a new folder. According to our guidelines call it _Localization_.
-3. Place a new XML-File called `resources.en-us.xml` in this folder.
+2. Add a new folder. The folder must be called _Localization_.
+3. Place a new XML file called `resources.en-us.xml` in this folder.
 4. Make another right click, select the **Properties** context item and change&#x20;
 
 | Property                 | Value         |
@@ -346,11 +342,11 @@ The resource values itself must be added by XML-Files. Lets do this.
 </Language>
 ```
 
-If you compile the plugin now you can press the button **Update resources** to update the newly added localized resources from your XML-File.
+After building the module you can press the button **Update resources** to update the newly added localized resources from your XML file.
 
 ## Say Hello
 
-Now that we can configure the name of the person that should be greeted by the plugin lets do some public rendering.&#x20;
+Now that we can configure the name of the person that should be greeted by the module let's do some public rendering.&#x20;
 
 We add another controller, a model and a view for the public action.&#x20;
 
@@ -395,7 +391,6 @@ namespace MyOrg.HelloWorld.Models
         public string Name { get; set; }
     }
 }
-
 ```
 {% endcode %}
 
@@ -417,16 +412,14 @@ namespace MyOrg.HelloWorld.Models
 ```
 {% endcode %}
 
-The public view will be displayed when opening the URL:
-
-[http://localhost:59318/helloworld/publicInfo](http://localhost:59318/helloworld/publicInfo)&#x20;
+The public view will be displayed when opening the URL: [http://localhost:59318/helloworld/publicInfo](http://localhost:59318/helloworld/publicInfo)&#x20;
 
 ## Finally
 
-Open the project file and remove all `ItemGroup` properties as they aren't needed for the _Smartstore_ build process.
+Open the project file and remove all `ItemGroup` properties because they are not required for the _Smartstore_ build process.
 
-Now we've built a simple module that can store a setting and renders its value in the frontend when accessing the route /HelloWorld/PublicInfo. Of course this is only a starting point on the way to build more complex modules by using ActionsFilters, own DataContext and last but least ViewComponents which will be rendered into _WidgetZones_.
+Now we have built a simple module that can store a setting and renders its value in the frontend when accessing the route _helloworld/publicinfo_. Of course this is only a starting point on the way to build more complex modules by using _Action Filters_, own _DataContext_ and last but not least _View Components_ which will be rendered into _Widget Zones_.
 
-The code for this topic can be downloaded here:
+The code for this tutorial can be downloaded here:
 
 {% file src="../../../.gitbook/assets/MyOrg.HelloWorld.zip" %}
