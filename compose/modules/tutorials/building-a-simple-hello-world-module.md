@@ -235,7 +235,7 @@ Lets add the view which is returned by the GET action of the controller.
 
 1. Right click on the project in the Solution Explorer.
 2. Add a new folder and call it _Views_.
-3. Add another new folder and call it _HelloWorld_.
+3. Add another new folder and call it _HelloWorldAdmin_.
 4. Place a new Empty Razor View called `Configure.cshtml` in this folder.
 
 {% code title="Configure.cshtml" %}
@@ -339,7 +339,76 @@ If you compile the plugin now you can press the button **Update resources** to u
 
 ## Say Hello
 
-Now that we can configure the name of the person that should be greeted by the plugin lets do some public rendering.
+Now that we can configure the name of the person that should be greeted by the plugin lets do some public rendering.&#x20;
+
+We add another controller, a model and a view for the public action.&#x20;
+
+1. Right click on the _Controllers_ directory in the Solution Explorer.
+2. Add a new class called `HelloWorldController.cs`&#x20;
+
+{% code title="Controllers\HelloWorldController.cs" %}
+```csharp
+using Microsoft.AspNetCore.Mvc;
+using MyOrg.HelloWorld.Models;
+using MyOrg.HelloWorld.Settings;
+using Smartstore.ComponentModel;
+using Smartstore.Web.Controllers;
+using Smartstore.Web.Modelling.Settings;
+
+namespace MyOrg.HelloWorld.Controllers
+{
+    public class HelloWorldController : PublicController
+    {
+        [LoadSetting]
+        public IActionResult PublicInfo(HelloWorldSettings settings)
+        {
+            var model = MiniMapper.Map<HelloWorldSettings, PublicInfoModel>(settings);
+            return View(model);
+        }
+    }
+}
+```
+{% endcode %}
+
+1. Right click on the _Models_ directory in the Solution Explorer.
+2. Add a new class called `PublicInfoModel.cs`&#x20;
+
+{% code title="Models\PublicInfoModel.cs" %}
+```csharp
+using Smartstore.Web.Modelling;
+
+namespace MyOrg.HelloWorld.Models
+{
+    public class PublicInfoModel : ModelBase
+    {
+        public string Name { get; set; }
+    }
+}
+
+```
+{% endcode %}
+
+1. Right click on the _Views_ directory in the Solution Explorer.
+2. Add a new folder named _HelloWorld_
+3. Add a new Razor View called `PublicInfo.cshtml`&#x20;
+
+{% code title="Views\HelloWorld\PublicInfo.cshtml" %}
+```html
+@model PublicInfoModel
+
+@{
+    Layout = "_Layout";
+}
+
+<div>
+    Hello @Model.Name
+</div>
+```
+{% endcode %}
+
+The public view will be displayed when opening the URL:
+
+[http://localhost:59318/helloworld/publicInfo](http://localhost:59318/helloworld/publicInfo)&#x20;
 
 ## Finally
 
@@ -348,8 +417,6 @@ Open the project file and remove all ItemGroup properties as they aren't needed 
 ## TODO (mh) (core)
 
 Link according to or guidelines.
-
-Add a public controller with a simple action index which really says Hello World
 
 Add HelloWorld project zip file
 
