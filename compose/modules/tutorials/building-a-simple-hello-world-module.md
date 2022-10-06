@@ -4,7 +4,7 @@ Before we get into the topic, please take a look at the introduction to creating
 
 ## Creating a project file
 
-We start by creating a project file for our plugin.
+We start by creating a project file for our modules.
 
 1. Open the Smartstore Solution _Smartstore.sln_
 2. Right click on the _Modules_ Folder in the Solution-Explorer
@@ -24,15 +24,21 @@ Now we alter `MyOrg.HelloWorld.csproj` to the following.
 </Project>
 ```
 
-## Adding a module metadata (module.json)
+## Adding Module Metadata (module.json)
 
 Lets add `module.json` now. For more information on this file refer to [getting-started-with-modules.md](../getting-started-with-modules.md "mention")
 
 1. Right click on the project in the Solution Explorer.
 2. **Add / New Item / Javascript JSON Configuration File**.
 3. Name it `module.json`
-4. Make another right click, select the **Properties** context item and change Build Action = Content, Copy to Output Directory = Copy if newer
-5. Add the following content
+4. Make another right click, select the **Properties** context item and change
+
+| Property                 | Value         |
+| ------------------------ | ------------- |
+| Build Action             | Content       |
+| Copy to Output Directory | Copy if newer |
+
+&#x20;  5\. Add the following content
 
 {% code title="module.json" %}
 ```json
@@ -42,7 +48,7 @@ Lets add `module.json` now. For more information on this file refer to [getting-
   "Group": "Admin",
   "SystemName": "MyOrg.HelloWorld",
   "FriendlyName": "Hello World",
-  "Description": "This plugin says Hello World",
+  "Description": "This module says Hello World",
   "Version": "5.0",
   "MinAppVersion": "5.0",
   "Order": 1,
@@ -52,7 +58,7 @@ Lets add `module.json` now. For more information on this file refer to [getting-
 ```
 {% endcode %}
 
-## Module.cs
+## Creating the Module
 
 Now we change the name of `Class1.cs` to `Module.cs` and add the following code:
 
@@ -97,7 +103,7 @@ internal class Module : ModuleBase, IConfigurable
 ```
 {% endcode %}
 
-If we compile the project now, we have got a plugin which will be recognized by Smartstore and can be installed by going to **Admin / Plugins / Manage Plugins / Hello World / Install**.
+If we compile the project now, we have got a modules which will be recognized by Smartstore and can be installed by going to **Admin / Plugins / Manage Plugins / Hello World / Install**.
 
 Note two things here:
 
@@ -126,9 +132,9 @@ namespace MyOrg.HelloWorld.Settings
 ```
 {% endcode %}
 
-Now we can uncomment the corresponding lines in our `Module.cs`, which saves the initial setting values when installing the module or removes them if the module becomes uninstalled. When the plugin is now installed anew the setting `HelloWorldSettings.Name` will be saved to the database along with the default value "John Smith".
+Now we can uncomment the corresponding lines in our `Module.cs`, which saves the initial setting values when installing the module or removes them if the module becomes uninstalled. When the module is now installed anew the setting `HelloWorldSettings.Name` will be saved to the database along with the default value "John Smith".
 
-## Configuration
+## Adding Configuration
 
 Now that we have a setting for our module lets add the code to make this setting configurable. In our Module.cs we've implemented the interface `IConfigurable` which forces us to implement the method `GetConfigurationRoute` with the return type `RouteInfo`. This method will be called if the Shop-Administrator clicks on **Config** button next to the Module in the Plugin Management section of the shop administration area.
 
@@ -193,9 +199,9 @@ namespace MyOrg.HelloWorld.Controllers
 
 We havn't added a configuration model yet so there will be 3 errors right now. This will be the next step.
 
-Notice the area attribute the controller is decorated with. This means all actions of this controller will be reachable within this area only. If you want to add actions to the plugin within another area don't forget to decorate these actions with the desired area or add another controller.
+Notice the area attribute the controller is decorated with. This means all actions of this controller will be reachable within this area only. If you want to add actions to the module within another area don't forget to decorate these actions with the desired area or add another controller.
 
-According to the MVC pattern, we have to actions in this controller to handle the configure view we're about to add. The first action is for the GET request and the second will handle POST requests.
+According to the MVC pattern, we have two actions in this controller to handle the configure view we're about to add. The first action is for the GET request and the second will handle POST requests.
 
 The `AuthorizeAdmin` attribute makes sure the current user has the right to access this view.
 
@@ -302,7 +308,7 @@ To spare some using directives in the view it's recommended to add a `_ViewImpor
 
 If the module will be built now, you can click on the configure button and will be able to store a value for the setting _HelloWorldSettings.Name_ into the database by just entering it in the provided input field of the configuration view.
 
-## Localization
+## Adding Localization
 
 If you look at the ConfigurationModel you'll see the properties of the model are decorated with the `LocalizedDisplay` attribute. By doing so you can add localized values that describe the property. The attribute on property level can either contain the full resource-ID `[LocalizedDisplay("Plugins.MyOrg.HelloWorld.Name")]` or inherit a part from the containing class also decorated with this attribute like it's done in our example.
 
@@ -311,7 +317,12 @@ The resource values itself must be added by XML-Files. Lets do this.
 1. Right click on the project in the Solution Explorer.
 2. Add a new folder. According to our guidelines call it _Localization_.
 3. Place a new XML-File called `resources.en-us.xml` in this folder.
-4. Make another right click, select the **Properties** context item and change Build Action = Content, Copy to Output Directory = Copy if newer
+4. Make another right click, select the **Properties** context item and change&#x20;
+
+| Property                 | Value         |
+| ------------------------ | ------------- |
+| Build Action             | Content       |
+| Copy to Output Directory | Copy if newer |
 
 ```xml
 <Language Name="English" IsDefault="false" IsRightToLeft="false">
@@ -412,11 +423,10 @@ The public view will be displayed when opening the URL:
 
 ## Finally
 
-Open the project file and remove all ItemGroup properties as they aren't needed for the Smartstore build process.
+Open the project file and remove all `ItemGroup` properties as they aren't needed for the _Smartstore_ build process.
 
-## TODO (mh) (core)
+Now we've built a simple module that can store a setting and renders its value in the frontend when accessing the route /HelloWorld/PublicInfo. Of course this is only a starting point on the way to build more complex modules by using ActionsFilters, own DataContext and last but least ViewComponents which will be rendered into _WidgetZones_.
 
-Link according to or guidelines.
+The code for this topic can be downloaded here:
 
-Add HelloWorld project zip file
-
+{% file src="../../../.gitbook/assets/MyOrg.HelloWorld.zip" %}
