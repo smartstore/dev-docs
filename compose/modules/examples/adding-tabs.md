@@ -1,4 +1,4 @@
-# Adding tabs
+# 🥚 Adding tabs
 
 In _Smartstore_, we use tabs in different places in the backend and frontend. For this purpose we use the `TabTagHelper`.
 
@@ -23,9 +23,9 @@ You can use the _TagHelper_ in any view. To do this, you must make the tag helpe
 
 ### Add individual tabs to existing tabstrips
 
-If you as a developer are faced with the task to extend an existing entity e.g.: _Products_, _Categories_ or _Manufacturers_, you should not do this in the core code itself but attach to the tab from a module. To demonstrate this, in the course of this tutorial we will extend the _HelloWorld_-Plugin we created in the last tutorial.
+If you as a developer are faced with the task to extend an existing entity e.g.: _Products_, _Categories_ or _Manufacturers_, you should not do this in the core code itself but attach to the tab from a module. To demonstrate this, in the course of this tutorial we will extend the _HelloWorld_ module we created in the last tutorial.
 
-To do this, we'll add a new `Events.cs` class in the root of the plugin. When a tabstrip is created, the TagHelper fires the event `TabStripCreated`. The event message contains everything to add a custom tab to the tabstrip. The code to add an own tab in the product detail configuration in the admin area looks like this.
+To do this, we'll add a new `Events.cs` class in the root of the module. When a tabstrip is created, the TagHelper fires the event `TabStripCreated`. The event message contains everything to add a custom tab to the tab strip. The code to add a custom tab in the product detail configuration in the admin area looks like this:
 
 ```csharp
 using System.Threading.Tasks;
@@ -58,18 +58,18 @@ namespace MyOrg.HelloWorld
 }
 ```
 
-First, let's see which tabstrip it is. The tab we are interested in has the id `product-edit`. This is available in the event message as `TabStripName`. In the event message also the model of the containing view is supplied. Thus we have e.g. access to the id of the entity for which the detail view was requested.
+First, let's see which tab strip it is. The tab we are interested in has the id `product-edit`. This is available in the event message as `TabStripName`. In the event message the model of the containing view is also supplied. Thus we have e.g. access to the id of the entity for which the detail view was requested.
 
 Using the `TabFactory` of the event message we can inject a new tab.
 
-|                    |                                                                                     |
-| ------------------ | ----------------------------------------------------------------------------------- |
-| Text               | The text of the tab item that appears in the tabstrip.                              |
-| Name               | Unique name of tab item.                                                            |
-| Icon               | The icon of the tab                                                                 |
-| LinkHtmlAttributes | Attributes to be added to the tab's link.                                           |
-| Action             | The `action` that should be executed to display the tab.                            |
-| Ajax               | Specifies whether the tab should be reloaded via Ajax when the tab link is clicked. |
+| Method                 | Description                                                                        |
+| ---------------------- | ---------------------------------------------------------------------------------- |
+| **Text**               | The text of the tab item that appears in the tab strip                             |
+| **Name**               | Unique name/id of tab item                                                         |
+| **Icon**               | The icon of the tab                                                                |
+| **LinkHtmlAttributes** | HTML attributes to be added to the tab's link                                      |
+| **Action**             | The MVC `action` that should be invoked to display the tab                         |
+| **Ajax**               | Specifies whether the tab should be reloaded via Ajax when the tab link is clicked |
 
 Now that the tab has been added, we need to add the action that will control the tab. To do this, we open the admin controller and add the following action:
 
@@ -89,7 +89,11 @@ public async Task<IActionResult> AdminEditTab(int entityId)
 }
 ```
 
-The value with which the model is filled is taken from the `GenericAttributes` of the product, since this has not yet been saved, it is empty at the present time. More about this later.
+The value with which the model is filled is taken from the `GenericAttributes` property of the product, since this has not yet been saved, it is empty at the present time. More about this later.
+
+{% hint style="info" %}
+To learn more about generic attributes, please refer to [generic-attributes.md](../../../framework/advanced/generic-attributes.md "mention")
+{% endhint %}
 
 Here we use the `SmartDbContext` to get the instance of the product we just edited. Therefore we need to make the `SmartDbContext` known to the controller via dependency injection. So we add the following code at the very top:
 
@@ -102,9 +106,9 @@ public HelloWorldAdminController(SmartDbContext db)
 }
 ```
 
-Since we use a model with two simple properties in the action we just added and return a view we have to create this next.
+Since we use a model with two simple properties in the action we just add and return a view we have to create this next.
 
-The `AdminEditTabModel.cs` class belongs in the `Models` folder, of course.
+The `AdminEditTabModel.cs` class belongs in the _Models_ folder, of course.
 
 ```csharp
 using Smartstore.Web.Modelling;
@@ -123,9 +127,9 @@ namespace MyOrg.HelloWorld.Models
 
 ```
 
-Please also deposit the localized values for this model in the corresponding XML files. We have already explained how to do this in the _HelloWorld_ tutorial.
+Please also place the localized values for this model in the corresponding XML files. We have already explained how to do this in the [building-a-simple-hello-world-module.md](../tutorials/building-a-simple-hello-world-module.md "mention") tutorial.
 
-The view for the model of course belongs in the view folder `HelloWorldAdmin` and contains the following code:
+The view for the model of course belongs in the view folder _HelloWorldAdmin_ and contains the following code:
 
 ```html
 @model AdminEditTabModel
@@ -150,18 +154,18 @@ The view for the model of course belongs in the view folder `HelloWorldAdmin` an
 </div>
 ```
 
-When the project is now compiled and the product configuration is opened in the admin area, the tab that was added by the plugin appears here.
+When the project is now compiled and the product configuration is opened in the admin area, the tab that was added by the module appears here.
 
-Next, we make sure that the value that is entered is also saved when the product is saved. For this we listen to the `ModelBoundEvent`, which is fired whenever an entity is updated. To find all the places where the event is fired, search throughout the solution for the following code:
+Next, we make sure that the value that is entered is also saved when the product is saved. For this we listen to the `ModelBoundEvent`, which is published whenever a form was posted and the MVC model binder bound the model. To find all the places where the event is pubslihed, search throughout the solution for the following code:
 
 ```csharp
-Services.EventPublisher.PublishAsync(new ModelBoundEvent
+EventPublisher.PublishAsync(new ModelBoundEvent
 ```
 
 The code to save the value of our tab belongs to the class `Events.cs` looks like this:
 
 ```csharp
-public async Task HandleEventAsync(ModelBoundEvent message)
+public async Task HandleEventAsync(ModelBoundEvent message, SmartDbContext db)
 {
     if (!message.BoundModel.CustomProperties.ContainsKey("MyTab"))
         return;
@@ -169,25 +173,18 @@ public async Task HandleEventAsync(ModelBoundEvent message)
     if (message.BoundModel.CustomProperties["MyTab"] is not AdminEditTabModel model)
         return;
 
-    var product = await _db.Products.FindByIdAsync(model.EntityId);
+    var product = await db.Products.FindByIdAsync(model.EntityId);
     product.GenericAttributes.Set("HelloWorldMyTabValue", model.MyTabValue);
 
-    await _db.SaveChangesAsync();
-}
-```
-
-Since the `SmartDbContext` is accessed here, we have to make it known in the class via dependency injection, just like with the controller. To do this, we add the following constructor to the class:
-
-```csharp
-private readonly SmartDbContext _db;
-
-public Events(SmartDbContext db)
-{
-    _db = db;
+    await db.SaveChangesAsync();
 }
 ```
 
 The value is stored here in the `GenericAttributes` of the product. A `GenericAttribute` is a separate entity with the help of which any simple values can be stored for each entity. For more complex data structures you should provide your own domain object in your plugin.
+
+{% hint style="info" %}
+To learn more about events, please refer to [events.md](../../../framework/platform/events.md "mention")
+{% endhint %}
 
 ### Download
 
