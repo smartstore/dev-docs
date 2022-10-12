@@ -188,3 +188,7 @@ public Events(SmartDbContext db)
 ```
 
 The value is stored here in the `GenericAttributes` of the product. A `GenericAttribute` is a separate entity with the help of which any simple values can be stored for each entity. For more complex data structures you should provide your own domain object in your plugin.
+
+### Download
+
+{% file src="../../../.gitbook/assets/MyOrg.HelloWorldTabs.rar" %}
