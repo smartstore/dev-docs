@@ -12,7 +12,7 @@ For a more in-depth view on widgets, -zones and -invokers, please refer to [Widg
 
 Following the [last tutorial](adding-tabs.md), you'll need to do these steps to implement a Widget:
 
-* modify [**Module.cs**](creating-a-widget-provider.md#implementing-iwidget)****
+* modify [**`Module.cs`**](creating-a-widget-provider.md#implementing-iwidget)**``**
 * modify [**PublicInfoModel.cs**](creating-a-widget-provider.md#modify-publicinfomodel)****
 * add **Components** \ [**ViewComponent.cs**](creating-a-widget-provider.md#adding-viewcomponent)****
 * add **Views** \ **Shared** \ **Components** \ _**\<ModuleName>**_ \ [**Default.cshtml**](creating-a-widget-provider.md#undefined)****
@@ -21,7 +21,7 @@ Following the [last tutorial](adding-tabs.md), you'll need to do these steps to 
 
 Using the module from the [Adding Tabs tutorial](adding-tabs.md), we'll start with the Module.cs file
 
-You'll need to add `IWidget`to the implementation
+You'll need to add `IWidget` to the implementation
 
 ```csharp
 public class Module : ModuleBase, IConfigurable, IWidget
@@ -111,7 +111,7 @@ To use the product specific information we saved in `MyTabValue`, you need to ad
 private readonly SmartDbContext _db;
 public HelloWorldViewComponent(SmartDbContext db)
 {
-	_db = db;
+    _db = db;
 }
 ```
 
@@ -165,10 +165,12 @@ The final code look like this:
 public class HelloWorldViewComponent : SmartViewComponent
 {
 	private readonly SmartDbContext _db;
+	
 	public HelloWorldViewComponent(SmartDbContext db)
 	{
 		_db = db;
 	}
+	
 	public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object model)
 	{
 		if (widgetZone != "productdetails_pictures_top")
@@ -182,9 +184,7 @@ public class HelloWorldViewComponent : SmartViewComponent
 		}
 
 		var productModel = (ProductDetailsModel) model;
-
 		var product = await _db.Products.FindByIdAsync(productModel.Id);
-
 		var value = product.GenericAttributes.Get<string>("HelloWorldMyTabValue");
 		
 		var publicInfoModel = new PublicInfoModel
