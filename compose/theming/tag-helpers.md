@@ -63,20 +63,40 @@ namespace Smartstore.Web.TagHelpers.Shared
 ```
 {% endcode %}
 
-* Line 5: HtmlTargetElement: `*`, `IfAttributeName`
-*   Line 6: extends the abstract TagHelper class
+`Line 5`: HtmlTargetElement: `*`, `IfAttributeName`
 
-    It's methods are:
+The first argument describes on what HTML element the TagHelper can be used on.
 
-    * int Order
-    * void Init
-    * void Process
-    * Task ProcessAsync
-* Line 8: `IfAttributeName`
-* Line 10: `Order`
-* Line 17: `Condition`
-* Line 19: `ProcessAsync`
-* Line 21-26: The actual code
+The second argument uses `IfAttributeName` (`Line 8`) to define the attribute key.
+
+`Line 6`: extends the abstract TagHelper class
+
+{% hint style="info" %}
+The abstract `TagHelper` class provides:
+
+* int Order
+* void Init
+* void Process
+* Task ProcessAsync
+{% endhint %}
+
+`Line 8`: `IfAttributeName` - specifies the attribute name used in the HTML tag
+
+`Line 16`: `[HtmlAttributeName(IfAttributeName)]` sets the attribute name
+
+`Line 10`: `Order` - specifies the execution order in a set of `TagHelpers`
+
+`Line 17`: `Condition` - property of the `TagHelper`
+
+`Line 19`: `ProcessAsync` - is called when the tag is being processed
+
+* `TagHelperContext` - contains the name and attribute list of the tag
+* `TagHelperOutput` - object to interact with the DOM
+
+`Line 21-26`: The program logic
+
+* If `Condition` is `true`, the task is completed.
+* If `Condition` is `false`, the ouput is suppressed.
 
 ## Generic TagHelpers and where to find them
 
@@ -91,7 +111,11 @@ You can find the code to Smartstore TagHelpers in `Smartstore.Web.Common` / `Tag
 
 * BackToTagHelper
 * BootstrapIconTagHelper
-* SettingEditorTagHelper
+*   SettingEditorTagHelper
+
+    Provides automatic HTML-Input type Mapping
+
+    usage of UIHint ->\[Smartstore.DevTools -> ConfigurationModel.cs -> UIHint(Smart-Editor-TagHelper-Type)]
 * SmartLabelTagHelper
 
 #### DataGrid
