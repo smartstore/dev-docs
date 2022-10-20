@@ -14,9 +14,9 @@ Following the [last tutorial](adding-tabs.md), you'll need to do these steps to 
 
 * modify [**`Module.cs`**](creating-a-widget-provider.md#implementing-iwidget)
 * create [**`ViewComponentModel.cs`**](creating-a-widget-provider.md#modify-publicinfomodel)
-* modify [**`MyOrg.HelloWorld.csproj`**](creating-a-widget-provider.md#adding-database-access)****
+* modify [**`MyOrg.HelloWorld.csproj`**](creating-a-widget-provider.md#undefined)****
 * add **Components /** [**`ViewComponent.cs`**](creating-a-widget-provider.md#adding-viewcomponent)
-* add [**`CacheableRoutes.cs`**](creating-a-widget-provider.md#adding-the-cacheableroutes)
+* add [**`CacheableRoutes.cs`**](creating-a-widget-provider.md#undefined)
 * add **Views /** **Shared /** **Components /** _**\<ComponentName> /**_ [**`Default.cshtml`**](creating-a-widget-provider.md#adding-a-view)
 
 ## Implementing the IWidget
@@ -203,7 +203,7 @@ return View(viewComponentModel);
 
 The final code looks like this:
 
-{% code title="HelloWorldViewComponents.cs" %}
+{% code title="HellowWorldViewComponents.cs" %}
 ```csharp
 public class HelloWorldViewComponent : SmartViewComponent
 {
@@ -243,7 +243,7 @@ public class HelloWorldViewComponent : SmartViewComponent
 
 ## Adding the CacheableRoutes
 
-Old cache can cause trouble whilst developing modules. To avoid our model being `null`, you need to specify, that this `ViewComponent` gets to use the same cache until it's properly invalidated.
+Old cache can cause trouble whilst developing modules. To avoid our model being `null`, you need to specify, that this ViewComponent gets to use the same cache until it's properly invalidated.
 
 You can do this by adding the `CacheableRoutes` class.
 
