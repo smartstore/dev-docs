@@ -106,7 +106,7 @@
   * [Theme variables](compose/theming/theme-variables.md)
   * [Asset bundling](compose/theming/asset-bundling.md)
   * [Injecting content](compose/theming/injecting-content.md)
-  * [Tag Helpers](compose/theming/tag-helpers.md)
+  * [🥚 Tag Helpers](compose/theming/tag-helpers.md)
 
 ## Appendix
 
