@@ -73,31 +73,97 @@ The `HoneypotTagHelper` is Smartstore's cyber-security implementation of the [Ho
 
 ### Shared
 
-* ? AttributesTagHelper - allgemeine Attribute-Collection?
 * BundleTagHelper - Bundles external scripts and styles
-* CollapsedContentTagHelper
-* ConfirmTagHelper
-* FileIconTagHelper
-* FileUploaderTagHelper
-* LanguageTagHelper
-* LocalizationScriptTagHelper
-* PageAssetTagHelper
-* TagNameTagHelper
-* WidgetTagHelper
 
 <details>
 
 <summary>CollapsedContent Tag Helper</summary>
 
-The CollapsedContentTagHelper hides text after a maximum height has been reached. It adds _Show more_ or _Show less_ to the Element.
+The `CollapsedContentTagHelper` collapses the element to a maximum height. It also adds _Show more_ or _Show less_ to the Element.
 
-```
+```cshtml
 <collapsed-content>
-    Some text
+    Odit non aspernatur sunt ipsum dolorem nihil quibusdam earum.<br />
+    Eius nulla magni cum cum delectus sit omnis. Quam aut itaque ut.<br />
+    Adipisci nihil enim aut eos voluptas et. Iure ut maxime ut qui.<br />
+    Impedit adipisci laborum quia pariatur. Laboriosam voluptatibus<br />
+    atque qui minima et ut deleniti.<br />
+    <br />
+    Debitis beatae aut aut iusto non consequuntur. Et inventore placeat<br />
+    alias ut consequatur corrupti. Ut qui laboriosam amet tempora velit<br />
+    sed est. Dolorem doloremque reiciendis voluptatem quasi nemo<br />
+    perferendis quo. Voluptas exercitationem consequatur dolorum omnis<br />
+    porro necessitatibus dignissimos qui.<br />
+    <br />
+    Consectetur et corporis vel voluptas autem libero magnam. Mollitia<br />
+    pariatur placeat ut. Dolores quidem molestiae dolore ut accusamus<br />
+    quam dolorem iure. Nihil optio voluptatibus eum quis.<br />
+    <br />
+    Officia a accusantium nihil voluptas et. Error aut labore est qui<br />
+    rem. Fugiat perspiciatis repellendus voluptatem aut qui dolorem.
 </collapsed-content>
 ```
 
-To specify the maximum number of pixel you want to show, add the `sm-max-height` attribute. Otherwise it uses the catalog's default setting.
+To specify the maximum number of pixel you want to show, add the `sm-max-height` attribute. Otherwise the catalog's default setting will be used.
+
+</details>
+
+<details>
+
+<summary>Confirm Tag Helper</summary>
+
+The `ConfirmTagHelper` adds a confirm button. There are many ways to customise it.
+
+```cshtml
+<confirm button-id="entry-delete" />
+
+<confirm message="@T("Common.AreYouSure")" button-id="entry-delete" icon="fas fa-question-circle" action="EntryDelete" type="Action" />
+```
+
+</details>
+
+<details>
+
+<summary>FileIcon Tag Helper</summary>
+
+The `FileIconTagHelper` display a file icon.
+
+```cshtml
+<file-icon file-extension="@Model.FileExtension" show-label="true" />
+```
+
+It also supports these attributes:
+
+* `label`
+* `show-label`
+* `badge-class`
+
+</details>
+
+<details>
+
+<summary>FileUploader Tag Helper</summary>
+
+The `FileUploaderTagHelper` adds a highly customisable way to upload files.
+
+Here is an excerpt from _Smartstore.Web/Views/Customer/Avatar.cshtml_ to show this.
+
+{% code title="Avatar.cshtml" %}
+```cshtml
+<file-uploader 
+    file-uploader-name="uploadedFile"
+    upload-url='@Url.Action("UploadAvatar", "Customer")'
+    type-filter="image"
+    display-browse-media-button="false"
+    display-remove-button="fileId != 0"
+    display-remove-button-after-upload="true"
+    upload-text='@T("Common.FileUploader.UploadAvatar")'
+    onuploadcompleted="onAvatarUploaded"
+    onfileremoved="onAvatarRemoved"
+    multi-file="false"
+    has-template-preview="true" />
+```
+{% endcode %}
 
 </details>
 
@@ -115,9 +181,35 @@ The `IfTagHelper` adds a conditional attribute to the Element. The output is sup
 
 <details>
 
+<summary>TagName Tag Helper</summary>
+
+The `TagNameTagHelper` changes the tag at runtime.
+
+```cshtml
+<span sm-tagname="div">I always wanted to be a div...</span>
+```
+
+</details>
+
+<details>
+
+<summary>Widget Tag Helper</summary>
+
+The `WidgetTagHelper` adds HTML content and injects it into a [zone](../../framework/content/widgets.md#zones). More information can be found in [Widgets](../../framework/content/widgets.md#widget-tag-helper).
+
+```cshtml
+<widget target-zone="my_widget_zone">
+    <span>Widget content</span>
+</widget>
+```
+
+</details>
+
+<details>
+
 <summary>Zone Tag Helper</summary>
 
-The `ZoneTagHelper` defines an area for widgets to inject content.
+The `ZoneTagHelper` defines an zone for widgets to inject content. More information can be found in [Widgets](../../framework/content/widgets.md#zones).
 
 ```cshtml
 <zone name="a_widget_drop_zone_name">
