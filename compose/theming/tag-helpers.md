@@ -248,13 +248,65 @@ It also supports these attributes:
 
 #### Media
 
-* AudioTagHelper
-* BaseImageTagHelper
-* BaseMediaTagHelper
-* ImageTagHelper
-* MediaTagHelper
-* ThumbnailTagHelper
-* VideoTagHelper
+<details>
+
+<summary>Audio Tag Helper</summary>
+
+The `AudioTagHelper` adds an audio element.
+
+```cshtml
+<audio sm-file="AudioFile" />
+```
+
+</details>
+
+<details>
+
+<summary>Image Tag Helper</summary>
+
+The `ImageTagHelper` adds an image with attributes used in `Model` or the File.
+
+```cshtml
+<img sm-file="JPGFile"/>
+```
+
+</details>
+
+<details>
+
+<summary>Media Tag Helper</summary>
+
+The `MediaTagHelper` adds a suitable tag for a given media type.
+
+```cshtml
+<media sm-file="Model.CurrentFile" sm-size="Model.ThumbSize" alt="@picAlt" title="@picTitle" />
+```
+
+</details>
+
+<details>
+
+<summary>Thumbnail Tag Helper</summary>
+
+The `ThumbnailTagHelper` adds thumbnail of a media file.
+
+```cshtml
+<media-thumbnail sm-file="MediaFile" sm-size="ThumbSize" />
+```
+
+</details>
+
+<details>
+
+<summary>Video Tag Helper</summary>
+
+The `VideoTagHelper` adds a video element.
+
+```cshtml
+<video sm-file="VideoFile" controls preload="metadata" />
+```
+
+</details>
 
 ### Admin
 
