@@ -73,7 +73,27 @@ The `HoneypotTagHelper` is Smartstore's cyber-security implementation of the [Ho
 
 ### Shared
 
-* BundleTagHelper - Bundles external scripts and styles
+<details>
+
+<summary>Attributes Tag Helper</summary>
+
+The `AttributesTagHelper` adds attributes to the element. It can be used in two ways:
+
+* Adding a collection of attributes to the element.
+* Adding an attribute, if it evaluates to true.
+
+```cshtml
+@{
+    var attributes = new AttributeDictionary().Merge(ConvertUtility.ObjectToDictionary(ViewData["htmlAttributes"] ?? new object()));
+}
+<span attrs="attributes">I might have some attributes</span>
+
+//or
+
+<input type="checkbox" attr-checked='(node.HasChildren, "checked")' />
+```
+
+</details>
 
 <details>
 
@@ -267,22 +287,6 @@ Further information can be found in this [explanation](https://www.learnrazorpag
 
 <details>
 
-<summary>CollectionItem Tag Helper</summary>
-
-The `CollectionItemTagHelper` prepends a hidden prefix element to all it's current children.
-
-Unsure??
-
-```cshtml
-<collection-item name="@collectionName">
-    //A collection of nodes
-</collection-item>
-```
-
-</details>
-
-<details>
-
 <summary>ColorBox Tag Helper</summary>
 
 The `ColorBoxTagHelper` adds a color-picker. It is used under the hood of the `SettingEditorTagHelper` to display colors.
@@ -309,7 +313,7 @@ The `EditorTagHelper` adds a customisable input field. It works similiar to the 
 
 <summary>FormControl Tag Helper</summary>
 
-The FormControlTagHelper adds labels and CSS classes to form elements.
+The `FormControlTagHelper` adds labels and CSS classes to form elements.
 
 ```cshtml
 <input type="text" asp-for="Name" />
@@ -355,7 +359,7 @@ The `NumberInputTagHelper` extends the number-input's customisability and styles
 
 <summary>TripleDatePicker Tag Helper</summary>
 
-The TripleDatePickerTagHelper adds a customisable date-picker displaying the day, month and year.
+The `TripleDatePickerTagHelper` adds a customisable date-picker displaying the day, month and year.
 
 {% code overflow="wrap" %}
 ```cshtml
