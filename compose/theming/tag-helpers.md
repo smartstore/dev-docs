@@ -237,14 +237,133 @@ It also supports these attributes:
 
 #### Forms
 
-* AjaxFormTagHelper
-* CollectionItemTagHelper
-* ColorBoxTagHelper
-* EditorTagHelper
-* FormControlTagHelper
-* HintTagHelper
-* NumberInputTagHelper
-* TripleDatePickerTagHelper
+<details>
+
+<summary>AjaxForm Tag Helper</summary>
+
+The `AjaxFormTagHelper` adds unobtrusive AJAX to a form.
+
+```cshtml
+<form sm-ajax method="post" asp-area="" asp-action="Do" sm-onsuccess="OnDo@(Model.Id)" sm-loading-element-id="#do-prog-@(Model.Id)">
+```
+
+It also supports these attributes:
+
+* `sm-ajax`
+* `sm-confirm`
+* `sm-onbegin`
+* `sm-oncomplete`
+* `sm-onfailure`
+* `sm-onsuccess`
+* `sm-allow-cache`
+* `sm-loading-element-id`
+* `sm-loading-element-duration`
+* `sm-update-target-id`
+* `sm-insertion-mode`
+
+Further information can be found in this [explanation](https://www.learnrazorpages.com/razor-pages/ajax/unobtrusive-ajax).
+
+</details>
+
+<details>
+
+<summary>CollectionItem Tag Helper</summary>
+
+The `CollectionItemTagHelper` prepends a hidden prefix element to all it's current children.
+
+Unsure??
+
+```cshtml
+<collection-item name="@collectionName">
+    //A collection of nodes
+</collection-item>
+```
+
+</details>
+
+<details>
+
+<summary>ColorBox Tag Helper</summary>
+
+The `ColorBoxTagHelper` adds a color-picker. It is used under the hood of the `SettingEditorTagHelper` to display colors.
+
+```cshtml
+<colorbox asp-for="MyColour" sm-default-color="#ff2030")" />
+```
+
+</details>
+
+<details>
+
+<summary>Editor Tag Helper</summary>
+
+The `EditorTagHelper` adds a customisable input field. It works similiar to the `SettingEditorTagHelper`.
+
+```cshtml
+<editor asp-for="PriceInclTax" sm-postfix="@primaryStoreCurrencyCode" />
+```
+
+</details>
+
+<details>
+
+<summary>FormControl Tag Helper</summary>
+
+The FormControlTagHelper adds labels and CSS classes to form elements.
+
+```cshtml
+<input type="text" asp-for="Name" />
+<input type="checkbox" asp-for="MyBool" sm-switch />
+```
+
+It also supports these attributes:
+
+* `asp-items`
+* `sm-append-hint`
+* `sm-ignore-label`
+* `sm-control-size`
+* `sm-plaintext`
+* `sm-required`
+
+</details>
+
+<details>
+
+<summary>Hint Tag Helper</summary>
+
+The `HintTagHelper` converts the element into a hint.
+
+```cshtml
+<div><span>John Smith</span><hint asp-for="Name" /></div>
+```
+
+</details>
+
+<details>
+
+<summary>NumberInput Tag Helper</summary>
+
+The `NumberInputTagHelper` extends the number-input's customisability and styles the element.
+
+```cshtml
+<input type="number" sm-decimals="2" sm-numberinput-style="centered" asp-for="price"/>
+```
+
+</details>
+
+<details>
+
+<summary>TripleDatePicker Tag Helper</summary>
+
+The TripleDatePickerTagHelper adds a customisable date-picker displaying the day, month and year.
+
+{% code overflow="wrap" %}
+```cshtml
+<triple-date-picker day-name="@(controlId + "-day")" month-name="@(controlId + "-month")" year-name="@(controlId + "-year")" day="Model.SelectedDay" month="Model.SelectedMonth" year="Model.SelectedYear" begin-year="Model.BeginYear" end-year="Model.EndYear" disabled="Model.IsDisabled" />
+```
+{% endcode %}
+
+</details>
 
 #### Media
 
