@@ -69,6 +69,8 @@ The `HoneypotTagHelper` is Smartstore's cyber-security implementation of the [Ho
 <honeypot />
 ```
 
+It also supports the `sm-enabled` attribute.
+
 </details>
 
 ### Shared
@@ -140,6 +142,24 @@ The `ConfirmTagHelper` adds a confirm button. There are many ways to customise i
 <confirm message="@T("Common.AreYouSure")" button-id="entry-delete" icon="fas fa-question-circle" action="EntryDelete" type="Action" />
 ```
 
+It also supports these attributes:
+
+* `action`: Action to execute, if confirmed. Default: `Delete`
+* `controller`: Controller to search for `action`. Default: `ViewContext.RouteData.Values.GetcontrollerName()`
+* `form-post-url`
+* `type`: Type of confirm action. Default: `Delete`
+* `backdrop`: Button has a backdrop. Default: `true`
+* `title`: Title of the dialog.
+* `accept-button-color`: Color of the accept button.
+* `accept-text`: Custom accept button text.
+* `cancel-text`: Custom cancel button text.
+* `center`: Dialog is centered vertically. Default: `true`
+* `center-content`: Dialog is centered. Default: `false`
+* `size`: Size of the dialog. Possible values: Small, Medium, Large, Flex, FlexSmall. Default: `Medium`
+* `message`: Custom display message.
+* `icon`: Icon class.
+* `icon-color`: Custom icon color.
+
 </details>
 
 <details>
@@ -154,7 +174,7 @@ The `FileIconTagHelper` display a file icon.
 
 It also supports these attributes:
 
-* `label`
+* `label`: Custom label. Default: the files extension
 * `show-label`
 * `badge-class`
 
@@ -184,6 +204,8 @@ Here is an excerpt from _Smartstore.Web/Views/Customer/Avatar.cshtml_ to show th
     has-template-preview="true" />
 ```
 {% endcode %}
+
+The default value for the attribute `media-path` is `SystemAlbumProvider.Files`.
 
 </details>
 
@@ -223,6 +245,8 @@ The `WidgetTagHelper` adds HTML content and injects it into a [zone](../../frame
 </widget>
 ```
 
+The `key` attribute makes sure only one instance of the widget is included in the zone.
+
 </details>
 
 <details>
@@ -237,9 +261,9 @@ The `ZoneTagHelper` defines an zone for widgets to inject content. More informat
 
 It also supports these attributes:
 
-* `model`
-* `replace-content`
-* `remove-if-empty`
+* `model`: Declare what model to use within the zone.
+* `replace-content`: Replace content, if at least one widget is rendered.
+* `remove-if-empty`: Remove the root zone tag, if it has no content. Default: `false`
 
 </details>
 
@@ -441,8 +465,8 @@ The `AjaxFormTagHelper` adds unobtrusive AJAX to a form.
 
 It also supports these attributes:
 
-* `sm-ajax`
-* `sm-confirm`
+* `sm-ajax`: The form is an unobrusive AJAX form.
+* `sm-confirm`: Custom confirm message.
 * `sm-onbegin`
 * `sm-oncomplete`
 * `sm-onfailure`
@@ -451,7 +475,7 @@ It also supports these attributes:
 * `sm-loading-element-id`
 * `sm-loading-element-duration`
 * `sm-update-target-id`
-* `sm-insertion-mode`
+* `sm-insertion-mode`: Mode of insertion of the response. Possible values: Replace, InsertBefore, InsertAfter, ReplaceWith.
 
 Further information can be found in this [explanation](https://www.learnrazorpages.com/razor-pages/ajax/unobtrusive-ajax).
 
@@ -479,6 +503,8 @@ The `EditorTagHelper` adds a customisable input field. It works similiar to the 
 <editor asp-for="PriceInclTax" sm-postfix="@primaryStoreCurrencyCode" />
 ```
 
+To add more `ViewData` attributes, use `asp-additional-viewdata`.
+
 </details>
 
 <details>
@@ -497,8 +523,9 @@ It also supports these attributes:
 * `asp-items`
 * `sm-append-hint`
 * `sm-ignore-label`
-* `sm-control-size`
-* `sm-plaintext`
+* `sm-switch`: Process checkboxes as switches. Default: `true`
+* `sm-control-size`: Size of the element. Default: `Medium`
+* `sm-plaintext`: View as plaintext.
 * `sm-required`
 
 </details>
@@ -539,9 +566,15 @@ The `TripleDatePickerTagHelper` adds a customisable date-picker displaying the d
 ```
 {% endcode %}
 
+The default value for `control-size` is `Medium`.
+
 </details>
 
 #### Media
+
+All media Tag Helpers support the following attributes: `sm-file`, `sm-file-id`, `sm-url-host`.
+
+All image-based Tag Helpers (`ImageTagHelper`, `MediaTagHelper`, `ThumbnailTagHelper`, `VideoTagHelper`) support the following attributes: `sm-model`, `sm-size`, `sm-width`, `sm-height`, `sm-resize-mode`, `sm-anchor-position` and `sm-no-fallback`.
 
 <details>
 
@@ -691,12 +724,6 @@ The `SettingEditorTagHelper` provides automatic HTML-Input type Mapping.
 
 It automatically checks the type of `Name` and looks for an appropriate HTML input. Additionally it offers model binding and matching.
 
-It also supports these attributes:
-
-* `asp-template`
-* `parent-selector`
-* `sm-postfix`
-
 </details>
 
 <details>
@@ -711,9 +738,9 @@ The `SmartLabelTagHelper` displays a label and an optional hint.
 
 It also supports these attributes:
 
-* `sm-ignore-hint`
-* `sm-text`
-* `sm-hint`
+* `sm-ignore-hint`: Hint will be ignored. Default: `true`
+* `sm-text`: Custom label text.
+* `sm-hint`: Custom label hint.
 
 </details>
 
