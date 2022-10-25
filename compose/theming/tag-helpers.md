@@ -245,15 +245,187 @@ It also supports these attributes:
 
 #### Controls
 
-* EntityPickerTagHelper
-* MenuTagTagHelper
-* ModalBodyTagHelper
-* ModalFooterTagHelper
-* ModalHeaderTagHelper
-* ModalTagHelper
-* PaginationTagHelper
-* TabStripTagHelper
-* TabTagHelper
+<details>
+
+<summary>EntityPicker Tag Helper</summary>
+
+The `EntityPickerTagHelper` adds an element to pick one or more entities from a larger group.
+
+```cshtml
+<entity-picker asp-for="Rotator" max-items="100" entity-type="product" dialog-title="Search" />
+```
+
+It also supports these attributes:
+
+* `entity-type`: Entity type to be picked. Default: `product`
+* `target-input-selector`: Identifier of the target input, defined by `field-name`.
+* `caption`: Caption of the dialog.
+* `icon-css-class`: Icon of the button that opens the dialog. Default: `fa fa-search`
+* `dialog-title`: Title of the dialog.
+* `disable-grouped-products`: Disable search for grouped products.
+* `disable-bundle-products`: Disable search for bundle products.
+* `disabled-entity-ids`: Ids of disabled entities.
+* `selected`: Ids of selected entities.
+* `enable-thumb-zoomer`: Enables the thumb zoomer.
+* `highlight-search-term`: Highlight search term in search results. Default: `true`
+* `max-items`: Maximum number of selectable items.
+* `append-mode`: Append selected entity ids to already chosen entities. Default: `true`
+* `delimiter`: Entity id delimiter. Default: `,`
+* `field-name`: Fieldname of \[target-input-selector] to paste selected ids. Default: `id`
+* `ondialogloading`: JS function called _before_ dialog is loaded.
+* `ondialogloaded`: JS function called _after_ dialog is loaded.
+* `onselectioncompleted`: JS function called _after_ selection.
+
+</details>
+
+<details>
+
+<summary>Menu Tag Helper</summary>
+
+The `MenuTagHelper` adds a menu widget.
+
+```
+<menu name="Main" template="Categories"></menu>
+```
+
+</details>
+
+<details>
+
+<summary>Modal Tag Helper</summary>
+
+The `ModalTagHelper` adds a customisable modal dialog. It works in combination with:
+
+* `ModalHeaderTagHelper`
+* `ModalBodyTagHelper`
+* `ModalFooterTagHelper`
+
+Here is an excerpt from _Smartstore.Web/Areas/Admin/Views/Theme/Configure.cshtml_ to show this.
+
+{% code title="Configure.cshtml" %}
+```cshtml
+<modal id="importvariables-window">
+    <modal-header sm-title="@T("Admin.Configuration.Themes.ImportVars")"></modal-header>
+    <modal-body>
+        <form enctype="multipart/form-data" method="post" asp-action="ImportVariables" asp-route-theme="@Model.ThemeName" asp-route-storeId="@Model.StoreId">
+            <p class="text-muted">
+                @T("Admin.Configuration.Themes.ImportVars.Note")
+            </p>
+            <div>
+                @T("Admin.Configuration.Themes.ImportVars.XmlFile"): <input type="file" id="importxmlfile" name="importxmlfile" />
+            </div>
+        </form>
+    </modal-body>
+    <modal-footer>
+        <button type="button" class="btn btn-secondary btn-flat" data-dismiss="modal">
+            <span>@T("Admin.Common.Cancel")</span>
+        </button>
+        <button id="importxmlsubmit" type="button" class="btn btn-primary">
+            <span>@T("Common.Import")</span>
+        </button>
+    </modal-footer>
+</modal>
+```
+{% endcode %}
+
+The `ModalTagHelper` also supports these attributes:
+
+* `sm-size`: Size of the dialog. Possible values: Small, Medium, Large, Flex, FlexSmall. Default: `Medium`
+* `sm-fade`: Show fade animation. Default: `true`
+* `sm-focus`: Has focus. Default: `true`
+* `sm-backdrop`: Backgrop behaviour. Possible values: Show, Hide, Static, Inverse, Invisible. Default: `Show`
+* `sm-show`: Show the dialog immidiately. Default: `true`
+* `sm-close-on-escape-press`: Dialog closes on pressing `Esc`. Default: `true`
+* `sm-center-vertically`: Center content vertically. Default: `false`
+* `sm-center-content`: Center content. Default: `false`
+* `sm-render-at-page-end`: Insert dialog at the end of the page. Default: `true`
+
+The `ModalHeaderTagHelper` also supports these attributes:
+
+* `sm-title`: The dialog title.
+* `sm-show-close`: Show close button. Default: true
+
+The `ModalBodyTagHelper` also supports these attributes:
+
+* `sm-content-url`: URL to content. Content is included via iframe.
+
+</details>
+
+<details>
+
+<summary>Pagination Tag Helper</summary>
+
+The `PaginationTagHelper` adds [pagination](https://en.wikipedia.org/wiki/Pagination).
+
+```cshtml
+<pagination sm-list-items="Model.MySubscriptions" />
+```
+
+It also supports these attributes:
+
+* `sm-list-items`
+* `sm-alignment`: Element alignment. Possible values: Left, Centered, Right. Default: `Centered`
+* `sm-size`: Element size. Possible values: Mini, Small, Medium, Large. Default: `Medium`
+* `sm-style`: Element style. Possible values: Pagination, Blog
+* `sm-show-first`: Always show first page. Default: `false`
+* `sm-show-last`: Always show last page. Default: `false`
+* `sm-show-next`: Always show next page. Default: `true`
+* `sm-show-previous`: Always show previous page. Default: `true`
+* `sm-max-pages`: Maximum number of displayed pages. Default: `8`
+* `sm-skip-active-state`
+* `sm-item-title-format-string`
+* `sm-query-param`: Default: `page`
+
+</details>
+
+<details>
+
+<summary>TabStrip Tag Helper</summary>
+
+The `TabStripTagHelper` adds a tab strip. It works with the `TabTagHelper`.
+
+```cshtml
+<tabstrip id="tab-example" sm-nav-style="Material" sm-nav-position="Top">
+    <tab sm-title="First Tab" sm-selected="true">
+        <partial name="Tab1" model="TabModel" />
+    </tab>
+    <tab sm-title="Second Tab" sm-selected="true">
+        <partial name="Tab2" model="TabModel" />
+        </tab>
+</tabstrip>
+```
+
+The `TabStripTagHelper` also supports these attributes:
+
+* `sm-hide-single-item`: Hide navigation on single tab. Default: `true`
+* `sm-responsive`: Collapse navigation on smaller screens. Default: `false`
+* `sm-nav-position`: Position of the navigation. Possible values: Top, Right, Below, Left Default: `Top`
+* `sm-nav-style`: Style of the navigation. Possible values: Tabs, Pills, Material.
+* `sm-fade`: Add fade animation. Default: `true`
+* `sm-smart-tab-selection`: Reselect active tab on reload. Default: `true`
+* `sm-onajaxbegin`
+* `sm-onajaxsuccess`
+* `sm-onajaxfailure`
+* `sm-onajaxcomplete`
+* `sm-publish-event`: Fires the `TabStripCreated` event. Default: `true`
+
+The `TabTagHelper` also supports these attributes:
+
+* `sm-name`
+* `sm-title`
+* `sm-selected`
+* `sm-disabled`
+* `sm-visible`: Tab visibility. Default: `true`
+* `sm-hide-if-empty`: Default: `false`
+* `sm-ajax`: Load content with AJAX
+* `sm-icon`
+* `sm-icon-class`
+* `sm-badge-text`
+* `sm-badge-style`: Badge Style. Possible values: Secondary, Primary, Success, Info, Warning, Danger, Light, Dark.
+* `sm-image-url`
+* `sm-adaptive-height`: Responsive height. Default: `false`
+
+</details>
 
 #### Forms
 
