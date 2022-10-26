@@ -1,14 +1,14 @@
 # 🥚 Adding menu items
 
 {% hint style="info" %}
-For a more in-depth view on widgets, zones and invokers, please refer to [Menus](../../../framework/content/menus.md).
+For a more in-depth view on menus, please refer to [Menus](../../../framework/content/menus.md).
 {% endhint %}
 
 Menus are a very important tool to structurise Smartstore's interface. Building on the previous tutorial, you will add a menu entry to the admin menu.
 
-## Adding the menu class
+## Adding a menu
 
-First you add the class `AdminMenu.cs` to the root folder of your module.
+First you create the class `AdminMenu.cs` in the root folder of your module.
 
 ```csharp
 namespace MyOrg.HelloWorld
@@ -19,7 +19,7 @@ namespace MyOrg.HelloWorld
 }
 ```
 
-### Implement AdminMenuProvider
+### Implement the `AdminMenuProvider`
 
 You need to add the interface `AdminMenuProvider` and implement the method `BuildMenuCore`.
 
@@ -32,7 +32,7 @@ public class AdminMenu : AdminMenuProvider
 }
 ```
 
-### Create a MenuItem
+### Create a menu item
 
 Next you create a `MenuItem`.
 
@@ -60,7 +60,7 @@ Add a new item to your localization, so that the menu text will show.
 </LocaleResource>
 ```
 
-### Create TreeNodes
+### Create tree nodes
 
 Create a `TreeNode` _menuNode_ from `myMenuItem`.
 
@@ -120,10 +120,99 @@ namespace MyOrg.HelloWorld
 ```
 {% endcode %}
 
+## Adding a submenu
+
+To add a submenu is very simple. First you add a menu just like you did above. The only difference is, that you won't give the menu item an action.
+
+```csharp
+var secondMenuItem = new MenuItem().ToBuilder()
+    .ResKey("Plugins.MyOrg.HelloWorld.MySecondMenuItem")
+    .AsItem();
+```
+
+Then create another menu item and specify the action.
+
+```csharp
+var subMenuItem = new MenuItem().ToBuilder()
+    .ResKey("Plugins.MyOrg.HelloWorld.MySubMenuItem")
+    .Action("Configure", "HelloWorldAdmin", new { area = "Admin" })
+    .AsItem();
+```
+
+### Add localization strings
+
+Add two new items to your localization.
+
+```xml
+<LocaleResource Name="MySecondMenuItem">
+    <Value>Hello World</Value>
+</LocaleResource>
+<LocaleResource Name="MySubMenuItem">
+    <Value>Another way to configure</Value>
+</LocaleResource>
+```
+
+### Create tree nodes
+
+Once again you create a `TreeNode` for each menu item.
+
+```csharp
+var secondMenuNode = new TreeNode<MenuItem>(secondMenuItem);
+var subMenuNode = new TreeNode<MenuItem>(subMenuItem);
+```
+
+Then use `menuNode` to insert and append the new menu items.
+
+```csharp
+secondMenuNode.InsertAfter(menuNode);
+secondMenuNode.Append(subMenuNode);
+```
+
+Your final code should look like this:
+
+```csharp
+using Smartstore.Collections;
+using Smartstore.Core.Content.Menus;
+using Smartstore.Web.Rendering.Builders;
+
+namespace MyOrg.HelloWorld
+{
+    public class AdminMenu : AdminMenuProvider
+    {
+        protected override void BuildMenuCore(TreeNode<MenuItem> modulesNode)
+        {
+            var myMenuItem = new MenuItem().ToBuilder()
+                .ResKey("Plugins.MyOrg.HelloWorld.MyMenuItem")
+                .Icon("gear", "bi")
+                .Action("Configure", "HelloWorldAdmin", new { area = "Admin" })
+                .AsItem();
+
+            var menuNode = new TreeNode<MenuItem>(myMenuItem);
+            var refNode = modulesNode.Root.SelectNodeById("settings");
+            menuNode.InsertAfter(refNode);
+
+            var secondMenuItem = new MenuItem().ToBuilder()
+                .ResKey("Plugins.MyOrg.HelloWorld.MySecondMenuItem")
+                .AsItem();
+            var subMenuItem = new MenuItem().ToBuilder()
+                .ResKey("Plugins.MyOrg.HelloWorld.MySubMenuItem")
+                .Action("Configure", "HelloWorldAdmin", new { area = "Admin" })
+                .AsItem();
+
+            var secondMenuNode = new TreeNode<MenuItem>(secondMenuItem);
+            var subMenuNode = new TreeNode<MenuItem>(subMenuItem);
+
+            secondMenuNode.InsertAfter(menuNode);
+            secondMenuNode.Append(subMenuNode);
+        }
+    }
+}
+```
+
 ## Conclusion
 
-In this tutorial you created a menu item and added it to the admin menu.
+In this tutorial you created a menu item, added it to the admin menu and added a submenu.
 
 The code for this module can be downloaded here:
 
-\--Insert File--
+{% file src="../../../.gitbook/assets/MyOrg.HelloWorldMenus.zip" %}
