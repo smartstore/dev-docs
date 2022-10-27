@@ -4,7 +4,7 @@ Tag Helpers are extensions of existing HTML tags. They can extend the functional
 
 ## How To Use Tag Helpers
 
-To use the Smartstore Tag Helpers in your Views, you'll need to reference specific libraries. You can do this either in your View file or by using `_ViewImports.cshtml`. Add the following lines and IntelliSense should recognise the Tag Helpers.
+To use the Smartstore Tag Helpers in your Views, you'll need to reference specific libraries. You can do this either in your View file or by using `_ViewImports.cshtml` (recommended). Add the following lines and IntelliSense should recognise the Tag Helpers.
 
 ```
 //for public Tag Helpers
@@ -104,7 +104,7 @@ The `AttributesTagHelper` adds attributes to the element. It can be used in two 
 The `CollapsedContentTagHelper` collapses the element to a maximum height. It also adds _Show more_ or _Show less_ to the Element.
 
 ```cshtml
-<collapsed-content>
+<collapsed-content sm-max-height="50">
     Odit non aspernatur sunt ipsum dolorem nihil quibusdam earum.<br />
     Eius nulla magni cum cum delectus sit omnis. Quam aut itaque ut.<br />
     Adipisci nihil enim aut eos voluptas et. Iure ut maxime ut qui.<br />
@@ -169,14 +169,12 @@ It also supports these attributes:
 The `FileIconTagHelper` display a file icon.
 
 ```cshtml
-<file-icon file-extension="@Model.FileExtension" show-label="true" />
+<file-icon file-extension="@Model.FileExtension" show-label="true" badge-class="badge-info"/>
 ```
 
 It also supports these attributes:
 
 * `label`: Custom label. Default: the files extension
-* `show-label`
-* `badge-class`
 
 </details>
 
@@ -488,7 +486,7 @@ Further information can be found in this [explanation](https://www.learnrazorpag
 The `ColorBoxTagHelper` adds a color-picker. It is used under the hood of the `SettingEditorTagHelper` to display colors.
 
 ```cshtml
-<colorbox asp-for="MyColour" sm-default-color="#ff2030")" />
+<colorbox asp-for="MyColour" sm-default-color="#ff2030" />
 ```
 
 </details>
@@ -520,7 +518,6 @@ The `FormControlTagHelper` adds labels and CSS classes to form elements.
 
 It also supports these attributes:
 
-* `asp-items`
 * `sm-append-hint`
 * `sm-ignore-label`
 * `sm-switch`: Process checkboxes as switches. Default: `true`
