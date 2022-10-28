@@ -531,7 +531,7 @@ It also supports these attributes:
 
 <summary>Hint Tag Helper</summary>
 
-The `HintTagHelper` displays the localised Hint of resource passed in `asp-for`.
+The `HintTagHelper` converts the element into a hint.
 
 ```cshtml
 <div><span>John Smith</span><hint asp-for="Name" /></div>
