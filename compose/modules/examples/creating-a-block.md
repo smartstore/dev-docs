@@ -1,6 +1,6 @@
 # 🥚 Creating a Block
 
-A `Block` is used to create pages quickly within the Page Builder. It can take on various forms:
+A `Block` is used to create content quickly within the Page Builder. It can take on various forms:
 
 * HTML Output
 * An Image
@@ -69,7 +69,7 @@ Place the following attributes above your `BlockHandler` definition.
 
 This does three things:
 
-* `helloworld`: Defines the [location of the views](creating-a-block.md#undefined) for your `Block`.
+* `helloworld`: Defines the [location of the views](creating-a-block.md#add-some-views) for your `Block`.
 * `fa fa-eye`: Defines the _Font Awesome_ icon shown next to your label in the Page Builder.
 * `Hello World`: Defines the label text shown in the Page Builder.
 
@@ -203,6 +203,6 @@ We learned a lot here today...
 For more examples, take a look at the folder `Blocks` in the Page Builder module.
 {% endhint %}
 
-Download file:
+The code for this module can be downloaded here:
 
-\<insert file here>
+{% file src="../../../.gitbook/assets/MyOrg.HelloWorldBlock.zip" %}

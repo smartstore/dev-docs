@@ -1,4 +1,4 @@
-# 🥚 Adding menu items
+# 🐣 Adding menu items
 
 {% hint style="info" %}
 For a more in-depth view on menus, please refer to [Menus](../../../framework/content/menus.md).
@@ -44,7 +44,7 @@ var myMenuItem = new MenuItem().ToBuilder()
     .AsItem();
 ```
 
-* `ResKey` is a reference to your localization files.
+* `ResKey` is a reference to the resource in your localization files.
 * `Icon` adds a menu icon.
 *   `Action` creates a route to your action, defined in the specified controller.
 
@@ -52,7 +52,7 @@ var myMenuItem = new MenuItem().ToBuilder()
 
 ### Add a localization string
 
-Add a new item to your localization, so that the menu text will show.
+Add a new resource to your localization, so that the menu text will show.
 
 ```xml
 <LocaleResource Name="MyMenuItem">
@@ -141,7 +141,7 @@ var subMenuItem = new MenuItem().ToBuilder()
 
 ### Add localization strings
 
-Add two new items to your localization.
+Add two new resources to your localization.
 
 ```xml
 <LocaleResource Name="MySecondMenuItem">
