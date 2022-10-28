@@ -1,6 +1,6 @@
 # 🥚 Creating a Block
 
-A `Block` is used to create content quickly within the Page Builder. It can take on various forms:
+A `Block` is used to create content quickly within the Page Builder. Various forms have already been implemented in Smartstore:
 
 * HTML Output
 * An Image
@@ -8,6 +8,8 @@ A `Block` is used to create content quickly within the Page Builder. It can take
 *   Product lists
 
     ...
+
+You can basically create whatever Block you want. The sky is the limit.
 
 {% hint style="info" %}
 If you want to take a deep dive into the topic, see [Blocks](../../../framework/content/page-builder-and-blocks.md).
@@ -30,25 +32,26 @@ namespace MyOrg.HelloWorld.Blocks
 }
 ```
 
-This is where you add settings and other values. Treat it like a model.
+This is where you add block-settings and values you might need for model preparation. Treat it like a model.
 
 ```csharp
 [LocalizedDisplay("Plugins.MyOrg.HelloWorld.Name")]
-    public string Name { get; set; }
+public string Name { get; set; }
 ```
 
 If you don't want a property to be saved to the database, use `IgnoreDataMember`.
 
 ```csharp
 [IgnoreDataMember]
-    public Object NotForTheDatabase { get; set; }
+public Object NotForTheDatabase { get; set; }
 ```
 
-{% hint style="danger" %}
-For all wanting to use _model binding_. Do not forget to add the attribute `IgnoreDataMember` in possible combination with `BindNever`! If you don't, the whole model will be saved to the database.
+Use `BindNever` when manually binding the model.
 
-See _Modules/Smartstore.Blog/Blocks/BlogBlock.cs_ and _Modules/Smartstore.PageBuilder/Blocks/VideoBlock.cs_ for examples.
-{% endhint %}
+```csharp
+[IgnoreDataMember, BindNever]
+public MediaFileInfo mediaFile { get; set; }
+```
 
 ### Add a BlockHandler
 
@@ -57,11 +60,11 @@ Next add the new class `HelloWorldBlockHandler` to your file and add the interfa
 ```csharp
 public class HelloWorldBlockHandler : BlockHandlerBase<HelloWorldBlock>
 {
-    //Doing nothing means standard behaviour.
+    // Doing nothing means standard behaviour.
 }
 ```
 
-Place the following attributes above your `BlockHandler` definition.
+Place the following attribute above your `BlockHandler` definition.
 
 ```csharp
 [Block("helloworld", Icon = "fa fa-eye", FriendlyName = "Hello World")]
@@ -88,7 +91,7 @@ public partial class HelloWorldBlockValidator : AbstractValidator<HelloWorldBloc
 }
 ```
 
-Here you can define your rules. Add the following to make sure `Name` is never empty.
+Here you can define your rules using `FluentValidation`. Add the following to make sure `Name` is never empty.
 
 ```csharp
 RuleFor(x => x.Name).NotEmpty();
@@ -115,7 +118,7 @@ namespace MyOrg.HelloWorld.Blocks
     [Block("helloworld", Icon = "fa fa-eye", FriendlyName = "Hello World")]
     public class HelloWorldBlockHandler : BlockHandlerBase<HelloWorldBlock>
     {
-        //Doing nothing means standard behaviour.
+        // Doing nothing means standard behaviour.
     }
     public class HelloWorldBlock : IBlock
     {
@@ -133,12 +136,12 @@ namespace MyOrg.HelloWorld.Blocks
 ```
 {% endcode %}
 
-### Add some Views
+### Add Views
 
 Create the folders _BlockTemplates/helloworld/_ in the _Views/Shared/_ folder of your module.
 
 {% hint style="warning" %}
-The folder name _helloworld_ corresponds with the attribute you set in your [BlockHandler](creating-a-block.md#add-a-blockhandler)!
+The folder name _helloworld_ corresponds to the attribute you set in your [BlockHandler](creating-a-block.md#add-a-blockhandler)!
 {% endhint %}
 
 Create three files, Edit.cshtml, Preview.cshtml and Public.cshtml for simple output.
@@ -167,16 +170,6 @@ This is your configuration view. It functions the same way your Configure.cshtml
 </div>
 ```
 
-#### Preview.cshtml
-
-This is the grid placement view. It is shown whilst moving around the blocks in the Page Builder.
-
-```cshtml
-@model HelloWorldBlock
-
-This is a HelloWorld-Block preview.
-```
-
 #### Public.cshtml
 
 This is what your customers will see. You can also see this clicking on **Preview** in the Page Builder.
@@ -186,6 +179,10 @@ This is what your customers will see. You can also see this clicking on **Previe
 
 <div>My block name: @Model.Name</div>
 ```
+
+{% hint style="info" %}
+Create _Preview.cshtml_ to access the grid placement view. It will be shown whilst moving around blocks in the Page Builder.
+{% endhint %}
 
 Now you can use your `Block` in the Page Builder.
 
@@ -198,10 +195,6 @@ Now you can use your `Block` in the Page Builder.
 ## Conclusion
 
 We learned a lot here today...
-
-{% hint style="info" %}
-For more examples, take a look at the folder `Blocks` in the Page Builder module.
-{% endhint %}
 
 The code for this module can be downloaded here:
 
