@@ -250,10 +250,130 @@ Run your code and see how `MyLocalVar` reacts to each view mode.
 
 ### Using a widget as a view
 
+If you want to display a widget instead of a view, you can do this using the following methods.
+
+```csharp
+protected override Task RenderCoreAsync(IBlockContainer element, IEnumerable<string> templates, IHtmlHelper htmlHelper, TextWriter textWriter)
+```
+
+`RenderCoreAsync` gives you the possibility to reroute the public action adress. That means you can display your HelloWorld widget instead of using your views.
+
+Add these lines to the `RenderCodeAsync` function in `HelloWorldBlockHandler`.
+
+```csharp
+if (templates.First() == "Edit")
+{
+    return base.RenderCoreAsync(element, templates, htmlHelper, textWriter);
+}
+else
+{
+    return RenderByWidgetAsync(element, templates, htmlHelper, textWriter);
+}
+```
+
+This enables `GetWidget` to be called, so that you can display your widget.
+
+```csharp
+protected override WidgetInvoker GetWidget(IBlockContainer element, IHtmlHelper htmlHelper, string template)
+```
+
+`GetWidget` acts in a similar way to `GetDisplayWidget` in _Module.cs_. To call it, add these lines to the `GetWidget` function in `HelloWorldBlockHandler`:
+
+```csharp
+return new ComponentWidgetInvoker(typeof(HelloWorldViewComponent), new
+{
+    widgetZone = "productdetails_pictures_top",
+    model = new ProductDetailsModel { Id=1 }
+});
+```
+
+This will display your widget using the content of the product with the Id `1`.
+
+{% hint style="info" %}
+If you want to pass data of the block to your widget, use `var block = (HelloWorldBlock)element.Block;` in `GetWidget`.
+{% endhint %}
+
+### Final code
+
+Your complete code should look something like this:
+
+{% code title="HelloWorldBlock.cs" %}
+```csharp
+namespace MyOrg.HelloWorld.Blocks
+{
+    [Block("helloworld", Icon = "fa fa-eye", FriendlyName = "Hello World")]
+    public class HelloWorldBlockHandler : BlockHandlerBase<HelloWorldBlock>
+    {
+        public override async Task<HelloWorldBlock> LoadAsync(IBlockEntity entity, StoryViewMode viewMode)
+        {
+            var block = base.Load(entity, viewMode);
+
+            if (viewMode == StoryViewMode.Edit)
+            {
+                // This only gets called in Edit-Mode
+                block.MyLocalVar += " - Running in Edit-Mode";
+            }else if (viewMode == StoryViewMode.Preview)
+            {
+                // This only gets called in Preview-Mode
+                block.MyLocalVar += " - Running in Preview-Mode";
+            }else if (viewMode == StoryViewMode.GridEdit)
+            {
+                // This only gets called in Grid-Edit-Mode
+                block.MyLocalVar += " - Running in Grid-Edit-Mode";
+            }else if (viewMode == StoryViewMode.Public)
+            {
+                // This only gets called in Public-Mode
+                block.MyLocalVar += " - Running in Public-Mode";
+            }
+
+            return block;
+        }
+        protected override Task RenderCoreAsync(IBlockContainer element, IEnumerable<string> templates, IHtmlHelper htmlHelper, TextWriter textWriter)
+        {
+            if (templates.First() == "Edit")
+            {
+                return base.RenderCoreAsync(element, templates, htmlHelper, textWriter);
+            }
+            else
+            {
+                return RenderByWidgetAsync(element, templates, htmlHelper, textWriter);
+            }
+        }
+
+        protected override WidgetInvoker GetWidget(IBlockContainer element, IHtmlHelper htmlHelper, string template)
+        {
+            var block = (HelloWorldBlock)element.Block;
+            
+            return new ComponentWidgetInvoker(typeof(HelloWorldViewComponent), new
+            {
+                widgetZone = "productdetails_pictures_top",
+                model = new ProductDetailsModel { Id=1 }
+            });
+        }
+    }
+    public class HelloWorldBlock : IBlock
+    {
+        [LocalizedDisplay("Plugins.MyOrg.HelloWorld.Name")]
+        public string Name { get; set; }
+        public string MyLocalVar { get; set; } = "Initialised in Block";
+    }
+    public partial class HelloWorldBlockValidator : AbstractValidator<HelloWorldBlock>
+    {
+        public HelloWorldBlockValidator()
+        {
+            RuleFor(x => x.Name).NotEmpty();
+        }
+    }
+}
+```
+{% endcode %}
+
 ## Conclusion
 
-We learned a lot here today...
+In this tutorial you built your own `Block`. You learned how to access the different view modes and how to add a widget.
 
 The code for this module can be downloaded here:
 
 {% file src="../../../.gitbook/assets/MyOrg.HelloWorldBlock.zip" %}
+
+{% file src="../../../.gitbook/assets/MyOrg.HelloWorldBlock_Advanced.zip" %}
