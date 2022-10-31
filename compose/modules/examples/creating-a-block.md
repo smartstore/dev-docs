@@ -1,18 +1,13 @@
 # 🥚 Creating a Block
 
-A `Block` is used to create content quickly within the Page Builder. Various forms have already been implemented in Smartstore:
-
-* HTML Output
-* An Image
-* An iFrame
-*   Product lists
-
-    ...
-
-You can basically create whatever Block you want. The sky is the limit.
+A `Block` is used to create content quickly within the Page Builder. Various forms have already been implemented by Smartstore like HTML output, images, iframes, product listings and many more. The possibilities for new Blocks are endless.
 
 {% hint style="info" %}
 If you want to take a deep dive into the topic, see [Blocks](../../../framework/content/page-builder-and-blocks.md).
+{% endhint %}
+
+{% hint style="info" %}
+You can find the source code of a sample Block at _Smartstore.DevTools/Blocks/SampleBlock.cs_
 {% endhint %}
 
 ## Write a simple Block
@@ -72,7 +67,7 @@ Place the following attribute above your `BlockHandler` definition.
 
 This does three things:
 
-* `helloworld`: Defines the [location of the views](creating-a-block.md#add-some-views) for your `Block`.
+* `helloworld`: Defines the [location of the views](creating-a-block.md#add-some-views) for your `Block`. A lowercase value is recommended by our guidelines.
 * `fa fa-eye`: Defines the _Font Awesome_ icon shown next to your label in the Page Builder.
 * `Hello World`: Defines the label text shown in the Page Builder.
 
@@ -144,7 +139,7 @@ Create the folders _BlockTemplates/helloworld/_ in the _Views/Shared/_ folder of
 The folder name _helloworld_ corresponds to the attribute you set in your [BlockHandler](creating-a-block.md#add-a-blockhandler)!
 {% endhint %}
 
-Create three files, Edit.cshtml, Preview.cshtml and Public.cshtml for simple output.
+Create the two files _Edit.cshtml_ and _Public.cshtml_ for simple output.
 
 {% hint style="info" %}
 Add the reference `@using MyOrg.HelloWorld.Blocks` to \_ViewImports. That way you can access the `HelloWorldBlock` model in all your views.
@@ -152,7 +147,7 @@ Add the reference `@using MyOrg.HelloWorld.Blocks` to \_ViewImports. That way yo
 
 #### Edit.cshtml
 
-This is your configuration view. It functions the same way your Configure.cshtml file works.
+This is your configuration view. It functions the same way your _Configure.cshtml_ file works.
 
 ```cshtml
 @model HelloWorldBlock
@@ -188,7 +183,70 @@ Now you can use your `Block` in the Page Builder.
 
 ## Advanced topics
 
+Taking a closer look at the `BlockHandler`, there is some more functionality you can add to your module.
+
 ### Handling StoryViewMode
+
+Using `StoryViewMode`, you are able to distinguish between the four different view modes of a `Block`:
+
+* `Edit`: Shown when you edit `Block` properties.
+* `GridEdit`: Shown when arranging Blocks on the grid.
+* `Preview`: Shown when previewing your story.
+* `Public`: Shown in frontend, when your story is published.
+
+Create a new block-setting `MyLocalVar` in `HelloWorldBlock`.
+
+```csharp
+public string MyLocalVar { get; set; } = "Initialised in Block";
+```
+
+Add the `LoadAsync` function to `HelloWorldBlockHandler`.
+
+```csharp
+public override async Task<HelloWorldBlock> LoadAsync(IBlockEntity entity, StoryViewMode viewMode)
+```
+
+To access the current block, use the following line.
+
+```csharp
+var block = base.Load(entity, viewMode);
+```
+
+Now you can use `viewMode` to get the currently used view mode for your block.
+
+```csharp
+if (viewMode == StoryViewMode.Edit)
+{
+    // This only gets called in Edit-Mode
+    block.MyLocalVar += " - Running in Edit-Mode";
+}else if (viewMode == StoryViewMode.Preview)
+{
+    // This only gets called in Preview-Mode
+    block.MyLocalVar += " - Running in Preview-Mode";
+}else if (viewMode == StoryViewMode.GridEdit)
+{
+    // This only gets called in Grid-Edit-Mode
+    block.MyLocalVar += " - Running in Grid-Edit-Mode";
+}else if (viewMode == StoryViewMode.Public)
+{
+    // This only gets called in Public-Mode
+    block.MyLocalVar += " - Running in Public-Mode";
+}
+
+return block;
+```
+
+Insert the following in Edit.cshtml, Preview.cshtml and Public.cshtml.
+
+```cshtml
+<div>My local variable: @Model.MyLocalVar</div>
+```
+
+{% hint style="info" %}
+Use Preview.cshtml, to be able to access Grid-Edit-Mode.
+{% endhint %}
+
+Run your code and see how `MyLocalVar` reacts to each view mode.
 
 ### Using a widget as a view
 
