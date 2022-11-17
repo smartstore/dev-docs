@@ -101,7 +101,7 @@ The `AttributesTagHelper` adds attributes to the element. It can be used in two 
 
 <summary>CollapsedContent Tag Helper</summary>
 
-The `CollapsedContentTagHelper` collapses the element to a maximum height. It also adds _Show more_ or _Show less_ to the Element.
+The `CollapsedContentTagHelper` collapses the element to a maximum height. It also adds _Show more_ or _Show less_ to the element.
 
 ```cshtml
 <collapsed-content sm-max-height="50">
@@ -211,11 +211,60 @@ The default value for the attribute `media-path` is `SystemAlbumProvider.Files`.
 
 <summary>If Tag Helper</summary>
 
-The `IfTagHelper` adds a conditional attribute to the Element. The output is suppressed, if the condition evaluates to `false`.
+The `IfTagHelper` adds a conditional attribute to the element. The output is suppressed, if the condition evaluates to `false`.
 
 ```cshtml
 <span sm-if="@Model.visible">Here I am!</span>
 ```
+
+</details>
+
+<details>
+
+<summary>SuppressIfEmpty Tag Helper</summary>
+
+The `SuppressIfEmptyTagHelper` adds a conditional attribute to the element. The output is suppressed, if the condition is `true` and the element is empty or only contains whitespaces.
+
+```cshtml
+@{
+    bool condition = true;
+}
+
+<div id="div1" sm-suppress-if-empty="condition">
+    @* I will be suppressed *@
+</div>
+
+<div id="div2" sm-suppress-if-empty="condition">
+    I won't be suppressed!
+</div>
+
+<div id="div3" sm-suppress-if-empty="!condition">
+    @* I won't be suppressed *@
+</div>
+```
+
+</details>
+
+<details>
+
+<summary>SuppressIfEmptyZone Tag Helper</summary>
+
+The `SuppressIfEmptyZoneTagHelper` suppresses the output, if the targeted zone is empty or only contains whitespaces.
+
+Here is an excerpt from _Smartstore.Web/Views/ShoppingCart/Partials/OffCanvasShoppingCart.cshtml_ to show this.
+
+{% code title="" %}
+```cshtml
+<div sm-suppress-if-empty-zone="offcanvas_cart_summary" class="offcanvas-cart-external-checkout">
+    <div class="heading heading-center py-0">
+        <h6 class="heading-title fs-h5 fwn">@T("Common.Or")</h6>
+    </div>
+    <div class="d-flex justify-content-center align-items-center flex-wrap flex-column">
+        <zone name="offcanvas_cart_summary" />
+    </div>
+</div>
+```
+{% endcode %}
 
 </details>
 
@@ -254,7 +303,7 @@ The `key` attribute makes sure only one instance of the widget is included in th
 The `ZoneTagHelper` defines an zone for widgets to inject content. More information can be found in [Widgets](../../framework/content/widgets.md#zones).
 
 ```cshtml
-<zone name="a_widget_drop_zone_name">
+<zone name="a_widget_drop_zone_name"/>
 ```
 
 It also supports these attributes:
@@ -613,7 +662,7 @@ The `MediaTagHelper` adds a suitable tag for a given media type.
 
 <summary>Thumbnail Tag Helper</summary>
 
-The `ThumbnailTagHelper` adds thumbnail of a media file.
+The `ThumbnailTagHelper` adds a thumbnail of a media file.
 
 ```cshtml
 <media-thumbnail sm-file="MediaFile" sm-size="ThumbSize" />
@@ -719,7 +768,7 @@ The `SettingEditorTagHelper` provides automatic HTML-Input type Mapping.
 <setting-editor asp-for="Name"></setting-editor>
 ```
 
-It automatically checks the type of `Name` and looks for an appropriate HTML input. Additionally it offers model binding and matching.
+It automatically checks the type of the variable passed in `asp-for` and looks for an appropriate HTML input. Additionally it offers model binding and matching.
 
 </details>
 
