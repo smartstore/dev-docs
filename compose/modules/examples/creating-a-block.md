@@ -274,13 +274,13 @@ else
 This enables `GetWidget` to be called, so that you can display your widget.
 
 ```csharp
-protected override WidgetInvoker GetWidget(IBlockContainer element, IHtmlHelper htmlHelper, string template)
+protected override Widget GetWidget(IBlockContainer element, IHtmlHelper htmlHelper, string template)
 ```
 
 `GetWidget` acts in a similar way to `GetDisplayWidget` in _Module.cs_. To call it, add these lines to the `GetWidget` function in `HelloWorldBlockHandler`:
 
 ```csharp
-return new ComponentWidgetInvoker(typeof(HelloWorldViewComponent), new
+return new ComponentWidget(typeof(HelloWorldViewComponent), new
 {
     widgetZone = "productdetails_pictures_top",
     model = new ProductDetailsModel { Id=1 }
@@ -340,11 +340,11 @@ namespace MyOrg.HelloWorld.Blocks
             }
         }
 
-        protected override WidgetInvoker GetWidget(IBlockContainer element, IHtmlHelper htmlHelper, string template)
+        protected override Widget GetWidget(IBlockContainer element, IHtmlHelper htmlHelper, string template)
         {
             var block = (HelloWorldBlock)element.Block;
             
-            return new ComponentWidgetInvoker(typeof(HelloWorldViewComponent), new
+            return new ComponentWidget(typeof(HelloWorldViewComponent), new
             {
                 widgetZone = "productdetails_pictures_top",
                 model = new ProductDetailsModel { Id=1 }
