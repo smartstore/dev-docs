@@ -6,18 +6,18 @@ For a more in-depth view on widgets, zones and invokers, please refer to [widget
 
 There are many ways to display or inject content in Smartstore. One of the methods is to use a Widget. Following the tutorial [adding-tabs.md](adding-tabs.md "mention") tutorial, you'll be adding a widget to your project.
 
-## Implementing the IWidget
+## Implementing the IActivatableWidget
 
-Using the module from the [adding-tabs.md](adding-tabs.md "mention") tutorial, we'll start with the `Module.cs` file. You'll need to add the interface `IWidget` to the implementation.
+Using the module from the [adding-tabs.md](adding-tabs.md "mention") tutorial, we'll start with the `Module.cs` file. You'll need to add the interface `IActivatableWidget` to the implementation.
 
 ```csharp
-public class Module : ModuleBase, IConfigurable, IWidget
+public class Module : ModuleBase, IConfigurable, IActivatableWidget
 ```
 
 This will force you to implement the following two Methods:
 
 ```csharp
-public WidgetInvoker GetDisplayWidget(string widgetZone, object model, int storeId)
+public Widget GetDisplayWidget(string widgetZone, object model, int storeId)
 
 public string[] GetWidgetZones()
 ```
@@ -48,20 +48,20 @@ If you want to see the widget zones in your store, you can use the _DevTools_ pl
 A simple implementation for `GetDisplayWidget` would be
 
 ```csharp
-public WidgetInvoker GetDisplayWidget(string widgetZone, object model, int storeId)
-    => new ComponentWidgetInvoker(typeof(HelloWorldViewComponent), new {widgetZone, model, storeId});
+public Widget GetDisplayWidget(string widgetZone, object model, int storeId)
+    => new ComponentWidget(typeof(HelloWorldViewComponent), new {widgetZone, model, storeId});
 ```
 
-which creates a `ComponentWidgetInvoker` for all widget zones we specified in `GetWidgetZones`. Your code should look something like this:
+which creates a `ComponentWidget` for all widget zones we specified in `GetWidgetZones`. Your code should look something like this:
 
 {% code title="Module.cs" %}
 ```csharp
-public class Module : ModuleBase, IConfigurable, IWidget
+public class Module : ModuleBase, IConfigurable, IActivatableWidget
 {
     // ...
 
-    public WidgetInvoker GetDisplayWidget(string widgetZone, object model, int storeId)
-        => new ComponentWidgetInvoker(typeof(HelloWorldViewComponent), new {widgetZone, model, storeId});
+    public Widget GetDisplayWidget(string widgetZone, object model, int storeId)
+        => new ComponentWidget(typeof(HelloWorldViewComponent), new {widgetZone, model, storeId});
 
     public string[] GetWidgetZones()
         => new string[] { "productdetails_pictures_top" };
@@ -273,8 +273,9 @@ Don't forget to activate your widget!
 3. You should see your widget listed. Press **Activate**.
 {% endhint %}
 
-In this tutorial you built a widget using the `IWidget` interface and specified your widget zones. You created a `ViewComponent` and bound it to different widget zones. Hopefully this will get you started with widgets and enable you to build more complex modules.
+In this tutorial you built a widget using the `IActivatableWidget` interface and specified your widget zones. You created a `ViewComponent` and bound it to different widget zones. Hopefully this will get you started with widgets and enable you to build more complex modules.
 
 The code for this module can be downloaded here:
 
 {% file src="../../../.gitbook/assets/MyOrg.HelloWorldWidget.zip" %}
+
