@@ -17,11 +17,11 @@ description: Inject content into zones
   * add more content to the shopping cart
   * and many many more
 * In ASP.NET Core, _view components_ or _partial views_ are kind of widgets.
-* In Smartstore, we have an abstraction for widgets: [WidgetInvoker](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/WidgetInvoker.cs): because view components and partials are - technically speaking - two different things. But we need to unify them to be able to feed widgets from different content sources.
-  * `HtmlWidgetInvoker`: renders any `IHTMLContent` instance
-  * `ComponentWidgetInvoker`: invokes and renders a view component
-  * `PartialViewWidgetInvoker`: invokes and renders a partial view
-  * INFO: You can implement a custom widget invoker by deriving from `WidgetInvoker` and overriding the `InvokeAsync` method.
+* In Smartstore, we have an abstraction for widgets: [Widget...](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/Widget.cs) because view components and partials are - technically speaking - two different things. But we need to unify them to be able to feed widgets from different content sources.
+  * `HtmlWidget`: renders any `IHTMLContent` instance
+  * `ComponentWidget`: invokes and renders a view component
+  * `PartialViewWidget`: invokes and renders a partial view
+  * INFO: You can implement a custom widget class by deriving from `Widget` and overriding the `InvokeAsync` method. If it is simple enough, just return your content there. Otherwise, implement the rendering part as an [IWidgetInvoker\<TWidget>](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/Services/IWidgetInvoker.cs). Your `Widget.InvokeAsync` method should resolve and call the invoker in this case.
 * Furthermore, the `widget` Tag Helper allows you to compose HTML content in any view template and to inject it into any zone (much like the _section_ directive in ASP.NET)
 
 ## Zones
@@ -64,13 +64,23 @@ description: Inject content into zones
 
 * Sometimes you may need to check whether a zone has content _before_ declaring the `zone` tag. This is the case if the `zone` tag is wrapped, and the wrapper HTML output should be suppressed if no content exists:
 
-```cshtml
-@if (Display.ZoneHasContent("wishlist_items_top")) 
+```aspnet
+@if (await Display.ZoneHasContentAsync("wishlist_items_top")) 
 {
     <div class="some-wrapper">
         <zone name="wishlist_items_top" />
     </div>
 }
+```
+
+Another way to suppress surrounding content: `sm-suppress-if-empty-zone` Tag Helper. This sort of pre-renders a given zone, and, if the zone content is empty or whitespace, suppresses the output of the parent tag:
+
+```aspnet
+<div sm-suppress-if-empty-zone="wishlist_items_top" class="some-wrapper">
+    <div class="inner-wrapper m-4">
+        <zone name="wishlist_items_top" />
+    </div>
+</div>
 ```
 
 ## Widget Tag Helper
@@ -116,7 +126,7 @@ description: Inject content into zones
     sm-key="fileuploader"></script>
 ```
 
-## Widget invoker
+## Widget class
 
 * Unifies view component, partial view and `IHtmlContent`
 * Before injecting or rendering a widget we have to create an instance:
@@ -124,7 +134,7 @@ description: Inject content into zones
 ```csharp
 // From view component: by type.
 // -----------------------------
-var widget = new ComponentWidgetInvoker<WeatherViewComponent>() 
+var widget = new ComponentWidget<WeatherViewComponent>() 
 { 
     // sort order within target zone. Optional.
     Order = 10,
@@ -139,7 +149,7 @@ var widget = new ComponentWidgetInvoker<WeatherViewComponent>()
 // The second parameter "My.Module" is the system name of the module
 // where the view component is located. This must be specified, 
 // otherwise component resolution by name will fail.
-var widget = new ComponentWidgetInvoker("Weather", "My.Module", new 
+var widget = new ComponentWidget("Weather", "My.Module", new 
 {
     // Pass arguments to the view component's "Invoke" method
     arg1 = "Hello",
@@ -151,13 +161,13 @@ var widget = new ComponentWidgetInvoker("Weather", "My.Module", new
 // The second parameter "My.Module" is the system name of the module
 // where the partial view is located. This must be specified, 
 // otherwise view resolution will fail.
-var widget = new PartialViewWidgetInvoker("Weather", "My.Module");
+var widget = new PartialViewWidget("Weather", "My.Module");
 
 // From any HTML content.
 // ----------------------
 var tag = new TagBuilder("div");
 tag.InnerHtml.SetContent("Lorem ipsum");
-var widget = new HtmlWidgetInvoker(tag);
+var widget = new HtmlWidget(tag);
 ```
 
 * The most common way to inject a widget into a zone is by using [IWidgetProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/Services/IWidgetProvider.cs). It is a request scoped registrar for widget instances.
@@ -172,11 +182,11 @@ internal class CookieConsentFilter : IResultFilter
         _widgetProvider = widgetProvider;
     }
     
-    public void OnResultExecuting(ResultExecutingContextfilterContext)
+    public void OnResultExecuting(ResultExecutingContextFilterContext)
     {
         _widgetProvider.RegisterWidget(
-            "end", 
-            new ComponentWidgetInvoker("CookieManager", null));
+            "end", // The zone name to render widget into
+            new ComponentWidget("CookieManager", null));
     }
     
     public void OnResultExecuted(ResultExecutedContext filterContext)
@@ -187,13 +197,13 @@ internal class CookieConsentFilter : IResultFilter
 ```
 
 * The `RegisterWidget` method has also some overloads that let you pass an array of zone names or even a regular expression.
-* `HasContent` method lets you check whether a zone contains at least one injected widget
+* `HasWidgets` method lets you check whether a zone contains at least one injected widget
 * `GetWidgets` method lets you enumerate all injected widgets in a given zone
 
 ## Static widgets (aka widget providers)
 
 * The legacy way of handling widgets
-* [IWidget](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/IWidget.cs) interface makes an application feature provider a widget (see [modularity-and-providers.md](../platform/modularity-and-providers.md "mention") for more info about providers)
+* [IActivatableWidget](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/IActivatableWidget.cs) interface makes an application feature provider a widget (see [modularity-and-providers.md](../platform/modularity-and-providers.md "mention") for more info about providers)
 * The provider class defines _what_ to render (`GetDisplayWidget` method), and _where_ to render it (`GetWidgetZones` method).
 * Example: [Google Analytics Module](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Modules/Smartstore.Google.Analytics/Module.cs) injects script content into the _head_ zone.
 * INFO: Static widgets require explicit activation by the user in the backend (**CMS / Widgets**), otherwise they are not rendered. But by decorating a non-widget provider with the [DependentWidgetsAttribute](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/DependentWidgetsAttribute.cs), you can specify widget providers, which should automatically get (de)activated when the provider gets (de)activated. This is useful in scenarios where separate widgets are responsible for the displaying of provider data.
