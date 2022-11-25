@@ -107,16 +107,16 @@ This class implements the `ExportProviderBase` interface, which requires you to 
 
 #### Add Attributes
 
-Smartstore uses the following attributes to integrate the providers correctly: SystemName, FriendlyName and ExportFeatures.
+Smartstore uses the following attributes to integrate the providers correctly: `SystemName`, `FriendlyName` and `ExportFeatures`.
 
 Add these attributes to your class definition.
 
 ```csharp
-[SystemName("MyOrg.HelloWorld.ProductXml")]
-[FriendlyName("Hello world XML product feed")]
+[SystemName("MyOrg.HelloWorld.ProductCsv")]
+[FriendlyName("Hello world CSV product feed")]
 [ExportFeatures(Features =
     ExportFeatures.CreatesInitialPublicDeployment |
-    ExportFeatures.OffersBrandFallback]
+    ExportFeatures.OffersBrandFallback)]
 ```
 
 | Export feature                  | Description                                                                                                                                                                              |
@@ -135,7 +135,264 @@ Add these attributes to your class definition.
 | UsesAttributeCombinationParent  | <p>Export attribute combinations as products including parent product.</p><p>This is only effective in combination with the <em>CanProjectAttributeCombinations</em> export feature.</p> |
 | UsesRelatedDataUnits            | Provide extra data units for related data.                                                                                                                                               |
 
+For later use in `Module.cs` you need to add the `SystemName` property, which mirrors the `SystemName` attribute. To tell the provider that you want to export a CSV file, the `FileExtension` property has to be overriden. The `Localizer` is used for localised error messages. `CsvConfiguration` tells the provider what CSV format to use.
+
+```csharp
+public static string SystemName => "MyOrg.HelloWorld.ProductCsv";
+
+public override string FileExtension => "CSV";
+
+public Localizer T { get; set; } = NullLocalizer.Instance;
+
+private CsvConfiguration _csvConfiguration;
+
+private CsvConfiguration CsvConfiguration
+{
+    get
+    {
+        _csvConfiguration ??= new CsvConfiguration
+        {
+            Delimiter = ';',
+            SupportsMultiline = false
+        };
+
+        return _csvConfiguration;
+    }
+}
+```
+
+#### Add configuration
+
+Next you need to tell the provider how it should be configured (_ViewComponent_ and _Model_). For this the `ConfigurationInfo` method is used.
+
+```csharp
+public override async ExportConfigurationInfo ConfigurationInfo => new()
+{
+    ConfigurationWidget = new ComponentWidget<HelloWorldConfigurationViewComponent>(),
+    ModelType = typeof(ProfileConfigurationModel)
+};
+```
+
+#### Export data
+
+Now you can start exporting your data. Start off by fetching the profile configuration data.
+
+```csharp
+var config = (context.ConfigurationData as ProfileConfigurationModel) ?? new ProfileConfigurationModel();
+```
+
+Next add the columns you want.
+
+```csharp
+var columns = new string[]
+{
+    "ProductName",
+    "SKU",
+    "Price",
+    "Savings"
+};
+```
+
+Then get the writer for CSV files.
+
+```csharp
+using var writer = new CsvWriter(new StreamWriter(context.DataStream, Encoding.UTF8, 1024, true));
+```
+
+Write the columns we specified.
+
+```csharp
+writer.WriteFields(columns);
+writer.NextRow();
+```
+
+Now to iterate over the product catalog.
+
+```csharp
+while (context.Abort == DataExchangeAbortion.None && await context.DataSegmenter.ReadNextSegmentAsync())
+{
+    var segment = await context.DataSegmenter.GetCurrentSegmentAsync();
+}
+```
+
+Inside the while loop we fetch the product and it's entity.
+
+```csharp
+foreach (dynamic product in segment)
+{
+    if (context.Abort != DataExchangeAbortion.None)
+    {
+        break;
+    }
+
+    Product entity = product.Entity;
+}
+```
+
+{% hint style="info" %}
+The difference between `entity` and `product` is the following:
+
+* `entity`: Describes the product saved in the database.
+* `product`: Describes the product with real data.
+{% endhint %}
+
+Add a try-catch block for error handling.
+
+```csharp
+try
+{
+    // Export Product data
+}
+catch (OutOfMemoryException ex)
+{
+    context.RecordOutOfMemoryException(ex, entity.Id, T);
+    context.Abort = DataExchangeAbortion.Hard;
+    throw;
+}
+catch (Exception ex)
+{
+    context.RecordException(ex, entity.Id);
+}
+```
+
+Now you calculate the savings inside the try-block.
+
+```csharp
+var calculatedPrice = (CalculatedPrice)product._Price;
+var saving = calculatedPrice.Saving;
+```
+
+Next we write the fields in order of our columns. After that we increment the row count.
+
+```csharp
+writer.WriteFields(new string[]
+{
+    product.Name,
+    product.Sku,
+    ((decimal)product.Price).FormatInvariant(),
+    saving.HasSaving ? saving.SavingPrice.Amount.FormatInvariant() : string.Empty
+});
+writer.NextRow();
+++context.RecordsSucceeded;
+```
+
+And finally you want to limit your row exports to `NumberOfExportedRows` from the profile configuration data.
+
+```csharp
+if (context.RecordsSucceeded >= config.NumberOfExportedRows)
+{
+    context.Abort = DataExchangeAbortion.Soft;
+}
+```
+
+Your code should look something like this:
+
+{% code title="HelloWorldCsvExportProvider.cs" %}
+```csharp
+namespace MyOrg.HelloWorld.Providers
+{
+    [SystemName("MyOrg.HelloWorld.ProductCsv")]
+    [FriendlyName("Hello world CSV product feed")]
+    [ExportFeatures(Features =
+        ExportFeatures.CreatesInitialPublicDeployment |
+        ExportFeatures.OffersBrandFallback)]
+    public class HelloWorldCsvExportProvider : ExportProviderBase
+    {
+        public static string SystemName => "MyOrg.HelloWorld.ProductCsv";
+
+        public override string FileExtension => "CSV";
+        public Localizer T { get; set; } = NullLocalizer.Instance;
+
+        private CsvConfiguration _csvConfiguration;
+
+        private CsvConfiguration CsvConfiguration
+        {
+            get
+            {
+                _csvConfiguration ??= new CsvConfiguration
+                {
+                    Delimiter = ';',
+                    SupportsMultiline = false
+                };
+
+                return _csvConfiguration;
+            }
+        }
+
+        public override ExportConfigurationInfo ConfigurationInfo => new()
+        {
+            ConfigurationWidget = new ComponentWidget<HelloWorldConfigurationViewComponent>(),
+            ModelType = typeof(ProfileConfigurationModel)
+        };
+
+        protected override async Task ExportAsync(ExportExecuteContext context, CancellationToken cancelToken)
+        {
+            var config = (context.ConfigurationData as ProfileConfigurationModel) ?? new ProfileConfigurationModel();
+
+            var columns = new string[]
+            {
+                "ProductName",
+                "SKU",
+                "Price",
+                "Savings"
+            };
+
+            using var writer = new CsvWriter(new StreamWriter(context.DataStream, Encoding.UTF8, 1024, true));
+
+            while (context.Abort == DataExchangeAbortion.None && await context.DataSegmenter.ReadNextSegmentAsync())
+            {
+                var segment = await context.DataSegmenter.GetCurrentSegmentAsync();
+
+                foreach (dynamic product in segment)
+                {
+                    if (context.Abort != DataExchangeAbortion.None)
+                    {
+                        break;
+                    }
+
+                    Product entity = product.Entity;
+
+                    try
+                    {
+                        var calculatedPrice = (CalculatedPrice)product._Price;
+                        var saving = calculatedPrice.Saving;
+
+                        writer.WriteFields(new string[]
+                        {
+                            product.Name,
+                            product.Sku,
+                            ((decimal)product.Price).FormatInvariant(),
+                            saving.HasSaving ? saving.SavingPrice.Amount.FormatInvariant() : string.Empty
+                        });
+                        writer.NextRow();
+                        ++context.RecordsSucceeded;
+
+                        if (context.RecordsSucceeded >= config.NumberOfExportedRows)
+                        {
+                            context.Abort = DataExchangeAbortion.Soft;
+                        }
+                    }
+                    catch (OutOfMemoryException ex)
+                    {
+                        context.RecordOutOfMemoryException(ex, entity.Id, T);
+                        context.Abort = DataExchangeAbortion.Hard;
+                        throw;
+                    }
+                    catch (Exception ex)
+                    {
+                        context.RecordException(ex, entity.Id);
+                    }
+                }
+            }
+        }
+    }
+}
+```
+{% endcode %}
+
 ### The XML export provider
+
+\<Show the differences in XML>
 
 ## Delete export profiles
 
