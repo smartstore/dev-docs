@@ -78,7 +78,7 @@ Create a razor view `Default.cshtml` and add it to _Views / Shared / Components 
             <smart-label asp-for="NumberOfExportedRows" />
         </div>
         <div class="adminData">
-            <smart-editor asp-for="NumberOfExportedRows"></smart-editor>
+            <setting-editor asp-for="NumberOfExportedRows"></setting-editor>
             <span asp-validation-for="NumberOfExportedRows"></span>
         </div>
     </div>
@@ -189,7 +189,8 @@ var columns = new string[]
     "ProductName",
     "SKU",
     "Price",
-    "Savings"
+    "Savings",
+    "Description"
 };
 ```
 
@@ -270,7 +271,8 @@ writer.WriteFields(new string[]
     product.Name,
     product.Sku,
     ((decimal)product.Price).FormatInvariant(),
-    saving.HasSaving ? saving.SavingPrice.Amount.FormatInvariant() : string.Empty
+    saving.HasSaving ? saving.SavingPrice.Amount.FormatInvariant() : string.Empty,
+    ((string)product.FullDescription).Truncate(5000)
 });
 
 writer.NextRow();
@@ -302,6 +304,7 @@ namespace MyOrg.HelloWorld.Providers
         public static string SystemName => "MyOrg.HelloWorld.ProductCsv";
 
         public override string FileExtension => "CSV";
+        
         public Localizer T { get; set; } = NullLocalizer.Instance;
 
         private CsvConfiguration _csvConfiguration;
@@ -335,11 +338,15 @@ namespace MyOrg.HelloWorld.Providers
                 "ProductName",
                 "SKU",
                 "Price",
-                "Savings"
+                "Savings",
+                "Description"
             };
 
             using var writer = new CsvWriter(new StreamWriter(context.DataStream, Encoding.UTF8, 1024, true));
 
+            writer.WriteFields(columns);
+            writer.NextRow();
+            
             while (context.Abort == DataExchangeAbortion.None && await context.DataSegmenter.ReadNextSegmentAsync())
             {
                 var segment = await context.DataSegmenter.GetCurrentSegmentAsync();
@@ -363,7 +370,8 @@ namespace MyOrg.HelloWorld.Providers
                             product.Name,
                             product.Sku,
                             ((decimal)product.Price).FormatInvariant(),
-                            saving.HasSaving ? saving.SavingPrice.Amount.FormatInvariant() : string.Empty
+                            saving.HasSaving ? saving.SavingPrice.Amount.FormatInvariant() : string.Empty,
+                            ((string)product.FullDescription).Truncate(5000)
                         });
                         writer.NextRow();
                         ++context.RecordsSucceeded;
@@ -393,7 +401,86 @@ namespace MyOrg.HelloWorld.Providers
 
 ### The XML export provider
 
-\<Show the differences in XML>
+XML export is very similar to CSV. First you need to change the _file extension_ and _system name_ to include `XML`.
+
+```csharp
+public static string SystemName => "MyOrg.HelloWorld.ProductXml";
+
+public override string FileExtension => "XML";
+```
+
+The `Localizer` and `ConfigurationInfo` stay the same. Now you only need to modify `ExportAsync`.
+
+For XML the writer comes from an `ExportXmlHelper`.
+
+```csharp
+using var helper = new ExportXmlHelper(context.DataStream);
+var writer = helper.Writer;
+```
+
+Next you start the document and write the grouping tag.
+
+```csharp
+writer.WriteStartDocument();
+writer.WriteStartElement("products");
+```
+
+Same as with CSV provider, you fetch the next data segment, iterate through the products and fetch it's entity.
+
+```csharp
+while (context.Abort == DataExchangeAbortion.None && await context.DataSegmenter.ReadNextSegmentAsync())
+{
+    var segment = await context.DataSegmenter.GetCurrentSegmentAsync();
+
+    foreach (dynamic product in segment)
+    {
+        if (context.Abort != DataExchangeAbortion.None)
+        {
+            break;
+        }
+
+        Product entity = product.Entity;
+    }
+}
+```
+
+When you've got the entity, start a new element and insert it's values.
+
+```csharp
+writer.WriteStartElement("product");
+
+try
+{
+    var calculatedPrice = (CalculatedPrice)product._Price;
+    var saving = calculatedPrice.Saving;
+
+    writer.WriteElementString("product-name", (string)product.Name);
+    writer.WriteElementString("sku", (string)product.Sku);
+    writer.WriteElementString("price", ((decimal)product.Price).FormatInvariant());
+
+    if (saving.HasSaving)
+    {
+        writer.WriteElementString("savings", saving.SavingPrice.Amount.FormatInvariant());
+    }
+
+    writer.WriteCData("desc", ((string)product.FullDescription).Truncate(5000));
+
+    context.RecordsSucceeded++;
+    
+    // Row limitation and catch block left out for brevity
+}
+
+writer.WriteEndElement(); // product
+```
+
+And when the while-loop is complete, the grouping and the document need to be closed.
+
+```csharp
+writer.WriteEndElement(); // products
+writer.WriteEndDocument();
+```
+
+You can find the source code in `HelloWorldXmlExportProvider.cs`.
 
 ## Delete export profiles
 
@@ -427,10 +514,12 @@ await profiles.EachAsync(x => _exportProfileService.DeleteExportProfileAsync(x, 
 This does two things:
 
 1. Fetch all export profiles that are associated with your export provider.
-2. Force delete each profile.
+2. Force deletes each profile.
 
 ## Conclusion
 
-Blablabla
+In this tutorial you built an export provider. You created a configuration profile and a CSV export provider.
+
+The code for this module can be downloaded here:
 
 \<Insert File here>
