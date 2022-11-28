@@ -522,4 +522,4 @@ In this tutorial you built an export provider. You created a configuration profi
 
 The code for this module can be downloaded here:
 
-\<Insert File here>
+{% file src="../../../.gitbook/assets/MyOrg.HelloWorldExport.zip" %}
