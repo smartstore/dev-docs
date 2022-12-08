@@ -1,32 +1,34 @@
 ---
-description: Start and initialize application
+description: Start and initialize the application
 ---
 
-# 👍 Bootstrapping
+# ✔ Bootstrapping
 
 ## Overview
 
-* The process of starting and initializing the application
-* May take some time, something between 2 and 10 sec., depending on hardware quality and amount of modules loaded
-* Usually - if app is shut down - the very first request triggers the application start
-* During application start
-  * All core assemblies are loaded into the app domain
-  * All installed module assemblies are discovered and loaded into the app domain
-  * All services are registered in the DI service container
-  * The HTTP request pipeline is configured
-  * Route endpoints are mapped
-* In a conventional ASP.NET Core application all this is performed in `Program.cs` (or `Startup.cs` in previous versions of ASP.NET)
-* But this is not an option for Smartstore, because external modules need to hook into the bootstrapping process
-* This is where modular _Starters_ enters the stage
+Bootstrapping is the process of starting and initializing the application. This can take some time (something between 2 and 10 seconds), depending on the quality of the hardware and the number of modules loaded. When the application is shut down, the very first request usually triggers the application startup.
+
+During the application startup, the following actions are taking place:
+
+* All **core assemblies** are loaded into the application domain
+* All **installed module assemblies** are discovered and loaded into the application domain
+* All **services** are registered in the DI service container
+* The HTTP request **pipeline** is configured
+* Route **endpoints** are mapped
+
+In a conventional ASP.NET Core application, all of these actions are performed in `Program.cs` (or `Startup.cs` in previous versions of ASP.NET), but this is not an option for Smartstore because external modules need to hook into the bootstrapping process. This is where modular **** _Starters_ come into play.
 
 ## Modular starters
 
-* The app core only contains a very slim bootstrapper, kind of a kernel
-* After all module assemblies has been loaded into app domain, the type scanner scans for concrete subclasses of [IStarter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Builders/IStarter.cs) in all assemblies.
-* The starters are sorted and executed successively
-* INFO: any project can have any number of starter classes, or none. No restrictions.
+The application core contains only a very slim bootstrapper (kind of a kernel). After all module assemblies are loaded into the application domain, the type scanner scans for concrete subclasses of the [IStarter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Builders/IStarter.cs) interface in all assemblies. The starters are sorted and executed successively.
+
+{% hint style="info" %}
+Each project can have any number of starter classes or none. There are no restrictions at all.
+{% endhint %}
 
 ### IStarter interface
+
+Here is the definition of the `IStarter` interface:
 
 ```csharp
 public interface IStarter : ITopologicSortable<string>
@@ -53,32 +55,46 @@ public interface IStarter : ITopologicSortable<string>
 
 ### StarterBase abstract class
 
-* For more comfort
-* Implements `IStarter` with virtual overridable methods
-* Your starter should derive from this, not from `IStarter`
-* Besides `ConfigureServices`, `StarterBase` also provides the overridable `ConfigureContainer` method. The latter does the same as the first, but in the `Autofac`-way (with `ContainerBuilder` passed instead of `IServiceCollection`).
-* You can override both, one or none... doesn't matter.
-* INFO: By convention, we place the file `Startup.cs` in the root of a module projects, name the class `Starter` and make it _internal_.
+In Smartstore, the [StarterBase](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Builders/StarterBase.cs) abstract class is used for more comfort. It implements the `IStarter` interface with virtual overridable methods, so your starter should be derived from this class and not from the `IStarter` interface.&#x20;
+
+Besides the  `ConfigureServices` method, `StarterBase` class also provides the `ConfigureContainer` overridable method. The latter does the same as the former, but in the `Autofac` way (using `ContainerBuilder` instead of `IServiceCollection`). You can override both of them, one or none, doesn't matter at all.
+
+{% hint style="info" %}
+Following the convention, we place the `Startup.cs` file in the root of a module project, name the class `Startup`, derive it from `StarterBase` abstract class and make it _internal_.
+{% endhint %}
 
 ### Conditional execution
 
-* Override the `StarterBase.Matches()` method and return a value indicating whether the starter should run or be skipped.
-* _SAMPLE_
+For conditional execution of the starter, we override the `StarterBase.Matches()` method and return a value indicating whether the starter should be executed or be skipped. This can be done in our module where we explicitly allow or suppress starter execution based on the application installation state for the instance, as in the following example:
+
+```csharp
+internal class Startup : StarterBase
+{
+    // Should NOT run when app is not fully installed yet
+    public override bool Matches(IApplicationContext appContext)
+        => appContext.IsInstalled;
+}
+```
 
 ### Order of execution
 
-* By default, starters are executed in the order they were discovered by the type scanner  (core assemblies first, then module assemblies etc.)
-* But: `IStarter.Order`, ...
-* And: `StarterBase.RunAfter()`
-* ...give you control about the order your starter
+By default, starters are executed in the order they were discovered by the type scanner (first core assemblies, then module assemblies, and so on). This is because, by default, in the `StarterBase` class the `IStarter.Order` property is assigned the `Default` value from the [`StarterOrdering`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Builders/StarterOrdering.cs) static class. However, this value can be overridden in your starter implementation. If there are 2 starters with the same `Order` value and it is necessary to explicitly specify the order of execution, the `StarterBase.RunAfter()` method is used. Here is an example of such implementation:
+
+```csharp
+internal class Startup : StarterBase
+{
+    public override int Order => StarterOrdering.BeforeStaticFilesMiddleware;
+
+    public Startup()
+    {
+        RunAfter<MyFirstModule>();
+    }
+} 
+```
 
 ### Middleware and Endpoint ordering
 
-* But sometimes even precise starter ordering is not enough
-* Middleware and endpoints require some more control
-* For example, you must be able to **precisely** define the order of a middleware component _within_ the request pipeline
-* Imagine you have developed two middleware components in a single module. One must come _before_ the `Static Files` middleware and the other one _after_ the `Routing` middleware.
-* In Smartstore, you can accomplish this in the following way:
+Sometimes even precise starter ordering is not enough. Middleware and endpoints require a bit more control, for example, you need to be able to **precisely** define the order of a middleware component _within_ the request pipeline. Imagine you have developed two middleware components in a single module. One must come `BeforeStaticFilesMiddleware` and the other one `AfterRoutingMiddleware`. In Smartstore, you can accomplish this in the following way:
 
 ```csharp
 internal class Startup : StarterBase
@@ -98,10 +114,9 @@ internal class Startup : StarterBase
 }
 ```
 
-* The [StarterOrdering](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Builders/StarterOrdering.cs) static class comes very handy here, because it defines numerous constants that represent the order of well-known middleware components (like StaticFiles, Routing, Authentication, ExceptionHandler etc.).&#x20;
-* You just have to hook-in before or after something.
+The static class [StarterOrdering](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Builders/StarterOrdering.cs) comes very handy here, because it defines numerous constants that represent the order of well-known middleware components (such as StaticFiles, Routing, Authentication, ExceptionHandler etc.). You just need to hook-in before or after something.
 
-### Example
+### Startup class full implementation example
 
 {% code title="Starter.cs" %}
 ```csharp
@@ -145,7 +160,7 @@ internal class Startup : StarterBase
     {
         // You can't do this in "ConfigureServices", because
         // ASP.NET DI does not support registration sources,
-        // decorators, adapters, metadata, Lazy<>, container etc. modules etc.
+        // decorators, adapters, metadata, Lazy<>, container, modules etc.
         builder.RegisterSource(new MyAutofacRegistrationSource());
     }
     
@@ -178,15 +193,19 @@ internal class Startup : StarterBase
 
 ## Initializers
 
-* Implementations of [IApplicationInitializer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Initialization/IApplicationInitializer.cs) are used to execute application initialization code during the very **first HTTP request** and **very early** in the request lifecycle
-* This distinguishes them from starters that run earlier (before `HttpContext` is initialized)
-* But some initialization logic simply needs a valid scope - like `HttpContext` - to resolve services from
-  * You just can't access scoped or transient dependencies in a starter, unless you spawn a custom dependency scope...
-  * Well, you could. But it is a VERY bad idea and pure evil :smile:
-* What you can do with initializers:
-  * [TaskSchedulerInitializer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Scheduling/Bootstrapping/TaskSchedulerInitializer.cs) is a good example: it activates the web scheduler after testing for valid host names, or...
-  * [InstallPermissionsInitializer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Security/Bootstrapping/InstallPermissionsInitializer.cs): checks for new permission records and seeds them
-  * [ModulesInitializer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Modularity/ModulesInitializer.cs): among other things discovers and refreshes changed module locale resources
-* By default, an initializer is executed only once, unless you specify a higher value in `MaxAttempts` property. But this setting has no effect if `ThrowOnError` is _true._
-* `ThrowOnError`: whether to throw any error and stop executing subsequent initializers. If this is _false_, the initializer will be executed and `OnFailAsync` will be invoked to give you the chance to do some logging or fix things.
-* No need to register in DI, all types implementing `IApplicationInitializer` are auto-discovered and resolved on app initialization. So: initializers can take any dependency.
+Implementations of [IApplicationInitializer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Initialization/IApplicationInitializer.cs) are used to execute application initialization code during the very **first HTTP request** and **very early** in the request lifecycle. This distinguishes them from starters that are executed earlier (before `HttpContext` is initialized).
+
+But some initialization logic simply needs a valid scope, like `HttpContext`, to resolve services from, since you just can't access scoped or transient dependencies in a starter (well, you could, but that's a very bad idea and pure evil 😄), unless you spawn a custom dependency scope. We won't cover that topic here, as there is plenty of material on the subject online.
+
+By default, an initializer is executed only once unless you specify a higher value in the `MaxAttempts` property. However, this setting has no effect if `ThrowOnError` is set to _true._ The`ThrowOnError` property indicates whether to throw any error and stop execution of subsequent initializers. If the value is _false_, the initializer will be executed and `OnFailAsync` is invoked to give you the chance to do some logging or fix things.
+
+{% hint style="info" %}
+There is no need to register an initializer in the DI, as all types implementing `IApplicationInitializer` are auto-discovered and resolved during application initialization. Thus, initializers can take any dependency.
+{% endhint %}
+
+### Smartstore built-in initializers
+
+* [ApplicationDatabasesInitializer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Data/Bootstrapping/ApplicationDatabasesInitializer.cs) is the very first initializer to run and does exactly what its name says, it initializes the application database(s)&#x20;
+* [TaskSchedulerInitializer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Scheduling/Bootstrapping/TaskSchedulerInitializer.cs) activates the web scheduler after checking for valid hostnames, or returns a warning if no scheduler or store is registered
+* [InstallPermissionsInitializer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Security/Bootstrapping/InstallPermissionsInitializer.cs) checks for new permission records and seeds them
+* [ModulesInitializer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Modularity/ModulesInitializer.cs) discovers and refreshes changed module locale resources among other things

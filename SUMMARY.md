@@ -12,7 +12,7 @@
 ## Framework
 
 * [Platform](framework/platform/README.md)
-  * [🥚 Bootstrapping](framework/platform/bootstrapping.md)
+  * [✔ Bootstrapping](framework/platform/bootstrapping.md)
   * [🥚 Caching](framework/platform/caching.md)
   * [🥚 Configuration](framework/platform/configuration.md)
   * [Database Migrations](framework/platform/database-migrations.md)
