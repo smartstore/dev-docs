@@ -1,14 +1,14 @@
 # 🥚 Creating an Export provider
 
-Using export providers you can export your shop data into many different formats. Smartstore primarily uses CSV and XML.
+Using export providers you can export your shop data into many different formats. Smartstore primarily uses CSV and XML. In this tutorial, you will write an export provider for the product catalog.
 
-In this tutorial, you will write an export provider for the product catalog.
+{% hint style="info" %}
+To learn more about export, refer to [Export](../../../framework/platform/export.md).
+{% endhint %}
 
 ## Create a configuration
 
-If you want to make your export provider customisable, you will need to a configuration. This step is optional.
-
-The configuration is made up of three things:
+If you want to make your export provider customizable, you will need a configuration. This step is optional. The configuration is made up of three things:
 
 1. The profile configuration model `ProfileConfigurationModel` that describes the used data.
 2. The view component `HelloWorldConfigurationViewComponent` that converts saved data into usable formats for your view.
@@ -135,7 +135,7 @@ Add these attributes to your class definition.
 | UsesAttributeCombinationParent  | <p>Export attribute combinations as products including parent product.</p><p>This is only effective in combination with the <em>CanProjectAttributeCombinations</em> export feature.</p> |
 | UsesRelatedDataUnits            | Provide extra data units for related data.                                                                                                                                               |
 
-For later use in `Module.cs` you need to add the `SystemName` property, which mirrors the `SystemName` attribute. To tell the provider that you want to export a CSV file, the `FileExtension` property has to be overriden. The `Localizer` is used for localised error messages. `CsvConfiguration` tells the provider what CSV format to use.
+For later use in `Module.cs` you need to add the `SystemName` property, which mirrors the `SystemName` attribute. To tell the provider that you want to export a CSV file, the `FileExtension` property has to be overriden. The `Localizer` is used for localized error messages. `CsvConfiguration` tells the provider what CSV format to use.
 
 ```csharp
 public static string SystemName => "MyOrg.HelloWorld.ProductCsv";
@@ -207,7 +207,7 @@ writer.WriteFields(columns);
 writer.NextRow();
 ```
 
-Now to iterate over the product catalog.
+Now iterate over the product catalog.
 
 ```csharp
 while (context.Abort == DataExchangeAbortion.None && await context.DataSegmenter.ReadNextSegmentAsync())
@@ -233,8 +233,8 @@ foreach (dynamic product in segment)
 {% hint style="info" %}
 The difference between `entity` and `product` is the following:
 
-* `entity`: Describes the product saved in the database.
-* `product`: Describes the product with real data.
+* `entity`: Represents the original entity read from the database.
+* `product`: A dynamic object that encapsulates and enriches the entity with some computed data.
 {% endhint %}
 
 Add a try-catch block for error handling.
@@ -486,7 +486,7 @@ You can find the source code in `HelloWorldXmlExportProvider.cs`.
 
 Finally you just need to clean up any existing profiles on `UnistallAsync` in `Module.cs`.
 
-Add a `SmartDbContext` and an `IExportProfileService` via _Dependency Injection_.
+Pass `SmartDbContext` and `IExportProfileService` to the module class constructor.
 
 ```csharp
 private readonly SmartDbContext _db;
@@ -502,19 +502,16 @@ public Module(SmartDbContext db, IExportProfileService exportProfileService)
 Then add the following lines to the beginning of your `UninstallAsync` method.
 
 ```csharp
+// Read the export profile entities associated with your export provider
 var profiles = await _db.ExportProfiles
     .Include(x => x.Deployments)
     .Include(x => x.Task)
     .Where(x => x.ProviderSystemName == HelloWorldCsvExportProvider.SystemName)
     .ToListAsync();
 
+// Now delete the entities and any related file
 await profiles.EachAsync(x => _exportProfileService.DeleteExportProfileAsync(x, true));
 ```
-
-This does two things:
-
-1. Fetch all export profiles that are associated with your export provider.
-2. Force deletes each profile.
 
 ## Conclusion
 
