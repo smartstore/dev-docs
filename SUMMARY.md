@@ -54,7 +54,7 @@
 * [Web API](framework/web-api/README.md)
   * [Breaking changes in Web API 5](framework/web-api/breaking-changes-in-web-api-5.md)
   * [Prerequisites](framework/web-api/prerequisites.md)
-  * [🥚 Help & Tools](framework/web-api/help-and-tools.md)
+  * [Help & Tools](framework/web-api/help-and-tools.md)
   * [Web API in detail](framework/web-api/web-api-in-detail.md)
   * [Authentication](framework/web-api/authentication.md)
   * [Code examples](framework/web-api/code-examples.md)
