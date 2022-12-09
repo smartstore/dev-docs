@@ -7,3 +7,7 @@ Paging is required if you want to query multiple records. You can do that with O
 Due to [Basic Authentication](authentication.md), it is mandatory to send requests over HTTPS. For HTTP, a status code 421 _Misdirected Request_ is returned. The only exception is that developers can send requests over HTTP to their local development environment.
 
 A request body needs to be UTF-8 encoded.
+
+## Special request HTTP header fields
+
+<table><thead><tr><th>Key</th><th>Value</th><th align="center">Required</th><th>Remarks</th><th data-hidden></th></tr></thead><tbody><tr><td>Accept</td><td>application/json</td><td align="center">yes</td><td>Only <em>application/json</em> is valid.</td><td></td></tr><tr><td>Accept-Charset</td><td>UTF-8</td><td align="center">yes</td><td></td><td></td></tr><tr><td>Authorization</td><td>Basic &#x3C;key pair></td><td align="center">yes</td><td>See <a href="authentication.md">Authentication</a>.</td><td></td></tr><tr><td>Prefer</td><td>return=representation</td><td align="center">no</td><td>Can be sent for PUT and PATCH requests if the API should answer with status code 200 and entity content response. Otherwise 204 <em>No Content</em> is returned.</td><td></td></tr></tbody></table>
