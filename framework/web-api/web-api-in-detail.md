@@ -43,3 +43,23 @@ A request body needs to be UTF-8 encoded.
 |              4              | UserUnknown                   | The user is unknown.                                                                                |
 |              5              | UserDisabled                  | The user is known but his access via the API is disabled.                                           |
 
+
+
+## Query options
+
+[OData query options](https://learn.microsoft.com/en-us/odata/concepts/queryoptions-overview) allow manipulation of data queries such as sorting, filtering, paging etc. They are sent in the query string of the request URL.
+
+Custom query options should lighten the workload with the Smartstore Web API, especially when you work with entity relationships.
+
+`SmApiFulfill{property_name}`: entities are often in multiple relationships with other entities. In most cases, an ID has to be set in order to create or change such relationships. Most of the time, however, this ID is unknown to you. To reduce the number of API round trips, this option can set an entity relationship indirectly. Example: You want to add a German address, but you don't know the ID of the German country entity which is required for inserting an address. Rather than calling the API again to get the ID, you can add the query option `SmApiFulfillCountry=DE`, and the API resolves the relationship automatically. The API can fulfill the following properties:
+
+| property\_name | Example                      | Description                               |
+| -------------- | ---------------------------- | ----------------------------------------- |
+| Country        | SmApiFulfillCountry=USA      | The two or three letter ISO country code. |
+| StateProvince  | SmApiFulfillStateProvince=CA | The abbreviation of a state or province.  |
+| Language       | SmApiFulfillLanguage=de-DE   | The culture of a language.                |
+| Currency       | SmApiFulfillCurrency=EUR     | The ISO code of a currency.               |
+
+{% hint style="warning" %}
+`SmApiFulfill` sets the relationship only if none exists yet. An existing relationship cannot be changed via this parameter.
+{% endhint %}
