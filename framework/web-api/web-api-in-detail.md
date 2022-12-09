@@ -30,3 +30,16 @@ A request body needs to be UTF-8 encoded.
 | <p>Smartstore-Api-AuthResultDesc:<br>UserDisabled</p>                        | A short description for the reason why the request was denied. Returned only if the authentication failed. See table below.            |
 | <p>WWW-Authenticate:<br>Basic realm="Smartstore.WebApi", charset="UTF-8"</p> | The name of the authentication method that failed.                                                                                     |
 
+
+
+## Reasons for denial
+
+| Smartstore-Api-AuthResultId | Smartstore-Api-AuthResultDesc | Remarks                                                                                             |
+| :-------------------------: | ----------------------------- | --------------------------------------------------------------------------------------------------- |
+|              0              | ApiDisabled                   | The API is disabled.                                                                                |
+|              1              | SslRequired                   | HTTPS is required in any case unless the request takes place in a development environment.          |
+|              2              | InvalidAuthorizationHeader    | The HTTP authorization header is missing or invalid. Must include a pair of public and secret keys. |
+|              2              | InvalidCredentials            | The credentials sent by the HTTP authorization header do not match those of the user.               |
+|              4              | UserUnknown                   | The user is unknown.                                                                                |
+|              5              | UserDisabled                  | The user is known but his access via the API is disabled.                                           |
+
