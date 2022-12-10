@@ -23,7 +23,7 @@
 | <p>GET Payments/Methods 1. --><br>GET PaymentMethods/GetAllPaymentMethods({active},{storeId})</p> | New method. Now returns a list of payment method system names.                                                                                                                                            |
 | <p>ProductPictures/... --><br>ProductMediaFiles/...</p>                                           | The controller name has changed.                                                                                                                                                                          |
 | <p>Products/ProductPictures --><br>Products/ProductMediaFiles</p>                                 | The navigation property name has changed.                                                                                                                                                                 |
-| <p>POST Uploads/ProductImages 1. --><br>Products/ProductMediaFiles 2.</p>                         | New method. Now returns list of **ProductMediaFile**. SKU, GTIN or MPN to identify the product can optionally be sent via query string. ContentDisposition parameter **pictureId** renamed to **fileId**. |
+| <p>POST Uploads/ProductImages 1. --><br>POST Products/ProductMediaFiles 2.</p>                    | New method. Now returns list of **ProductMediaFile**. SKU, GTIN or MPN to identify the product can optionally be sent via query string. ContentDisposition parameter **pictureId** renamed to **fileId**. |
 
 1. Route **/api/v1/** no longer exists.
 2. The parameterization has been changed to support Swagger.
