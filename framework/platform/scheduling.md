@@ -2,7 +2,7 @@
 description: Schedules automated tasks to be executed periodically
 ---
 
-# 👍 Scheduling
+# 🥚 Scheduling
 
 ## Overview
 
@@ -163,6 +163,6 @@ internal class Module : ModuleBase
   * 127.0.0.1
   * Machine's local IP address
 * Even then, it may sometimes happen that none of the tested hosts work due to environmental issues. In this case:
-* Specify a custom base url via _appsettings.json_. Search for `TaskSchedulerBaseUrl` entry and set a valid and working url, e.g. **`http://www.mystore.com`**`/taskscheduler`
+* Specify a custom base url via _appsettings.json_. Search for `TaskSchedulerBaseUrl` entry and set a valid and working url, e.g. **`http://www.mystore.com`**
 * Don't forget to restart the application.
 * INFO: Inspect the application logs to check for any scheduler polling errors
