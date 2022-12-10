@@ -14,18 +14,19 @@
 
 ## Changed endpoints
 
-| Old endpoint                             | New endpoint                                                | Remarks                                                                                                                                                                                                   |
-| ---------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET MediaFiles/Download({Id})            | GET MediaFiles/DownloadFile({id})                           |                                                                                                                                                                                                           |
-| POST OrderItems({id})/Infos              | GET OrderItems/GetShipmentInfo({id})                        |                                                                                                                                                                                                           |
-| POST Orders({id})/Infos                  | GET Orders/GetShipmentInfo({id})                            |                                                                                                                                                                                                           |
-| POST Orders({id})/Pdf                    | GET Orders/DownloadPdf({id})                                |                                                                                                                                                                                                           |
-| GET Payments/Methods 1.[^1]              | GET PaymentMethods/GetAllPaymentMethods({active},{storeId}) | New method. Now returns a list of payment method system names.                                                                                                                                            |
-| ProductPictures/...                      | ProductMediaFiles/...                                       | The controller name has changed.                                                                                                                                                                          |
-| Products/ProductPictures                 | Products/ProductMediaFiles                                  | The navigation property name has changed.                                                                                                                                                                 |
-| POST Uploads/ProductImages 1.[^2] 2.[^3] | POST Products({id})/SaveFiles                               | New method. Now returns list of **ProductMediaFile**. SKU, GTIN or MPN to identify the product can optionally be sent via query string. ContentDisposition parameter **pictureId** renamed to **fileId**. |
+| Old endpoint                               | New endpoint                                                | Remarks                                                                                                                                                                                                   |
+| ------------------------------------------ | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET MediaFiles/Download({Id})              | GET MediaFiles/DownloadFile({id})                           |                                                                                                                                                                                                           |
+| POST OrderItems({id})/Infos                | GET OrderItems/GetShipmentInfo({id})                        |                                                                                                                                                                                                           |
+| POST Orders({id})/Infos                    | GET Orders/GetShipmentInfo({id})                            |                                                                                                                                                                                                           |
+| POST Orders({id})/Pdf                      | GET Orders/DownloadPdf({id})                                |                                                                                                                                                                                                           |
+| <p>GET Payments/Methods<br>1.</p>          | GET PaymentMethods/GetAllPaymentMethods({active},{storeId}) | New method. Now returns a list of payment method system names.                                                                                                                                            |
+| ProductPictures/...                        | ProductMediaFiles/...                                       | The controller name has changed.                                                                                                                                                                          |
+| Products/ProductPictures                   | Products/ProductMediaFiles                                  | The navigation property name has changed.                                                                                                                                                                 |
+| <p>POST Uploads/ProductImages<br>1. 2.</p> | POST Products({id})/SaveFiles                               | New method. Now returns list of **ProductMediaFile**. SKU, GTIN or MPN to identify the product can optionally be sent via query string. ContentDisposition parameter **pictureId** renamed to **fileId**. |
 
-##
+1. Route **/api/v1/** no longer exists.
+2. The parameterization has been changed to support Swagger.
 
 ## Changed response header names
 
@@ -35,9 +36,3 @@
 | SmartStore-Net-Api-HmacResultId      | Smartstore-Api-AuthResultId   | [New values](web-api-in-detail.md#reasons-for-denial). |
 | SmartStore-Net-Api-HmacResultDesc    | Smartstore-Api-AuthResultDesc | [New values](web-api-in-detail.md#reasons-for-denial). |
 | SmartStore-Net-Api-MissingPermission | -                             | Obsolete, no longer sent.                              |
-
-[^1]: Route **/api/v1/** no longer exists.
-
-[^2]: Route **/api/v1/** no longer exists.
-
-[^3]: The parameterization has been changed to support Swagger.
