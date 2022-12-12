@@ -3,8 +3,16 @@
 ### Partially update an address
 
 ```
-PATCH http://localhost:59318/odata/v1/Addresses(1)?SmApiFulfillCountry=US&SmApiFulfillStateProvince=NY
-{ "City": "New York", "Address1": "21 West 52nd Street", "ZipPostalCode": "10021", "FirstName": "John", "LastName": "Doe" }
+PATCH http://localhost:59318/odata/v1/Addresses(1)
+?SmApiFulfillCountry=US&SmApiFulfillStateProvince=NY
+
+{ 
+    "City": "New York",
+    "Address1": "21 West 52nd Street",
+    "ZipPostalCode": "10021",
+    "FirstName": "John", 
+    "LastName": "Doe"
+}
 ```
 
 The example uses the `SmApiFulfillCountry` and `SmApiFulfillStateProvince` options to update the country (USA) and province (New York). This avoids extra querying of country and province records and passing its IDs in the request body.
@@ -12,7 +20,8 @@ The example uses the `SmApiFulfillCountry` and `SmApiFulfillStateProvince` optio
 ### Get ID of store with name "my nice store"
 
 ```
-GET http://localhost:59318/odata/v1/Stores?$top=1&$filter=Name eq 'my nice store'&$select=Id
+GET http://localhost:59318/odata/v1/Stores
+?$top=1&$filter=Name eq 'my nice store'&$select=Id
 ```
 
 Note the select option, which tells OData just to return the Id property.
@@ -20,7 +29,8 @@ Note the select option, which tells OData just to return the Id property.
 ### Getting localized property values
 
 ```
-GET http://localhost:59318/odata/v1/LocalizedProperties?$filter=LocaleKeyGroup eq 'Product' and EntityId eq 224 and Language/LanguageCulture eq 'de-DE'
+GET http://localhost:59318/odata/v1/LocalizedProperties?$filter=LocaleKeyGroup eq
+'Product' and EntityId eq 224 and Language/LanguageCulture eq 'de-DE'
 ```
 
 This is where the OData filter enters the equation. The request filters all German property values for a product with the ID 224. LocaleKeyGroup is typically the entity name (Product, Category, Manufacturer, ProductBundleItem, DeliveryTime etc.). The result looks like this:
