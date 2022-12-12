@@ -57,7 +57,7 @@
   * [Breaking changes in Web API 5](framework/web-api/breaking-changes-in-web-api-5.md)
   * [Web API in detail](framework/web-api/web-api-in-detail.md)
   * [Authentication](framework/web-api/authentication.md)
-  * [Code examples](framework/web-api/code-examples.md)
+  * [Request code example](framework/web-api/code-examples.md)
   * [Working with the Product entity](framework/web-api/working-with-the-product-entity.md)
   * [Working with the Order entity](framework/web-api/working-with-the-order-entity.md)
   * [Working with the Customer entity](framework/web-api/working-with-the-customer-entity.md)
