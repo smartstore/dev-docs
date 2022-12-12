@@ -77,9 +77,9 @@ The query string parameter **SmNetFulfill** has been renamed to **SmApiFulfill**
 
 ## Changed response header names
 
-| Old -> new name                                                              | Remarks                                                |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------ |
-| <p>SmartStore-Net-Api-... -><br>Smartstore-Api-...</p>                       | Name prefix changed.                                   |
-| <p>SmartStore-Net-Api-HmacResultId -><br>Smartstore-Api-AuthResultId</p>     | [New values](web-api-in-detail.md#reasons-for-denial). |
-| <p>SmartStore-Net-Api-HmacResultDesc -><br>Smartstore-Api-AuthResultDesc</p> | [New values](web-api-in-detail.md#reasons-for-denial). |
-| <p>SmartStore-Net-Api-MissingPermission -><br>-</p>                          | Obsolete, no longer sent.                              |
+| Old -> new name                                                              | Remarks                                                        |
+| ---------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| <p>SmartStore-Net-Api-... -><br>Smartstore-Api-...</p>                       | Name prefix changed.                                           |
+| <p>SmartStore-Net-Api-HmacResultId -><br>Smartstore-Api-AuthResultId</p>     | [New values](breaking-changes-in-web-api-5.md#authentication). |
+| <p>SmartStore-Net-Api-HmacResultDesc -><br>Smartstore-Api-AuthResultDesc</p> | [New values](breaking-changes-in-web-api-5.md#authentication). |
+| <p>SmartStore-Net-Api-MissingPermission -><br>-</p>                          | Obsolete, no longer sent.                                      |
