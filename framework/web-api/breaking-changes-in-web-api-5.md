@@ -41,16 +41,16 @@
 
 * For PUT and PATCH requests, the HTTP header **Prefer** with the value **return=representation** must be sent to get a status code 200 with entity content response. This is the default behavior of AspNetCore.OData v.8. Otherwise 204 _No Content_ is returned.
 * `/MediaFiles` returns type **FileItemInfo** which wraps and enriches the media file entity. `/MediaFolders` returns type **FolderNodeInfo** which wraps and enriches the media folder entity. Both are flattened objects and no longer entities.
-* The query string parameter **SmNetFulfill** has been renamed to **SmApiFulfill**.
 *   Request parameters are always written in camel case, for example for OData actions.\
 
 
-    {% code title="Example" %}
     ```
-    old /MediaFiles/GetFileByPath {"Path":"catalog/my-image.jpg"}
-    new /MediaFiles/GetFileByPath {"path":"catalog/my-image.jpg"}
+    old /MediaFiles/GetFileByPath {"Path": "catalog/my-image.jpg"}
+    new /MediaFiles/GetFileByPath {"path": "catalog/my-image.jpg"}
     ```
-    {% endcode %}
+
+
+* The query string parameter **SmNetFulfill** has been renamed to **SmApiFulfill**.
 
 ## Changed endpoints
 
