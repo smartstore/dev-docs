@@ -62,3 +62,5 @@ This is where the OData filter enters the equation. The request filters all Germ
   ]
 }
 ```
+
+`LocaleKey` is the context property name (the name and full description of the product entity). `LocaleValue` offers the localized value.
