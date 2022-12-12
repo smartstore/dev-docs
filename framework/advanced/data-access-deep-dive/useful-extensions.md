@@ -2,7 +2,7 @@
 description: For SmartDbContext and DbSet
 ---
 
-# 👎 Useful extensions
+# 🥚 Useful extensions
 
 ### DbContext extensions
 
