@@ -1,4 +1,4 @@
-# Help & Tools
+# 👍 Help & Tools
 
 ## The OData metadata document <a href="#helpandtools-theodatametadatadocument" id="helpandtools-theodatametadatadocument"></a>
 

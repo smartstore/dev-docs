@@ -2,7 +2,7 @@
 description: Profiling your shop’s performance
 ---
 
-# 🥚 Profiling
+# 👍 Profiling
 
 * Speed is important for any website
 * If a website takes a long time to load, this can have adverse effects on the user experience, site traffic, and SEO.&#x20;
@@ -52,6 +52,5 @@ description: Profiling your shop’s performance
 <pre class="language-csharp" data-title="Custom timing example"><code class="lang-csharp"><strong>using (_chronometer.Step("Some expensive code"))
 </strong>{
     // ... execute some expensive code
-}
-</code></pre>
+}</code></pre>
 

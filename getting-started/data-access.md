@@ -2,7 +2,7 @@
 description: Getting started to access the application database
 ---
 
-# 🥚 Data access
+# 👎 Data access
 
 ## Overview
 

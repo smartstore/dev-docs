@@ -15,6 +15,6 @@ GET http://localhost:59318/odata/v1/Products?$filter=ParentGroupedProductId eq 2
 ### Calculating the final price of a product
 
 ```
-POST http://localhost:59318/odata/v1/Products(1751)/CalculatePriceJsonJso
+POST http://localhost:59318/odata/v1/Products(1751)/CalculatePrice
 { "forListing": false, "quantity": 1 }
 ```
