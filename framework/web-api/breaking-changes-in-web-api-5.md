@@ -46,7 +46,7 @@ For PUT and PATCH requests, the HTTP header **Prefer** with the value **return=r
 
 `/MediaFiles` returns type **FileItemInfo** which wraps and enriches the media file entity. `/MediaFolders` returns type **FolderNodeInfo** which wraps and enriches the media folder entity. Both are flattened objects and no longer entities.
 
-#### Request parameters must be written in Camel case
+#### Request parameters must be written in camel case
 
 {% code title="Example" %}
 ```
