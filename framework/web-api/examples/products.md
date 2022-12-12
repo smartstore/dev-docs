@@ -152,3 +152,31 @@ POST http://localhost:59318/odata/v1/Products(211)/CreateAttributeCombinations
 ```
 
 This creates all possible attribute combinations for a product with the ID 211. As a first step, this action always deletes all existing attribute combinations for the given product.
+
+### Search products
+
+```
+POST http://localhost:59318/odata/v1/Products/Search?q=notebook
+```
+
+Searches the catalog for products with the term _notebook_. The API expect the same query string parameters used for searching in the shop frontend. The following table shows query string parameters that can be used for searching products.
+
+|       Query string parameter      | Description                                                              |
+| :-------------------------------: | ------------------------------------------------------------------------ |
+|                 q                 | Search term.                                                             |
+|                 i                 | Page index.                                                              |
+|                 s                 | Page size.                                                               |
+|                 o                 | Order by. `ProductSortingEnum` value.                                    |
+|                 p                 | Price range (from-to \|\| from(-) \|\| -to).                             |
+|                 c                 | Category identifiers.                                                    |
+|                 m                 | Manufacturer identifiers.                                                |
+|                 r                 | Minimum rating. Value from 1 to 5.                                       |
+|                 a                 | Product availability by stock.                                           |
+|                 n                 | New arrivals.                                                            |
+|                 d                 | Delivery time identifiers.                                               |
+|                 \*                | Variants & attributes. MegaSearchPlus module required.                   |
+| <mark style="color:red;">v</mark> | <mark style="color:red;">View mode. Has no relevance for the API.</mark> |
+
+{% hint style="info" %}
+Paging parameter $top and $skip are ignored. Instead use the above query string parameters for page index and page size. The maximum page size is determined by the same configuration setting that is used for all other API requests.
+{% endhint %}
