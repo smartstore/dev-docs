@@ -1,18 +1,18 @@
 # Products
 
-### **Getting a product with name "iPhone"**
+### **Get a product with name "iPhone"**
 
 ```
 GET http://localhost:59318/odata/v1/Products?$top=1&$filter=Name eq 'iPhone'
 ```
 
-### **Getting child products of grouped product with ID 210**
+### **Get child products of grouped product with ID 210**
 
 ```
 GET http://localhost:59318/odata/v1/Products?$filter=ParentGroupedProductId eq 210
 ```
 
-### Calculating the final price of a product
+### Calculate the final price of a product
 
 ```
 POST http://localhost:59318/odata/v1/Products(123)/CalculatePrice
@@ -64,4 +64,21 @@ POST http://localhost:59318/odata/v1/Products(1)/ProductManufacturers(12)
 * Omit the category/manufacturer identifier if you want to remove all related assignments for a product.
 * It doesn't matter if one of the assignments already exists. The Web API automatically ensures that a product has no duplicate categories or manufacturer assignments.
 * Such navigation links are only available for a few navigation properties at the moment.
+{% endhint %}
+
+### **Delete assigment of image 66 to product 1**
+
+```
+DELETE http://localhost:59318/odata/v1/Products(1)/ProductMediaFiles(66)
+```
+
+### **Update display order of image assignment 66 at product 1**
+
+```
+PATCH http://localhost:59318/odata/v1/ProductMediaFiles(66)
+{ "DisplayOrder": 5 }
+```
+
+{% hint style="info" %}
+66 is the ID of _ProductMediaFile_, not the ID of _MediaFile_. _ProductMediaFile_ is a mapping between a product and a media file (image).
 {% endhint %}
