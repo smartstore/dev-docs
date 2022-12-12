@@ -82,3 +82,38 @@ PATCH http://localhost:59318/odata/v1/ProductMediaFiles(66)
 {% hint style="info" %}
 66 is the ID of _ProductMediaFile_, not the ID of _MediaFile_. _ProductMediaFile_ is a mapping between a product and a media file (image).
 {% endhint %}
+
+### Upload product images
+
+Multiple images can be uploaded for a product by a single multipart form data POST request. The product ID can be 0 and the product can be identified by query string parameter _sku_, _gtin_ or _mpn_.
+
+```
+POST http://localhost:59318/odata/v1/Products(1)/SaveFiles
+Content-Type: image/jpeg
+Content-Disposition: form-data; name="my-file-1"; filename="my-file1.jpg"
+
+<Binary data for my-file1.jpg here (length 503019 bytes)…>
+Content-Type: image/jpeg
+Content-Disposition: form-data; name="my-file-2"; filename="my-file2.jpg"
+
+<Binary data for my-file2.jpg here (length 50934 bytes)…>
+Content-Type: image/jpeg
+Content-Disposition: form-data; name="my-file-3"; filename="my-file3.jpg"
+
+<Binary data for my-file3.jpg here (length 175939 bytes)…>
+
+```
+
+{% hint style="info" %}
+It doesn't matter if one of the uploaded images already exists. The Web API automatically ensures that a product has no duplicate images by comparing both binary data streams.
+{% endhint %}
+
+It's also possible to update/replace an existing image. To do so simply add the file identifier as `fileId` attribute in the content disposition header of the file. The example updates the picture entity with the Id 6166.
+
+```
+POST http://localhost:59318/odata/v1/Products(0)/SaveFiles?sku=p9658742
+Content-Type: image/jpeg
+Content-Disposition: form-data; name="new-image"; filename="new-image.jpg"; fileId="6166"
+
+<Binary data for new-image.jpg here (length 4108730 bytes)…>
+```
