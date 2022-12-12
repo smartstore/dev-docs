@@ -2,7 +2,7 @@
 description: pub/sub system for loosely coupled communication
 ---
 
-# 👍 Events
+# 🥚 Events
 
 ## Overview
 
