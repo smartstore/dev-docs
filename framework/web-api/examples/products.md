@@ -22,8 +22,7 @@ POST http://localhost:59318/odata/v1/Products(123)/CalculatePrice
 {% code title="Response" %}
 ```json
 {
-    "@odata.context": "http://localhost:59318/odata/v1/$metadata
-    #Smartstore.Web.Api.Models.Catalog.CalculatedProductPrice",
+    "@odata.context": "http://localhost:59318/odata/v1/$metadata#Smartstore.Web.Api.Models.Catalog.CalculatedProductPrice",
     "ProductId": 123,
     "CurrencyId": 5,
     "CurrencyCode": "EUR",
@@ -82,102 +81,4 @@ PATCH http://localhost:59318/odata/v1/ProductMediaFiles(66)
 
 {% hint style="info" %}
 66 is the ID of _ProductMediaFile_, not the ID of _MediaFile_. _ProductMediaFile_ is a mapping between a product and a media file (image).
-{% endhint %}
-
-### Upload product images
-
-Multiple images can be uploaded for a product by a single multipart form data POST request. The product ID can be 0 and the product can be identified by query string parameter _sku_, _gtin_ or _mpn_.
-
-```
-POST http://localhost:59318/odata/v1/Products(1)/SaveFiles
-Content-Type: image/jpeg
-Content-Disposition: form-data; name="my-file-1"; filename="my-file1.jpg"
-
-<Binary data for my-file1.jpg here (length 503019 bytes)…>
-Content-Type: image/jpeg
-Content-Disposition: form-data; name="my-file-2"; filename="my-file2.jpg"
-
-<Binary data for my-file2.jpg here (length 50934 bytes)…>
-Content-Type: image/jpeg
-Content-Disposition: form-data; name="my-file-3"; filename="my-file3.jpg"
-
-<Binary data for my-file3.jpg here (length 175939 bytes)…>
-
-```
-
-{% hint style="info" %}
-It doesn't matter if one of the uploaded images already exists. The Web API automatically ensures that a product has no duplicate images by comparing both binary data streams.
-{% endhint %}
-
-It's also possible to update/replace an existing image. To do so simply add the file identifier as `fileId` attribute in the content disposition header of the file. The example updates the picture entity with the Id 6166.
-
-```
-POST http://localhost:59318/odata/v1/Products(0)/SaveFiles?sku=p9658742
-Content-Type: image/jpeg
-Content-Disposition: form-data; name="img"; filename="new-image.jpg"; fileId="6166"
-
-<Binary data for new-image.jpg here (length 4108730 bytes)…>
-```
-
-{% hint style="info" %}
-Image uploading can be a resource-intensive process. We recommend the use of the async and await syntax or any other parallel asynchronous mechanism targeting payload efficiency.
-{% endhint %}
-
-### Managing attributes
-
-You can use the following endpoints: `ProductAttributes` (types of attributes), `ProductVariantAttributes` (attribute types mapped to a product), `ProductVariantAttributeValues` (attribute values assigned to a product) and optionally `ProductVariantAttributeCombinations` (additional information for particular attribute combinations). Because managing attributes that way can lead to some extra work, there is an action method `ManageAttributes` that sums up the most important steps.
-
-```
-POST http://localhost:59318/odata/v1/Products(211)/ManageAttributes
-{
-  "synchronize": true,
-  "attributes": [
-	{ "name": "Color", "isRequired": false, "values": [
-		{ "name": "Red"},
-		{ "name": "Green", "isPreSelected": true},
-		{ "name": "Blue"}
-	]},
-	{ "name": "Size", "values": [
-		{ "name": "Large"},
-		{ "name": "X-Large", "isPreSelected": true }
-	]}
-]}
-```
-
-The request configures a product with the ID 211 with two attributes, _Color_ and _Size,_ and its values, _Red, Green, Blue_ and _Large, X-Large_. If `synchronize` is set to `false`, only missing attributes and attribute values are inserted. If set to `true`, existing records are also updated and values not included in the request body are removed from the database. If you pass an empty value array, the attribute and all its values are removed from the product.
-
-### Create attribute combinations
-
-```
-POST http://localhost:59318/odata/v1/Products(211)/CreateAttributeCombinations
-```
-
-This creates all possible attribute combinations for a product with the ID 211. As a first step, this action always deletes all existing attribute combinations for the given product.
-
-### Search products
-
-```
-POST http://localhost:59318/odata/v1/Products/Search?q=notebook
-```
-
-Searches the catalog for products with the term _notebook_. The API expect the same query string parameters used for searching in the shop frontend. The following table shows query string parameters that can be used for searching products.
-
-|       Query string parameter      | Description                                                              |
-| :-------------------------------: | ------------------------------------------------------------------------ |
-|                 q                 | Search term.                                                             |
-|                 i                 | Page index.                                                              |
-|                 s                 | Page size.                                                               |
-|                 o                 | Order by. `ProductSortingEnum` value.                                    |
-|                 p                 | Price range (from-to \|\| from(-) \|\| -to).                             |
-|                 c                 | Category identifiers.                                                    |
-|                 m                 | Manufacturer identifiers.                                                |
-|                 r                 | Minimum rating. Value from 1 to 5.                                       |
-|                 a                 | Product availability by stock.                                           |
-|                 n                 | New arrivals.                                                            |
-|                 d                 | Delivery time identifiers.                                               |
-|                 \*                | Variants & attributes. MegaSearchPlus module required.                   |
-| <mark style="color:red;">v</mark> | <mark style="color:red;">View mode. Has no relevance for the API.</mark> |
-
-{% hint style="info" %}
-Paging parameter $top and $skip are ignored. Instead use the above query string parameters for page index and page size. The maximum page size is determined by the same configuration setting that is used for all other API requests.
 {% endhint %}

@@ -2,14 +2,21 @@
 
 Smartstore Web API uses Basic authentication over HTTPS authentication method to protect data from unauthorized access. It is recommended by OData protocol version 4.0 for the highest level of interoperability with generic clients.
 
-The client sends the credentials by using the Authorization header. The credentials are formatted as the string `public key:secret key` using UTF-8 and base64 encoding. The credentials are not encrypted, so HTTPS is mandatory. Example:
+The client sends the credentials by using the Authorization header. The credentials are formatted as the string `public key:secret key` using UTF-8 and base64 encoding. The credentials are not encrypted, so HTTPS is mandatory.
 
+{% code title="Example" %}
 ```csharp
-var credentialsStr = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{publicKey}:{secretKey}"));
-using var message = new HttpRequestMessage(new HttpMethod("GET"), "http://localhost:59318/odata/v1/Customers");
-message.Headers.Authorization = new AuthenticationHeaderValue("Basic", credentialsStr);
-// Authorization: Basic ZWE2NGQ0YTIyZGI1YmY4OTNhNGEyMWQ1Y2I4N2Y0NTg6M2E4ZTVmMGUzNjk2ZDY4NGRlMDRmZEFiZGUwMmY3MTg=
+var credentials = Convert.ToBase64String(
+    Encoding.UTF8.GetBytes($"{publicKey}:{secretKey}"));
+
+using var message = new HttpRequestMessage(
+    new HttpMethod("GET"),
+    "http://localhost:59318/odata/v1/Customers");
+
+message.Headers.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+// Authorization: Basic ZWE2NGQ0YTIyZGI1......ZDY4NGRlMDRmZEFiZGUwMmY3MTg=
 ```
+{% endcode %}
 
 The API responds with the status code 401 _Unauthorized_, if the user is not authorized to exchange data via the API. In this case, **Smartstore-Api-AuthResultId** (ID of the denied reason) and **Smartstore-Api-AuthResultDesc** (short description of the denied reason) response HTTP headers are sent with details of the reason for denial. In addition, the header **WWW-Authenticate** is sent with the value `Basic realm="Smartstore.WebApi", charset="UTF-8"`.
 
