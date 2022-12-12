@@ -2,7 +2,7 @@
 description: Application configuration framework
 ---
 
-# 🥚 Configuration
+# 👍 Configuration
 
 ## Overview
 

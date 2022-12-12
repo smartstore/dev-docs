@@ -2,7 +2,7 @@
 description: Inject content into zones
 ---
 
-# 🥚 Widgets
+# 👍 Widgets
 
 ## Overview
 

@@ -2,7 +2,7 @@
 description: Entities and O/R Mapping
 ---
 
-# 🥚 Domain
+# 👍 Domain
 
 ## Overview
 

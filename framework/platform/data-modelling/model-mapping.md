@@ -2,7 +2,7 @@
 description: Object mapping made easy
 ---
 
-# 🥚 Model mapping
+# 👍 Model mapping
 
 ## Overview
 
@@ -75,8 +75,7 @@ MiniMapper.Map(settings, model);
 
         return Task.CompletedTask;
     }
-}
-</code></pre>
+}</code></pre>
 
 ### Resolve & map
 

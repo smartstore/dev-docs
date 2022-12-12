@@ -2,7 +2,7 @@
 description: List of terms and concepts that you can find in Smartstore
 ---
 
-# 🥚 Glossary
+# 👍 Glossary
 
 These terms appear throughout the Smartstore developer documentation. Terms are presented in alphabetical order.
 

@@ -2,7 +2,7 @@
 description: Instructions how to build Smartstore
 ---
 
-# 🥚 Deployment & Build
+# 👍 Deployment & Build
 
 ## Option 1 - by publishing the entry host project
 

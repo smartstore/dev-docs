@@ -62,6 +62,7 @@
   * [Working with the Customer entity](framework/web-api/working-with-the-customer-entity.md)
   * [Bridge to data import](framework/web-api/bridge-to-data-import.md)
   * [More examples](framework/web-api/more-examples.md)
+  * [Examples](framework/web-api/examples.md)
 * [Advanced](framework/advanced/README.md)
   * [Performance guide](advanced/performance-guide.md)
   * [Service tier best practices](advanced/service-tier-best-practices.md)
