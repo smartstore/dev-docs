@@ -15,6 +15,31 @@ GET http://localhost:59318/odata/v1/Products?$filter=ParentGroupedProductId eq 2
 ### Calculating the final price of a product
 
 ```
-POST http://localhost:59318/odata/v1/Products(1751)/CalculatePrice
+POST http://localhost:59318/odata/v1/Products(123)/CalculatePrice
 { "forListing": false, "quantity": 1 }
 ```
+
+{% code title="Response" %}
+```json
+{
+    "@odata.context": "http://localhost:59318/odata/v1/$metadata#Smartstore.Web.Api.Models.Catalog.CalculatedProductPrice",
+    "ProductId": 123,
+    "CurrencyId": 5,
+    "CurrencyCode": "EUR",
+    "FinalPrice": 43.07800000,
+    "RegularPrice": null,
+    "RetailPrice": 47.58810000,
+    "OfferPrice": null,
+    "ValidUntilUtc": null,
+    "PreselectedPrice": null,
+    "LowestPrice": null,
+    "DiscountAmount": 0,
+    "Saving": {
+        "HasSaving": true,
+        "SavingPrice": 47.58810000,
+        "SavingPercent": 9,
+        "SavingAmount": 4.51010000
+    }
+}
+```
+{% endcode %}
