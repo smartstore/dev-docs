@@ -8,7 +8,7 @@ Due to [Basic Authentication](authentication.md), it is mandatory to send reques
 
 A request body needs to be UTF-8 encoded.
 
-## Special request HTTP header fields
+## Request HTTP header fields
 
 | Name: value                                                     | Required |                                                                          Remarks                                                                          |
 | --------------------------------------------------------------- | -------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------: |
@@ -17,33 +17,18 @@ A request body needs to be UTF-8 encoded.
 | <p><strong>Authorization</strong>:<br>Basic &#x3C;key pair></p> | yes      |                                                          See [Authentication](authentication.md).                                                         |
 | <p><strong>Prefer</strong>:<br>return=representation</p>        | no       | Can be sent for PUT and PATCH requests if the API should answer with status code 200 and entity content response. Otherwise 204 _No Content_ is returned. |
 
-## Special response HTTP header fields
+## Response HTTP header fields
 
-| Name: example value                                                                           | Description                                                                                                                            |
-| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| <p><strong>Smartstore-Api-AppVersion</strong>:<br>5.1.0.0</p>                                 | Smartstore version used by store.                                                                                                      |
-| <p><strong>Smartstore-Api-Version</strong>:<br>1 5.0</p>                                      | The highest API version supported by the server (unsigned integer) and the version of the installed API module (floating-point value). |
-| <p><strong>Smartstore-Api-MaxTop</strong>:<br>120</p>                                         | The maximum value for OData $top query option. The default value is 120 and is configurable by storekeeper.                            |
-| <p><strong>Smartstore-Api-Date</strong>:<br>2022-11-11T14:35:33.7772907Z</p>                  | The current server date and time in ISO-8601 UTC.                                                                                      |
-| <p><strong>Smartstore-Api-CustomerId</strong>:<br>1234</p>                                    | The customer identifier of the authenticated API user. Returned only if authentication is successful.                                  |
-| <p><strong>Smartstore-Api-AuthResultId</strong>:<br>5</p>                                     | The ID for the reason why the request was denied. Returned only if the authentication failed. See table below.                         |
-| <p><strong>Smartstore-Api-AuthResultDesc</strong>:<br>UserDisabled</p>                        | A short description for the reason why the request was denied. Returned only if the authentication failed. See table below.            |
-| <p><strong>WWW-Authenticate</strong>:<br>Basic realm="Smartstore.WebApi", charset="UTF-8"</p> | The name of the authentication method that failed.                                                                                     |
-
-
-
-## Reasons for denial
-
-| Smartstore-Api-AuthResultId | Smartstore-Api-AuthResultDesc | Description                                                                                         |
-| :-------------------------: | ----------------------------- | --------------------------------------------------------------------------------------------------- |
-|              0              | ApiDisabled                   | The API is disabled.                                                                                |
-|              1              | SslRequired                   | HTTPS is required in any case unless the request takes place in a development environment.          |
-|              2              | InvalidAuthorizationHeader    | The HTTP authorization header is missing or invalid. Must include a pair of public and secret keys. |
-|              2              | InvalidCredentials            | The credentials sent by the HTTP authorization header do not match those of the user.               |
-|              4              | UserUnknown                   | The user is unknown.                                                                                |
-|              5              | UserDisabled                  | The user is known but his access via the API is disabled.                                           |
-
-
+| Name: example value                                                                           | Description                                                                                                                                         |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <p><strong>Smartstore-Api-AppVersion</strong>:<br>5.1.0.0</p>                                 | Smartstore version used by store.                                                                                                                   |
+| <p><strong>Smartstore-Api-Version</strong>:<br>1 5.0</p>                                      | The highest API version supported by the server (unsigned integer) and the version of the installed API module (floating-point value).              |
+| <p><strong>Smartstore-Api-MaxTop</strong>:<br>120</p>                                         | The maximum value for OData $top query option. The default value is 120 and is configurable by storekeeper.                                         |
+| <p><strong>Smartstore-Api-Date</strong>:<br>2022-11-11T14:35:33.7772907Z</p>                  | The current server date and time in ISO-8601 UTC.                                                                                                   |
+| <p><strong>Smartstore-Api-CustomerId</strong>:<br>1234</p>                                    | The customer identifier of the authenticated API user. Returned only if authentication is successful.                                               |
+| <p><strong>Smartstore-Api-AuthResultId</strong>:<br>5</p>                                     | The ID for the reason why the request was denied. Returned only if the authentication failed. See [authentication](authentication.md).              |
+| <p><strong>Smartstore-Api-AuthResultDesc</strong>:<br>UserDisabled</p>                        | A short description for the reason why the request was denied. Returned only if the authentication failed. See [authentication](authentication.md). |
+| <p><strong>WWW-Authenticate</strong>:<br>Basic realm="Smartstore.WebApi", charset="UTF-8"</p> | The name of the authentication method that failed.                                                                                                  |
 
 ## Query options
 
