@@ -43,3 +43,25 @@ POST http://localhost:59318/odata/v1/Products(123)/CalculatePrice
 }
 ```
 {% endcode %}
+
+### **Assign category with ID 9 to product with ID 1**
+
+```
+POST http://localhost:59318/odata/v1/Products(1)/ProductCategories(9)
+{ "DisplayOrder": 5, "IsFeaturedProduct": true }
+```
+
+### **Assign manufacturer with ID 12 to product with ID 1**
+
+```
+POST http://localhost:59318/odata/v1/Products(1)/ProductManufacturers(12)
+{ "DisplayOrder": 1, "IsFeaturedProduct": false }
+```
+
+{% hint style="info" %}
+* The request body is optional but sending the content type header with _application/json_ is required otherwise 404 _Not Found_ is returned_._
+* Use the DELETE method to remove an assignment.
+* Omit the category/manufacturer identifier if you want to remove all related assignments for a product.
+* It doesn't matter if one of the assignments already exists. The Web API automatically ensures that a product has no duplicate categories or manufacturer assignments.
+* Such navigation links are only available for a few navigation properties at the moment.
+{% endhint %}
