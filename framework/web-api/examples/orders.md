@@ -12,18 +12,18 @@ GET http://localhost:59318/odata/v1/Orders(145)/ShippingAddress
 GET http://localhost:59318/odata/v1/OrderItems?$filter=OrderId eq 145&$expand=Product
 ```
 
-### **Get all orders with the order note "mystring"**
+### **Get orders with note "mystring"**
 
 ```
-GET http://localhost:59318/odata/v1/Orders
-?$filter=OrderNotes/any(ordernote: ordernote/Note eq 'mystring')
+GET http://localhost:59318/odata/v1/OrderNotes
+?$filter=Note eq 'mystring'&$expand=Order
 ```
 
-### **Get all orders without the order note "mystring"**
+### **Get orders without note "mystring"**
 
 ```
-GET http://localhost:59318/odata/v1/Orders
-?$filter=OrderNotes/all(ordernote: ordernote/Note ne 'mystring')
+GET http://localhost:59318/odata/v1/OrderNotes
+?$filter=Note ne 'mystring'&$expand=Order
 ```
 
 ### **Mark an order as paid**
