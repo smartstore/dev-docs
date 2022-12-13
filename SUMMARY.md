@@ -61,6 +61,7 @@
     * [Products](framework/web-api/examples/products.md)
     * [Orders](framework/web-api/examples/orders.md)
     * [Customers](framework/web-api/examples/customers.md)
+    * [ImportProfiles](framework/web-api/examples/importprofiles.md)
 * [Advanced](framework/advanced/README.md)
   * [Performance guide](advanced/performance-guide.md)
   * [Service tier best practices](advanced/service-tier-best-practices.md)
