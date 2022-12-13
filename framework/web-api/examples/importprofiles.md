@@ -18,7 +18,7 @@ Content-Disposition: form-data; name="my-file-1"; filename="produktcsvexport.csv
 <Binary data for produktcsvexport.csv here (length 6645 bytes)…>
 ```
 
-You have to provide an import profile identifier to identify the profile for which the import files are intended. This can be the profile ID as in the example above or the profile name passed via the query string parameter **name**.
+You have to provide an import profile identifier to identify the profile for which the import files are intended. This can be the profile ID as in the example above or the profile name passed via the query string parameter **name**. The file(s) are uploaded using a multipart form data POST request.
 
 You can also upload ZIP files which is useful for very large import files. ZIP files are always unzipped into the import folder of the profile.
 
