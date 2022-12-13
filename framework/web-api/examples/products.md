@@ -112,9 +112,9 @@ It's also possible to update/replace an existing image. To do so simply add the 
 
 ```
 POST http://localhost:59318/odata/v1/Products(0)/SaveFiles?sku=p9658742
+
 Content-Type: image/jpeg
 Content-Disposition: form-data; name="img"; filename="new-image.jpg"; fileId="6166"
-
 <Binary data for new-image.jpg here (length 4108730 bytes)…>
 ```
 
