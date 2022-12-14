@@ -28,11 +28,23 @@ The `Domain` is the model equivalent of your database table. You must specify th
 // Define your table name
 [Table("TableNameInDatabase")]
 
-// Define a property as an index for quick lookups (IX means Index)
+// Define a property as an index (IX means Index)
 [Index(nameof(PropertyName), Name = "IX_ClassName_PropertyName")]
 ```
 
-Add a file _HelloWorldNotification.cs_ to the new folder _Domain_.
+{% hint style="info" %}
+Defining a column as an index optimises and therefore speeds up database lookups.
+{% endhint %}
+
+After that you simply add your columns as you would properties to a model.
+
+```csharp
+public int columnA { get; set; }
+
+public bool columnB { get; set; } = true;
+```
+
+Add the file _HelloWorldNotification.cs_ to the new folder _Domain_.
 
 {% code title="HelloWorldNotification.cs" %}
 ```csharp
@@ -42,21 +54,32 @@ Add a file _HelloWorldNotification.cs_ to the new folder _Domain_.
 public class HelloWorldNotification : BaseEntity
 {
     public int AuthorId { get; set; }
+    
     public DateTime Published { get; set; }
-    public string Message { get; set; } = string.Empty
+    
+    public string Message { get; set; } = string.Empty;
 }
 ```
 {% endcode %}
 
-As you can see, `AuthorId` and `Published` are defined as indexes. This helps speed up database lookups.
+This creates the table `HelloWorld_Notifications` with the three columns: `AuthorId`, `Published` and `Message`. Because a lot of times you are going to be looking up notifications based on either `AuthorId` or `Published`, they are defined as indexes.
 
 ### Create the Migration
 
-The migration file name is the current date _YYYYMMDDHHMMSS\_Initial.cs_. With the following attribute added to the class:
+In order to add the `HelloWorld_Notifications` table to SmartStore's database, you need to create a migration. This will also be used when migrating from one Version to the next. The methods needed for this are `Up()` and `Down()` for migrating to the next version or the previous version of your table. In this tutorial we are only going to use the `Up` method.
+
+Create the folder _Migrations_ and add the migration class, which name includes the current date, _YYYYMMDDHHMMSS\_Initial.cs_. With the following attribute added to the class respectively:
 
 ```csharp
-[MigrationVersion("YYYY-MM-DD HH:MM:SS", "HelloWorld: Initial")]
+// Use the current date & time [YYYY-MM-DD HH:MM:SS]
+[MigrationVersion("2022-12-14 10:34:22", "HelloWorld: Initial")]
 ```
+
+{% code title="20221214103422_Initial.cs" %}
+```csharp
+// Some code
+```
+{% endcode %}
 
 ## Providing table access
 
