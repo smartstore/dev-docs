@@ -1,4 +1,4 @@
-# 👍 Getting started with modules
+# 🥚 Getting started with modules
 
 ## Overview
 

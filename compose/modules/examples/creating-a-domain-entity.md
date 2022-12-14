@@ -1,10 +1,10 @@
-# 🥚 Creating a Domain
+# 🥚 Creating a Domain entity
 
-Domains offer a way to add your own tables to SmartStore's database. In this tutorial you will write a simple notification system for your shop.
+Domain entities offer a way to add your own tables to Smartstore's database. In this tutorial you will write a simple notification system for your shop.
 
 ## Preparing the table
 
-### Table layout
+### Table schema
 
 A simple notification will need the following properties:
 
@@ -20,7 +20,7 @@ Here is what that table could look like:
 | 0  | 543    | 2022-12-12 11:48:08.9937258 | Hello World!                       |
 | 1  | 481    | 2022-12-13 19:02:55.7695421 | What a wonderful day it is :smile: |
 
-### Create the Domain
+### Create the Domain entity
 
 The `Domain` is the model equivalent of your database table. You must specify the table name and the indexes you need as attributes.
 
@@ -28,20 +28,16 @@ The `Domain` is the model equivalent of your database table. You must specify th
 // Define your table name
 [Table("TableNameInDatabase")]
 
-// Define a property as an index (IX means Index)
+// Define a property as an index
 [Index(nameof(PropertyName), Name = "IX_ClassName_PropertyName")]
 ```
-
-{% hint style="info" %}
-Defining a column as an index optimises and therefore speeds up database lookups.
-{% endhint %}
 
 After that you simply add your columns as you would properties to a model.
 
 ```csharp
-public int columnA { get; set; }
+public int ColumnA { get; set; }
 
-public bool columnB { get; set; } = true;
+public bool ColumnB { get; set; } = true;
 ```
 
 Add the file _HelloWorldNotification.cs_ to the new folder _Domain_.
@@ -57,7 +53,7 @@ public class HelloWorldNotification : BaseEntity
     
     public DateTime Published { get; set; }
     
-    public string Message { get; set; } = string.Empty;
+    public string Message { get; set; }
 }
 ```
 {% endcode %}
@@ -66,7 +62,7 @@ This creates the table `HelloWorld_Notifications` with the three columns: `Autho
 
 ### Create the Migration
 
-In order to add the `HelloWorld_Notifications` table to SmartStore's database, you need to create a migration. This will also be used when migrating from one Version to the next. The methods needed for this are `Up()` and `Down()` for migrating to the next version or the previous version of your table. In this tutorial we are only going to use the `Up` method.
+In order to add the `HelloWorld_Notifications` table to Smartstore's database, you need to create a migration. This will also be used when migrating from one version to the next. The methods needed for this are `Up()` and `Down()` for migrating to the next version or the previous version of your table. In this tutorial we are only going to use the `Up` method.
 
 Create the folder _Migrations_ and add the migration class, which name includes the current date, _YYYYMMDDHHMMSS\_Initial.cs_. With the following attribute added to the class respectively:
 
