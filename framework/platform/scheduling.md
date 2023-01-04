@@ -2,69 +2,134 @@
 description: Schedules automated tasks to be executed periodically
 ---
 
-# 🥚 Scheduling
+# ✔ Scheduling
 
 ## Overview
 
-* Executes automated tasks, e.g.: cleanup files, cleanup database, send emails, rebuild XML sitemap, periodic imports or exports etc.
-* Perfect for long-running processes or expensive stuff.
+Smartstore has a scheduling module that allows automated tasks, such as cleaning files, sending emails, and importing or exporting data, to be executed at specific times. Scheduling is particularly useful for handling long-running or resource-intensive tasks. The scheduling system uses a timer to check for overdue tasks every minute and runs them as part of an HTTP request, which helps to ensure that the dependency scope is always up and running.
 
+Unless otherwise specified, the task context virtualizer ([ITaskContextVirtualizer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/ITaskContextVirtualizer.cs) interface) virtualizes some environment parameters during task execution:
 
-
-* Is a **web** scheduler
-* No timer that executes tasks, but...
-* ...a timer polls the web scheduler HTTP endpoint every minute
-* The endpoint determines all overdue tasks and executes them within the scope of a HTTP request
-* This guarantees that the dependency scope is always up and running. No need to create custom scopes.
-* The task context virtualizer ([ITaskContextVirtualizer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/ITaskContextVirtualizer.cs)) will virtualize some environment parameters during task execution (unless specified otherwise):
-  * `IWorkContext.CurrentCustomer` --> BackgroundTask system customer
-  * `IStoreContext.CurrentStore` --> Primary (first) store
+* `IWorkContext.CurrentCustomer` for BackgroundTask system customer
+* `IStoreContext.CurrentStore` for primary (first) store
 
 ## Task descriptor
 
-* The [TaskDescriptor](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Domain/TaskDescriptor.cs) domain entity defines the task metadata: name, cron expression, whether it is enabled or not, priority, task type to execute etc.
-* This entity is saved in database
-* Some parts can be edited by the user in the backend, e.g. cron expression, enabled etc.
-* A task's cron expression specifies the next run time
-* When a task has run, a history entry is created containing infos about: time of execution, duration, name of machine that leased the execution, error etc.
-* A task can also be triggered manually by the user in the backend
-* Every running task can be cancelled explicitly in the backend
+The [TaskDescriptor](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Domain/TaskDescriptor.cs) domain entity defines metadata for tasks, including the task name, cron expression, enabled status, priority, and task type to execute. Some of these values, such as the cron expression and enabled status, can be edited by the user in the backend.&#x20;
+
+The cron expression determines the next time a task will run, and after a task has run, a history entry is created with information about the execution time, duration, machine name, and any errors that may have occurred.&#x20;
+
+Users also have the option to manually trigger a task in the backend, and any running task can be manually cancelled in the backend as well.
 
 ## Implementing a task
 
-* Any concrete class implementing the [ITask](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/ITask.cs) interface
-* No need to register in DI, it is auto-discovered and registered as a scoped service on app startup. So: task types can take any dependency.
-* `Run` method is the task handler. No sync-counterpart!
-* The task executor will call this method asynchronously and await it
-* Any exception raised during execution (either unhandled or explicity) will stop execution. The error will be logged. If the task descriptor's `StopOnError` property is `true`, task will be disabled and will not run anymore (unless user turns it on again).
-* By default, the task type's name (without namespace) is `TaskDescriptor.Type`. To specify another name - e.g. to avoid potential type name conflicts with other tasks - decorate your class with [TaskNameAttribute](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/TaskNameAttribute.cs) and pass a custom name.
-* INFO: if the task resolver determined more than one overdue task within a single poll operation, they will NOT be executed in parallel, but one after another. If a task's execution is not finished on the next poll (next minute), the executor will skip it.
-* INFO: Because of the minutely polling, it makes no sense to define cron expression with less fraction, e.g. "every 30 seconds".
-* _SAMPLE_
+To implement a task, create a concrete class that implements the [ITask](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/ITask.cs) interface. It does not need to be registered in the DI, but is automatically detected and registered as a _scoped service_ when the application starts. This allows task types to have dependencies.
+
+The `Run` method is the task handler. There is **no sync** counterpart! The task executor calls this method asynchronously and waits for it to complete.
+
+If an exception occurs during task execution (either unhandled or explicitly thrown), the task execution stops and the error is logged. If the `StopOnError` property of the task descriptor is set to `true`, the task is disabled and will not be executed again unless the user re-enables it.
+
+By default, the name of the task type (without namespace) is `TaskDescriptor.Type`. You can decorate your class with the [TaskNameAttribute](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/TaskNameAttribute.cs) to specify a different name for the task, which can be useful to avoid potential name conflicts with other tasks.
+
+{% hint style="info" %}
+If the task resolver detects that there is more than one overdue task during a single polling operation, these tasks will be executed **one after the other**, rather than in parallel. If a task has not completed execution by the time the next poll occurs (one minute later), the task executor will skip it.
+{% endhint %}
+
+{% hint style="info" %}
+Due to the fact that the scheduling system checks for overdue tasks on a minute-by-minute basis, it is not useful to define a cron expression with a frequency smaller than one minute, such as "every 30 seconds."
+{% endhint %}
+
+The following is an example of how to implement a task. The [DeleteGuestsTask](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Identity/Tasks/DeleteGuestsTask.cs) task periodically deletes guest customers. It implements the `ITask` interface, which contains the `Run` method. The method accepts the `TaskExecutionContext` and the `CancellationToken` (discussed in more detail later in this topic) as parameters. In this example, the task retrieves the last date when guest customers were required to be registered, and then calls the `DeleteGuestCustomersAsync` method.
+
+```csharp
+public class DeleteGuestsTask : ITask
+{
+    private readonly ICustomerService _customerService;
+    private readonly CommonSettings _commonSettings;
+
+    public DeleteGuestsTask(
+        ICustomerService customerService, 
+        CommonSettings commonSettings)
+    {
+        _customerService = customerService;
+        _commonSettings = commonSettings;
+    }
+
+    public async Task Run(TaskExecutionContext ctx, CancellationToken cancelToken = default)
+    { 
+        var registrationTo = DateTime.UtcNow.AddMinutes(
+            -_commonSettings.MaxGuestsRegistrationAgeInMinutes);
+
+        await _customerService.DeleteGuestCustomersAsync(
+            null, 
+            registrationTo, 
+            true, 
+            cancelToken);
+    }
+}
+```
 
 ## Task cancellation
 
-* Every task should be cancellable, especially those that are long-running
-* Remember that the user can request cancellation in the backend
-* Therefore the `CancellationToken` parameter is passed. It combines app shutdown token and user cancellation token.
-* Regularly check whether cancellation is requested and try to gracefully quit your task
-* _Regular_ means: not necessarily in every iteration, bur after a batch of something has completed.
-* _SAMPLE_
-* Or just throw if cancellation was requested
-* _SAMPLE_ (ThrowIfCancellationRequested())
+It is important that tasks can be canceled, particularly those that take a long time to complete. The `CancellationToke`n parameter is used to allow for cancellation by the user through the backend.&#x20;
+
+The `CancellationToken` combines the application shutdown token and the user cancellation token, and regularly checks if cancellation has been requested in order to try to gracefully end the task. It is not necessary to check for cancellation on every iteration, but it can be checked after completing a batch of work.
+
+The example bellow shows the `Run` task in the [DataImportTask ](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/DataImportTask.cs)class, where the cancelation token is passed to the `ImportAsync` method, which cancels the import after a batch of 100 processed entities.&#x20;
+
+<pre class="language-csharp" data-overflow="wrap"><code class="lang-csharp">public async Task Run(
+    TaskExecutionContext ctx, 
+    CancellationToken cancelToken = default)
+{
+    var request = new DataImportRequest(ctx.ExecutionInfo.Task.Alias.ToInt())
+    {
+        ProgressCallback = OnProgress
+    };
+
+    // Process!
+<strong>    await _importer.ImportAsync(request, cancelToken);
+</strong>    Task OnProgress(int value, int max, string msg)
+    {
+        return ctx.SetProgressAsync(value, max, msg);
+    }
+}
+</code></pre>
+
+You can also throw an exception if the cancellation request was sent. In the extension, we give an insight into the `ImportAsync` method, which is part of the [DataImporter ](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/DataImporter.cs)class and is called by the `Run` task in the previous example. The code has been shortened to show only the essentials.
+
+<pre class="language-csharp" data-overflow="wrap"><code class="lang-csharp">public async Task ImportAsync(
+    DataImportRequest request, 
+    CancellationToken cancelToken = default)
+{
+    //...
+    try
+    {
+        // Data import code
+    }
+    catch (Exception ex)
+    {
+        logger.ErrorsAll(ex);
+    }
+    finally
+    {
+        await Finalize(ctx);
+    }
+
+<strong>    cancelToken.ThrowIfCancellationRequested();
+</strong>}
+</code></pre>
 
 ## Propagating task progress
 
-* The task scheduler UI in backend can display task progress (either message, percent or both)
-* But you must provide this info
-* The [TaskExecutionContext](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/TaskExecutionContext.cs) parameter passed to the `Run` method contains the `SetProgress` method (with different overloads and sync/async variants).
-* Call it to propagate progress. Your progress is saved to database immediately.
-* The UI fetches refreshed progress info every seconds and can now display it
+The Task Scheduler UI in the backend can display task progress (either as a message, as a percentage, or both).
+
+To display task progress, you need to pass the [TaskExecutionContext](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/TaskExecutionContext.cs) class as a parameter to the `Run` method, which contains the `SetProgress` method (with various overloads and sync/async variants). You can call it to propagate progress. All your progress is immediately stored in the database. The UI then fetches updated progress information every second and can now display it.
 
 ## Adding or removing tasks programmatically
 
-* Necessary if your module provides tasks
-* In this case task must be added to task store during module installation and removed during uninstallation
+Adding or removing tasks programmatically is required if your module provides tasks. Your tasks must be added to the task store during module installation and removed during uninstallation.
+
+Here is an example of how to add a task in the module's base class (called `Module`):
 
 {% code title="Add and remove tasks programmatically" %}
 ```csharp
@@ -79,7 +144,7 @@ internal class Module : ModuleBase
 
     public override async Task InstallAsync(ModuleInstallationContext context)
     {
-        // Add the task, if it does not exist yet.
+        // Add the task if it does not exist yet.
         await _taskStore.GetOrAddTaskAsync<MyTaskImplType>(x =>
         {
             x.Name = "My localized task display name";
@@ -103,66 +168,99 @@ internal class Module : ModuleBase
 
 ## System tasks
 
-* If you want to hide a task from the user, `TaskDescriptor.IsHidden` must be set to `true`.
-* This prop cannot be edited by the user.
-* A hidden task is not displayed in task scheduler UI.
-* But you can invoke the `MinimalTaskViewComponent` to render a single task's state anywhere you want
-* The component displays task common info in a very compact widget
-* _SCREENSHOT_
-* It displays progress info if the task is currently running + a cancel button, or
-* it provides buttons to execute the task immediately and to edit the cron expression.
+If you want to hide a task from the user, `TaskDescriptor.IsHidden` must be set to `true`. This property cannot be edited by the user. A hidden task is not displayed in the task scheduler UI, but you can invoke the `MinimalTaskViewComponent` to render the state of a single task anywhere you want as shown in the example below. The component displays task common info in a very compact widget.
 
-{% code title="Invoking the MinimalTask view component" %}
-```cshtml
+```csharp
 @await Component.InvokeAsync("MinimalTask", new 
 { 
-	// The TaskDescriptor entity id
-	taskId = Model.TaskId, 
-	// "false" hides the "Cancel" button for a running task
-	cancellable = false
+    // The TaskDescriptor entity id
+    taskId = Model.TaskId, 
+    // "false" hides the "Cancel" button for a running task
+    cancellable = false
 })
 ```
-{% endcode %}
+
+<figure><img src="../../.gitbook/assets/scheduling-minimal-task-component.png" alt=""><figcaption></figcaption></figure>
+
+The image shows the component when the task has not yet been run. It provides buttons for running the task immediately and for editing the task. If the task is currently running, a progress indicator is displayed and a cancel button is available (assuming the task is set to be cancellable).
 
 ## Executing single tasks programmatically
 
-* To execute a single task programmatically call `ITaskScheduler.RunSingleTaskAsync()`
-* Pass the unique identifier of the task you want to execute (`TaskDescriptor.Id`)
-* Pass optional parameters as a dictionary --> will be converted to URL querystring.
-  * You can access passed parameters via `TaskExecutionContext.Parameters` property
-  * To virtualize the current customer during task execution, pass **CurrentCustomerId** as parameter
-  * To virtualize the current store during task execution, pass **CurrentStoreId** as parameter
-* _SAMPLE_
+To run a single task programmatically, you can call the `ITaskScheduler.RunSingleTaskAsync()` method and provide the unique identifier of the task you want to run (`TaskDescriptor.Id`) as an argument. You can also pass optional parameters in the form of a dictionary, which will be converted to a URL query string and can be accessed through the `TaskExecutionContext.Parameters` property. To virtualize the current customer during task execution, you can pass the **CurrentCustomerId** as a parameter, or to virtualize the current store, you can pass the **CurrentStoreId** as a parameter.
+
+In the next example we see that the `ApplyRules` method in the [CategoryController ](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Web/Areas/Admin/Controllers/CategoryController.cs)executes a single task. The method is passed the `TaskDescriptor.Id` parameter as well as additional data in a form of a dictionary (in this case, `CategoryIds`).
+
+```csharp
+[HttpPost]
+[Permission(Permissions.Catalog.Category.Update)]
+public async Task<IActionResult> ApplyRules(int id)
+{
+    var category = await _db.Categories.FindByIdAsync(id, false);
+    if (category == null)
+    {
+        return NotFound();
+    }
+
+    var task = await _taskStore.GetTaskByTypeAsync<ProductRuleEvaluatorTask>();
+    if (task != null)
+    {
+        // Trigger execution, but do not await. This is ok, because under the hood
+        // the scheduler delegates execution to the web scheduler via HttpClient.
+        _ = _taskScheduler.RunSingleTaskAsync(task.Id, new Dictionary<string, string>
+        {
+            { "CategoryIds", category.Id.ToString() }
+        });
+
+        NotifyInfo(T("Admin.System.ScheduleTasks.RunNow.Progress"));
+    }
+    else
+    {
+        NotifyError(T("Admin.System.ScheduleTasks.TaskNotFound", nameof(ProductRuleEvaluatorTask)));
+    }
+
+    return RedirectToAction(nameof(Edit), new { id = category.Id });
+}
+```
 
 ## Task leasing
 
-* By default, tasks are executed exclusively.&#x20;
-* Meaning: during execution task gets locked. So, even in a web-farm only one server can execute a single task.&#x20;
-* First server always wins. Other servers will skip the already running task.
-* To change this behavior (letting each server in a web-farm execute a task decidedly): Set `TaskDescriptor.RunPerMachine` to `true`.
-* This makes sense if your task does something that needs to be done on each server redundantly. E.g.: cleaning up local files, creating redundant/replicated indexes etc.
-* INFO: The user cannot edit this setting in the backend.
+By default, tasks are executed exclusively. This means that the task is locked during execution. So even in a web farm, only one server can execute a single task. First server always wins. Other servers will skip an already running task. To change this behavior (letting each server in a web farm execute a task decidedly), set `TaskDescriptor.RunPerMachine` to `true`. This makes sense if your task does something that needs to be done redundantly on each server. E.g.: cleaning up local files, creating redundant/replicated indexes, etc.
+
+{% hint style="info" %}
+The user cannot edit the `RunPerMachine` setting in the backend.
+{% endhint %}
 
 ## Implementing a custom Task Store provider
 
-* [ITaskStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/ITaskStore.cs)
-* The default implementation stores task info and progress in database
-* We cannot think of any scenario where it makes sense to override this :-)
-* But for the sake of completeness:
-* Create a class that implements `ITaskStore`
+To create a custom task store provider, you will need to create a class that implements the [ITaskStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/ITaskStore.cs) interface. The default implementation stores task information and progress in the database. We cannot think of any scenario where it makes sense to override this 😊, but for the sake of completeness, the necessary steps are as follows:
+
+* Create a class that implements the `ITaskStore` interface
 * Follow the contract and implement all members
-* Register your custom class in service container --> will overwrite the default registration
-* _SAMPLE_ (for registration, NOT for impl)
+* Register your custom class in the `ConfigureContainer` method of your Startup class, which will overwrite the default registration. For example:
+
+```csharp
+internal class Startup : StarterBase
+{
+    public override void ConfigureContainer(
+        ContainerBuilder builder, 
+        IApplicationContext appContext)
+    {
+        builder.AddTaskScheduler<MyCustomTaskStore>(appContext);
+    }
+}
+```
 
 ## Troubleshooting
 
-* To poll for overdue tasks, the scheduler must call an HTTP URL every minute via an `HttpClient` instance
-* On app startup, the scheduler does its best to determine a host name / a base url that actually works. It tests several host names in following order:
-  * Request host name
-  * localhost
-  * 127.0.0.1
-  * Machine's local IP address
-* Even then, it may sometimes happen that none of the tested hosts work due to environmental issues. In this case:
-* Specify a custom base url via _appsettings.json_. Search for `TaskSchedulerBaseUrl` entry and set a valid and working url, e.g. **`http://www.mystore.com`**
-* Don't forget to restart the application.
-* INFO: Inspect the application logs to check for any scheduler polling errors
+To poll for overdue tasks, the scheduler must call an HTTP URL every minute through an `HttpClient` instance. On application startup, the scheduler does its best to determine a base URL that actually works. It tests several host names in the following order:
+
+* Request hostname
+* localhost
+* 127.0.0.1
+* Machine's local IP address
+
+Even then, it may sometimes happen that none of the tested hosts work due to environment issues. In this case, try specifying a custom base URL via _appsettings.json_. Look for the `TaskSchedulerBaseUrl` entry and set a valid and working URL, such as **`http://www.mystore.com/`**. Also, don't forget to restart the application.
+
+{% hint style="info" %}
+Inspect the application logs to check for any scheduler polling errors.
+{% endhint %}
