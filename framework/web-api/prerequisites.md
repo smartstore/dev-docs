@@ -1,4 +1,4 @@
-# Prerequisites
+# ✔ Prerequisites
 
 The Smartstore Web API requires configuration by the store owner in order to start working. First of all, the store owner must install the Web API module in the backend of Smartstore. The module technology gives him the opportunity to activate or deactivate the entire Web API at any time without any impact on the online store.
 

@@ -1,4 +1,4 @@
-# Products
+# ✔ Products
 
 ### **Get a product with name "iPhone"**
 
@@ -67,7 +67,7 @@ POST http://localhost:59318/odata/v1/Products(1)/ProductManufacturers(12)
 * Such navigation links are only available for a few navigation properties at the moment.
 {% endhint %}
 
-### **Delete assigment of image 66 to product 1**
+### **Delete assignment of image 66 to product 1**
 
 ```
 DELETE http://localhost:59318/odata/v1/Products(1)/ProductMediaFiles(66)
@@ -88,7 +88,7 @@ PATCH http://localhost:59318/odata/v1/ProductMediaFiles(66)
 
 Multiple images can be uploaded for a product by a single multipart form data POST request. The product ID can be 0 and the product can be identified by query string parameter _sku_, _gtin_ or _mpn_.
 
-```
+```http
 POST http://localhost:59318/odata/v1/Products(1)/SaveFiles
 
 Content-Type: image/jpeg
@@ -108,7 +108,7 @@ Content-Disposition: form-data; name="my-file-3"; filename="my-file3.jpg"
 It doesn't matter if one of the uploaded images already exists. The Web API automatically ensures that a product has no duplicate images by comparing both binary data streams.
 {% endhint %}
 
-It's also possible to update/replace an existing image. To do so simply add the file identifier as `fileId` attribute in the content disposition header of the file. The example updates the picture entity with the Id 6166.
+It is also possible to update/replace an existing image. To do so simply add the file identifier as `fileId` attribute in the content disposition header of the file. The example updates the picture entity with the Id 6166.
 
 ```
 POST http://localhost:59318/odata/v1/Products(0)/SaveFiles?sku=p9658742
@@ -126,7 +126,7 @@ Image uploading can be a resource-intensive process. We recommend the use of the
 
 You can use the following endpoints: `ProductAttributes` (types of attributes), `ProductVariantAttributes` (attribute types mapped to a product), `ProductVariantAttributeValues` (attribute values assigned to a product) and optionally `ProductVariantAttributeCombinations` (additional information for particular attribute combinations). Because managing attributes that way can lead to some extra work, there is an action method `ManageAttributes` that sums up the most important steps.
 
-```
+```json
 POST http://localhost:59318/odata/v1/Products(211)/ManageAttributes
 {
   "synchronize": true,

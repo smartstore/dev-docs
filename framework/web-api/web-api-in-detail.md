@@ -1,8 +1,8 @@
-# Web API in detail
+# ✔ Web API in detail
 
 You can consume API services through HTTPS calls in a RESTful manner by using HTTPS methods GET, POST (insert), PUT (update), PATCH (partially update) and DELETE. OData query options (such a $expand, $filter, $top, $select, etc.) and API specific options (such as `SmApiFulfillCountry`) can be transferred through query strings.
 
-Paging is required if you want to query multiple records. You can do that with OData query options $skip and $top. The maximum value for $top is returned in the `Smartstore-Api-MaxTop` header field. The value is configurable by storekeeper.
+Paging is required if you want to query multiple records. You can do that with OData query options $skip and $top. The maximum value for $top is returned in the `Smartstore-Api-MaxTop` header field. The value is configurable by the store owner.
 
 Due to [Basic Authentication](authentication.md), it is mandatory to send requests over HTTPS. For HTTP, a status code 421 _Misdirected Request_ is returned. The only exception is that developers can send requests over HTTP to their local development environment.
 
@@ -23,7 +23,7 @@ A request body needs to be UTF-8 encoded.
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | <p><strong>Smartstore-Api-AppVersion</strong>:<br>5.1.0.0</p>                                 | Smartstore version used by store.                                                                                                                   |
 | <p><strong>Smartstore-Api-Version</strong>:<br>1 5.0</p>                                      | The highest API version supported by the server (unsigned integer) and the version of the installed API module (floating-point value).              |
-| <p><strong>Smartstore-Api-MaxTop</strong>:<br>120</p>                                         | The maximum value for OData $top query option. The default value is 120 and is configurable by storekeeper.                                         |
+| <p><strong>Smartstore-Api-MaxTop</strong>:<br>120</p>                                         | The maximum value for OData $top query option. The default value is 120 and is configurable by store owner.                                         |
 | <p><strong>Smartstore-Api-Date</strong>:<br>2022-11-11T14:35:33.7772907Z</p>                  | The current server date and time in ISO-8601 UTC.                                                                                                   |
 | <p><strong>Smartstore-Api-CustomerId</strong>:<br>1234</p>                                    | The customer identifier of the authenticated API user. Returned only if authentication is successful.                                               |
 | <p><strong>Smartstore-Api-AuthResultId</strong>:<br>5</p>                                     | The ID for the reason why the request was denied. Returned only if the authentication failed. See [authentication](authentication.md).              |

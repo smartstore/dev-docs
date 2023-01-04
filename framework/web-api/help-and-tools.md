@@ -1,8 +1,8 @@
-# Help & Tools
+# ✔ Help & Tools
 
 ## The OData metadata document <a href="#helpandtools-theodatametadatadocument" id="helpandtools-theodatametadatadocument"></a>
 
-The metadata document describes the entity data model (EDM) of the OData service, using an XML language called the Conceptual Schema Definition Language (CSDL). The metadata document shows the structure of the data in the OData service and can be used to generate client code. This is the recommended overview for the consumer to indicate the location of a particular resource or API endpoint. To get the metadata document, send the following request:
+The metadata document describes the entity data model (EDM) of the OData service, using an XML language called the _Conceptual Schema Definition Language_ (CSDL). The metadata document shows the structure of the data in the OData service and can be used to generate client code. This is the recommended overview for the consumer to indicate the location of a particular resource or API endpoint. To get the metadata document, send the following request:
 
 ```http
 GET http://localhost:59318/odata/v1/$metadata
