@@ -61,7 +61,7 @@
     * [✔ Products](framework/web-api/examples/products.md)
     * [✔ Orders](framework/web-api/examples/orders.md)
     * [✔ Customers](framework/web-api/examples/customers.md)
-    * [✔ Import Profiles](framework/web-api/examples/import-profiles.md)
+    * [✔ Import Profiles](framework/web-api/examples/importprofiles.md)
   * [✔ Appendix](framework/web-api/appendix.md)
 * [Advanced](framework/advanced/README.md)
   * [Performance guide](advanced/performance-guide.md)
