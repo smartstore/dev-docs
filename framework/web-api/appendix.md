@@ -1,4 +1,4 @@
-# ✔ Appendix
+# Appendix
 
 ## Errors
 
@@ -19,4 +19,4 @@
 
 ### [Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
 
-* Explicit `From` parameter bindings are required, otherwise _Swashbuckle_ will describe them as query parameters by default. Code comments of parameters decorated with `FromForm` do not show up ([#2519](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2519)).
+* Explicit `From` parameter bindings are required otherwise Swashbuckle will describe them as query parameters by default. Code comments of parameters decorated with `FromForm` do not show up ([#2519](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2519)).

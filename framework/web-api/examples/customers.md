@@ -1,4 +1,4 @@
-# ✔ Customers
+# Customers
 
 ### **Get return requests for a customer**
 

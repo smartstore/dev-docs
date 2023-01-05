@@ -1,4 +1,4 @@
-# ✔ Authentication
+# Authentication
 
 Smartstore Web API uses Basic authentication over HTTPS authentication method to protect data from unauthorized access. It is recommended by OData protocol version 4.0 for the highest level of interoperability with generic clients.
 
@@ -22,11 +22,11 @@ The API responds with the status code 401 _Unauthorized_, if the user is not aut
 
 ## Reasons for denial
 
-| AuthResultId | AuthResultDesc             | Description                                                                                         |
-| :----------: | -------------------------- | --------------------------------------------------------------------------------------------------- |
-|       0      | ApiDisabled                | The API is disabled.                                                                                |
-|       1      | SslRequired                | HTTPS is required in any case unless the request takes place in a development environment.          |
-|       2      | InvalidAuthorizationHeader | The HTTP authorization header is missing or invalid. Must include a pair of public and secret keys. |
-|       3      | InvalidCredentials         | The credentials sent by the HTTP authorization header do not match those of the user.               |
-|       4      | UserUnknown                | The user is unknown.                                                                                |
-|       5      | UserDisabled               | The user is known but his access via the API is disabled.                                           |
+| Smartstore-Api-AuthResultId | Smartstore-Api-AuthResultDesc | Description                                                                                         |
+| :-------------------------: | ----------------------------- | --------------------------------------------------------------------------------------------------- |
+|              0              | ApiDisabled                   | The API is disabled.                                                                                |
+|              1              | SslRequired                   | HTTPS is required in any case unless the request takes place in a development environment.          |
+|              2              | InvalidAuthorizationHeader    | The HTTP authorization header is missing or invalid. Must include a pair of public and secret keys. |
+|              3              | InvalidCredentials            | The credentials sent by the HTTP authorization header do not match those of the user.               |
+|              4              | UserUnknown                   | The user is unknown.                                                                                |
+|              5              | UserDisabled                  | The user is known but his access via the API is disabled.                                           |

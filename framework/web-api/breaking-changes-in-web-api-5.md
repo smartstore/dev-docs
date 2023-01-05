@@ -1,4 +1,4 @@
-# ✔ Breaking changes in Web API 5
+# Breaking changes in Web API 5
 
 #### Authentication
 
@@ -44,7 +44,7 @@ For PUT and PATCH requests, the HTTP header **Prefer** with the value **return=r
 
 #### Return types of media endpoints
 
-_/MediaFiles_ returns type `FileItemInfo` **** which wraps and enriches the media file entity. _/MediaFolders_ returns type `FolderNodeInfo` which wraps and enriches the media folder entity. Both are flattened objects and no longer entities.
+`/MediaFiles` returns type **FileItemInfo** which wraps and enriches the media file entity. `/MediaFolders` returns type **FolderNodeInfo** which wraps and enriches the media folder entity. Both are flattened objects and no longer entities.
 
 #### Request parameters must be written in camel case
 
