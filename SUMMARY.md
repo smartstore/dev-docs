@@ -79,7 +79,7 @@
     * [DbContextScope](framework/advanced/data-access-deep-dive/dbcontextscope.md)
     * [DbContextFactory](framework/advanced/data-access-deep-dive/dbcontextfactory.md)
     * [Database batch operations](framework/advanced/data-access-deep-dive/database-batch-operations.md)
-    * [🥚 Useful extensions](framework/advanced/data-access-deep-dive/useful-extensions.md)
+    * [✔ Useful extensions](framework/advanced/data-access-deep-dive/useful-extensions.md)
   * [LinkResolver](framework/advanced/linkresolver.md)
   * [QR codes](framework/advanced/qr-codes.md)
   * [Native libraries](framework/advanced/native-libraries.md)
