@@ -74,7 +74,7 @@
   * [Generic attributes](framework/advanced/generic-attributes.md)
   * [Sync mapping](framework/advanced/sync-mapping.md)
   * [🥚 Data access (Deep Dive)](framework/advanced/data-access-deep-dive/README.md)
-    * [Search query expressions](framework/advanced/data-access-deep-dive/search-query-expressions.md)
+    * [✔ Search filter expressions](framework/advanced/data-access-deep-dive/search-query-expressions.md)
     * [DbQuerySettings](framework/advanced/data-access-deep-dive/dbquerysettings.md)
     * [DbContextScope](framework/advanced/data-access-deep-dive/dbcontextscope.md)
     * [DbContextFactory](framework/advanced/data-access-deep-dive/dbcontextfactory.md)

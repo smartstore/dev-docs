@@ -1,6 +1,8 @@
-# Search query expressions
+# ✔ Search filter expressions
 
-Lorem ipsum ...
+A search filter expression is a set of criteria used to define a subset of data to be retrieved from the database. In an expression, you can specify various conditions that the data must meet in order to be included in the search results. You can also use Boolean operators like `and` and `or` to combine multiple conditions and create more complex expressions.
+
+In Smartstore, you can specify such expressions on data grid field level. Any textbox in a data grid filter form which contains a question mark icon can process expressions.
 
 ## Examples
 
