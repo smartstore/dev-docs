@@ -76,7 +76,7 @@
   * [🥚 Data access (Deep Dive)](framework/advanced/data-access-deep-dive/README.md)
     * [✔ Search filter expressions](framework/advanced/data-access-deep-dive/search-query-expressions.md)
     * [🥚 DbContextScope](framework/advanced/data-access-deep-dive/dbcontextscope.md)
-    * [DbContextFactory](framework/advanced/data-access-deep-dive/dbcontextfactory.md)
+    * [🥚 Pooled DbContext factory](framework/advanced/data-access-deep-dive/dbcontextfactory.md)
     * [✔ Database bulk operations](framework/advanced/data-access-deep-dive/database-batch-operations.md)
     * [✔ Useful extensions](framework/advanced/data-access-deep-dive/useful-extensions.md)
   * [LinkResolver](framework/advanced/linkresolver.md)
