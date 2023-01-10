@@ -20,7 +20,7 @@
   * [Export](framework/platform/export.md)
   * [🥚 Hooks](framework/platform/hooks.md)
   * [Identity](framework/platform/identity.md)
-  * [IO abstraction](framework/platform/io-abstraction.md)
+  * [🥚 IO abstraction](framework/platform/io-abstraction.md)
   * [Import](framework/platform/import.md)
   * [Logging](framework/platform/logging.md)
   * [🥚 Data modelling](framework/platform/data-modelling/README.md)
