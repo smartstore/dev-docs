@@ -15,7 +15,7 @@ description: Object mapping made easy
 ## MiniMapper
 
 * A lightweight and simple object mapper utility which tries to map properties **of the same name** between two objects using reflection.
-* It uses [FastProperty](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/ComponentModel/FastProperty.cs) under the hood to query and access properties, so it's really fast!
+* It uses reflection under the hood to query and access properties
 * If matched properties have different types, the mapper tries to convert them using the [type conversion system](../../advanced/type-conversion.md).
 * If conversion fails, the property is skipped (no exception is thrown)
 * Use `MiniMapper` when source and destination type look roughly the same and you don't need full control over mapping.
