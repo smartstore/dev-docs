@@ -10,7 +10,8 @@
 ## Export provider
 
 * An export provider specifies the data format (e.g. CSV or XML) and if it is a file based or on-the-fly in-memory export. It always writes the data into stream, so it never comes in contact with files at any time.
-* The provider implements [IExportProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IExportProvider.cs) or it inherits from `ExportProviderBase` and declares `SystemName`, `FriendlyName`, `Order` and `ExportFeatures` using attributes.
+* The provider implements [IExportProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IExportProvider.cs) or it inherits from `ExportProviderBase` and declares `SystemName`, `FriendlyName` and `Order`.
+* `ExportFeatures` flags are used to specify data processing and projection items supported by a provider. Example: `CanProjectAttributeCombinations` indicates that the provider is able to export attribute combinations as products.
 * If additional files are required independently of the actual export files, they can be requested via `ExportExecuteContext.ExtraDataUnits`.
 * Depending on the configuration, the provider is called several times by the data exporter during an export. Typically once per export file. Use `ExportExecuteContext.CustomProperties` for any custom data required across the entire export.
 
@@ -62,6 +63,12 @@ public class MyCompanyProductExportProvider : ExportProviderBase
 Override `ExportProviderBase.ConfigurationInfo` and provide a `ComponentWidget` and a model type:
 
 ```csharp
+public override ExportConfigurationInfo ConfigurationInfo => new()
+{
+	ConfigurationWidget = new ComponentWidget(typeof(MyConfigurationViewComponent)),
+	ModelType = typeof(MyProfileConfigurationModel)
+};
+
 protected override async Task ExportAsync(ExportExecuteContext context, CancellationToken cancelToken)
 {
 	var config = (context.ConfigurationData as MyProfileConfigurationModel) ?? new MyProfileConfigurationModel();
@@ -77,14 +84,19 @@ Dynamic objects has projection and configuration of the export profile applied. 
 
 The actual entity is accessibly via `dynObject.Entity`.
 
+### Export related data
+
+Export profile has option `ExportRelatedData`. If activated and if provider supports `ExportFeatures.UsesRelatedDataUnits` then data exporter adds additional data units to `ExportExecuteContext.ExtraDataUnits`. The provider can use them to export related data into a separate file, for example to additionally export tier prices through a product export provider. At the moment only tier prices, variant attribute values and variant attribute combinations are supported when exporting products, see `RelatedEntityType`. This mechanism is intended mainly for updating prices via flat data formats such as CSV, which can be edited by end users.
+
+TIPP: related data files are automatically imported together with the main data file(s) using file naming convention. If the name of the related data file ends with a `RelatedEntityType` value (e.g. `TierPrice` or `ProductVariantAttributeCombination`) then the product importer uses its data to update tier prices, variant attribute values or variant attribute combinations.
+
 ## Export profile
 
-* Combines an export provider, an export task, deployments (optional), configuration and settings to a profile.&#x20;
-* Two types: built-in system profiles and user profiles that have been added subsequently by the user. System profiles are used, for example, when exporting orders via the order list in the backend.
-* Partition:
-* Filter:
-* &#x20;Projection:
-* Configuration:
+* Combines an export provider, an export task, configuration, filters, settings and deployments (optional) to a single profile.&#x20;
+* An export provider can be assigned to several profiles with different configurations and settings.
+* Two types: built-in system profiles and user profiles that have been added subsequently by the user. System profiles are used, for example, when exporting orders via the order grid in the backend.
+
+
 
 ## Deployment
 
