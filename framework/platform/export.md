@@ -10,8 +10,10 @@
 ## Export provider
 
 * An export provider specifies the data format (e.g. CSV or XML) and if it is a file based or on-the-fly in-memory export. It always writes the data into stream, so it never comes in contact with files at any time.
-* The provider implements [IExportProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IExportProvider.cs) or it inherits from ExportProviderBase and uses the attributes SystemName, FriendlyName, Order and ExportFeatures.
+* The provider implements [IExportProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IExportProvider.cs) or it inherits from ExportProviderBase and declares SystemName, FriendlyName, Order and ExportFeatures using attributes.
+* If additional files are required independently of the actual export files, they can be requested via `ExportExecuteContext.ExtraDataUnits`.
 
+{% code title="A simple export provider" %}
 ```csharp
 [SystemName("Exports.MyCompanyProductCsv")]
 [FriendlyName("MyCompany product CSV Export")]
@@ -52,6 +54,23 @@ public class MyCompanyProductExportProvider : ExportProviderBase
 	}
 }
 ```
+{% endcode %}
+
+### Provider specific configuration
+
+Override `ExportProviderBase.ConfigurationInfo` and provide a `ComponentWidget` and a model type:
+
+```csharp
+protected override async Task ExportAsync(ExportExecuteContext context, CancellationToken cancelToken)
+{
+	var config = (context.ConfigurationData as MyProfileConfigurationModel) ?? new MyProfileConfigurationModel();
+	// ...
+}
+```
+
+### Data access
+
+Export data is provided in segments as dynamic objects which contains all properties of the entity plus extra data generally prefixed with an underscore, e.g. `dynObject._BasePriceInfo`. The actual entity is accessibly via `dynObject.Entity`.
 
 ## Export profile
 
