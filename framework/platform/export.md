@@ -10,8 +10,9 @@
 ## Export provider
 
 * An export provider specifies the data format (e.g. CSV or XML) and if it is a file based or on-the-fly in-memory export. It always writes the data into stream, so it never comes in contact with files at any time.
-* The provider implements [IExportProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IExportProvider.cs) or it inherits from ExportProviderBase and declares SystemName, FriendlyName, Order and ExportFeatures using attributes.
+* The provider implements [IExportProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IExportProvider.cs) or it inherits from `ExportProviderBase` and declares `SystemName`, `FriendlyName`, `Order` and `ExportFeatures` using attributes.
 * If additional files are required independently of the actual export files, they can be requested via `ExportExecuteContext.ExtraDataUnits`.
+* Depending on the configuration, the provider is called several times by the data exporter during an export. Typically once per export file. Use `ExportExecuteContext.CustomProperties` for any custom data required across the entire export.
 
 {% code title="A simple export provider" %}
 ```csharp
@@ -70,12 +71,21 @@ protected override async Task ExportAsync(ExportExecuteContext context, Cancella
 
 ### Data access
 
-Export data is provided in segments as dynamic objects which contains all properties of the entity plus extra data generally prefixed with an underscore, e.g. `dynObject._BasePriceInfo`. The actual entity is accessibly via `dynObject.Entity`.
+Export data is provided in segments with dynamic objects which contains all properties of the entity plus extra data generally prefixed with an underscore, e.g. `dynObject._BasePriceInfo`.
+
+Dynamic objects has projection and configuration of the export profile applied. For example if a certain language is selected in projection tab, the dynamic object contains the localized property values (e.g. a localized product name).
+
+The actual entity is accessibly via `dynObject.Entity`.
 
 ## Export profile
 
-* ....
+* Combines an export provider, an export task, deployments (optional), configuration and settings to a profile.&#x20;
+* Two types: built-in system profiles and user profiles that have been added subsequently by the user. System profiles are used, for example, when exporting orders via the order list in the backend.
+* Partition:
+* Filter:
+* &#x20;Projection:
+* Configuration:
 
-## Export deployment
+## Deployment
 
 * ....
