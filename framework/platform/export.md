@@ -83,7 +83,7 @@ Override `ExportProviderBase.ConfigurationInfo` and provide a `ComponentWidget` 
 ```csharp
 public override ExportConfigurationInfo ConfigurationInfo => new()
 {
-    ConfigurationWidget = new ComponentWidget(typeof(MyConfigurationViewComponent)),
+    ConfigurationWidget = new ComponentWidget<MyConfigurationViewComponent>(),
     ModelType = typeof(MyProviderConfigurationModel)
 };
 
@@ -107,15 +107,13 @@ public class MyProviderConfigurationModel
 }
 ```
 
-Your configuration is displayed in the configuration tab on the profile edit page.&#x20;
+Your configuration is displayed in the **Configuration** tab on the profile edit page.&#x20;
 
-### Data access
+### Export data
 
-Export data is provided in segments with dynamic objects which contains all properties of the entity plus extra data generally prefixed with an underscore, e.g. `dynObject._BasePriceInfo`.
+The export data is provided in segments by the data exporter. A data item is a dynamic object of type [DynamicEntity](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/Internal/DynamicEntity.cs) which wraps the actual entity and to which extra properties are attached. The entity is accessibly via `dynamicObject.Entity`. Additional data is generally prefixed with an underscore, e.g. `dynamicObject._BasePriceInfo`. See [appendix](export.md#appendix) for complete list.
 
-Dynamic objects has projection and configuration of the export profile applied. For example if a certain language is selected in projection tab, the dynamic object contains the localized property values (e.g. a localized product name).
-
-The actual entity is accessibly via `dynObject.Entity`.
+`DynamicEntity` has projection and configuration of the export profile applied. For example if a certain language is selected in the profile's projection tab, the `DynamicEntity` contains the localized property values (e.g. a localized product name) instead of the actual entity property value.
 
 ### Export related data
 
@@ -123,14 +121,21 @@ Export profile has option `ExportRelatedData`. If activated and if provider supp
 
 TIP: related data files are automatically imported together with the main data file(s) using file naming convention. If the name of the related data file ends with a `RelatedEntityType` value (e.g. `TierPrice` or `ProductVariantAttributeCombination`) then the product importer uses its data to update tier prices, variant attribute values or variant attribute combinations.
 
+## Data exporter
+
+The data exporter is an [IDataExporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IDataExporter.cs) implementation and the main core component of the export infrastructure. Its purpose is to provide export data to export providers in a high-performance way and to manage general tasks such as file management or data preview.
+
 ## Export profile
 
-* Combines all aspects of an export to make it configurable by the user: provider, task, partition, filters, projections, configuration and deployments.&#x20;
+* Export profiles combine all aspects of an export to make it configurable by the user: provider, task, partition, filters, projections, configuration and deployments.&#x20;
 * An export provider can be assigned to several profiles with different configurations and settings.
 * Two types: built-in system profiles and user profiles that have been added subsequently by the user. System profiles are used, for example, when exporting orders via the order grid in the backend.
+* Use [IExportProfileService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IExportProfileService.cs) to manage export profiles. For instance if you want to delete all profiles which have your export provider assigned when your module is unistalled.
 
+### Deployment
 
+Publishing profiles are  implementations of [IFilePublisher](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/Deployment/IFilePublisher.cs) and define how to further proceed with the export files. Built-in are publishing via the file system, email, HTTP POST, FTP or public folder. Any number of publishing profiles can be assigned to an export profile.
 
-## Deployment
+## Appendix
 
-* ....
+TODO: appendix with all extra data attached to DynamicEntity.
