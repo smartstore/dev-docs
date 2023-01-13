@@ -23,32 +23,32 @@ public class MyCompanyProductExportProvider : ExportProviderBase
 {
 	public override ExportEntityType EntityType => ExportEntityType.Product;
 	public override string FileExtension => "CSV";
-
+	
 	protected override async Task ExportAsync(ExportExecuteContext context, CancellationToken cancelToken)
 	{
 		using var writer = new CsvWriter(new StreamWriter(context.DataStream, Encoding.UTF8, 1024, true), CsvConfiguration.ExcelFriendlyConfiguration);
-
+	
 		writer.WriteField("Id");
 		writer.WriteField("Name");
 		// Write more columns...
 		writer.NextRow();
-
+	
 		while (context.Abort == DataExchangeAbortion.None && await context.DataSegmenter.ReadNextSegmentAsync())
 		{
 			var segment = await context.DataSegmenter.GetCurrentSegmentAsync();
-
+	
 			foreach (dynamic product in segment)
 			{
 				if (context.Abort != DataExchangeAbortion.None)
 					break;
-
+	
 				Product entity = product.Entity;
-
+	
 				writer.WriteField(entity.Id.ToString());
 				// Get and export localized product name from dynamic object.
 				writer.WriteField((string)product.Name);
 				// Write more fields...
-
+	
 				writer.NextRow();
 				++context.RecordsSucceeded;
 			}
