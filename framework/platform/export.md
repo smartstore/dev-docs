@@ -115,7 +115,7 @@ Your configuration is displayed in the **Configuration** tab on the profile edit
 
 ### Export data
 
-The export data is provided in segments by the data exporter. A data item is a dynamic object of type [DynamicEntity](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/Internal/DynamicEntity.cs) which wraps the actual entity and to which extra properties are attached. The entity is accessibly via `dynamicObject.Entity`. Additional data is generally prefixed with an underscore, e.g. `dynamicObject._BasePriceInfo`. See [appendix](export.md#appendix) for complete list.
+The export data is provided in segments by the data exporter. A data item is a dynamic object of type [DynamicEntity](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/Internal/DynamicEntity.cs) which wraps the actual entity and to which extra properties are attached. The entity is accessibly via `dynamicObject.Entity`. Additional data is generally prefixed with an underscore, e.g. `dynamicObject._BasePriceInfo`. See [appendix](export.md#properties-of-dynamicentity) for complete list.
 
 `DynamicEntity` has projection and configuration of the export profile applied. For example if a certain language is selected in the profile's projection tab, the `DynamicEntity` contains the localized property values (e.g. a localized product name) instead of the actual entity property value.
 
@@ -247,5 +247,29 @@ Your partial view with the toobar menu may look like this:
 ```
 
 ## Appendix
+
+### Properties of DynamicEntity
+
+#### All entity types
+
+| Property name (type)         | Description                                                                                                                                                                                                                                                                                      |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| \_Localized (List\<dynamic>) | <p>List of all localized values of all languages for an entity. Properties of an item are</p><p><em>Culture</em>: the language culture.</p><p><em>LocaleKey</em>: the key of the localized value (usually the property name of the entity).</p><p><em>LocaleValue</em>: the localized value.</p> |
+
+#### Products
+
+| Property name (type)                                                | Description                                                                                                                                  |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| \_IsParent (bool)                                                   | A value indicating whether the product is a "parent" where attribute combinations are exported as products and are considered as "children". |
+| \_CategoryName (string)                                             | The name of the first assigned category.                                                                                                     |
+| \_CategoryPath (string)                                             | The breadcrumb (path) of the first assigned category.                                                                                        |
+| \_AttributeCombinationValues (IList\<ProductVariantAttributeValue>) | A list of all attribute values if an attribute combination is exported as a product.                                                         |
+| \_AttributeCombinationId (int)                                      | The attribute combination ID if it's exported as a product.                                                                                  |
+| \_Price (CalculatedPrice)                                           | The calculated product price.                                                                                                                |
+|                                                                     |                                                                                                                                              |
+|                                                                     |                                                                                                                                              |
+|                                                                     |                                                                                                                                              |
+
+
 
 TODO: appendix with all extra data attached to DynamicEntity.
