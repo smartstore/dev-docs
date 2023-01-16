@@ -2,10 +2,14 @@
 
 ## Overview
 
-* The data exporter provides the data in segments that are written in a specific format into a stream by an export provider.
-* Export profiles are entities that are binding the export to an export provider and combining and storing all aspects of an export like settings and configurations making it configurable by the user.
+* The [data exporter](export.md#data-exporter) provides the data in segments that are written in a specific format into a stream by an [export provider](export.md#export-provider).
+* [Export profiles](export.md#export-profile) are entities that are binding the export to an export provider and combining and storing all aspects of an export like settings and configurations making it configurable by the user.
 * When an export is executed, a task associated with the export profile is started, which performs the actual export via data exporter and export provider. The task can be triggered manually or scheduled.
-* Export deployments are entities that can optionally be assigned to an export profile to specify how to proceed with the export data (e.g. files), for example to send them to an e-mail address.
+* [Export deployments](export.md#deployment) are entities that can optionally be assigned to an export profile to specify how to proceed with the export files, for example to send them to an e-mail address.
+
+## Data exporter
+
+The data exporter is an [IDataExporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IDataExporter.cs) implementation and the main core component of the export infrastructure. Its purpose is to provide the export data to [export providers](export.md#export-provider) in a high-performance way and to manage general tasks such as file management or data preview.
 
 ## Export provider
 
@@ -121,20 +125,60 @@ Export profile has option `ExportRelatedData`. If activated and if provider supp
 
 TIP: related data files are automatically imported together with the main data file(s) using file naming convention. If the name of the related data file ends with a `RelatedEntityType` value (e.g. `TierPrice` or `ProductVariantAttributeCombination`) then the product importer uses its data to update tier prices, variant attribute values or variant attribute combinations.
 
-## Data exporter
-
-The data exporter is an [IDataExporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IDataExporter.cs) implementation and the main core component of the export infrastructure. Its purpose is to provide export data to export providers in a high-performance way and to manage general tasks such as file management or data preview.
-
 ## Export profile
 
-* Export profiles combine all aspects of an export to make it configurable by the user: provider, task, partition, filters, projections, configuration and deployments.&#x20;
-* An export provider can be assigned to several profiles with different configurations and settings.
-* Two types: built-in system profiles and user profiles that have been added subsequently by the user. System profiles are used, for example, when exporting orders via the order grid in the backend.
-* Use [IExportProfileService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IExportProfileService.cs) to manage export profiles. For instance if you want to delete all profiles which have your export provider assigned when your module is unistalled.
+Export profiles combine all aspects of an export to make it configurable by the user: provider, task, partition, filters, projections, configuration and deployments. An export provider can be assigned to several profiles with different configurations and settings. Two types: built-in system profiles and user profiles that have been added subsequently by the user. System profiles are used, for example, when exporting orders via the order grid in the backend.
+
+Use [IExportProfileService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IExportProfileService.cs) to manage export profiles. For instance if you want to delete all profiles that have your export provider assigned when your module is unistalled. Use `ExportProfileInfoViewComponent` if you want display a list of all profiles that have your provider assigned. It renders a link to the profile and task, an info about last execution and a button to start the export:
+
+```csharp
+@await Component.InvokeAsync("ExportProfileInfo", new { providerSystemName = "Exports.MyCompanyProductCsv" })
+```
 
 ### Deployment
 
-Publishing profiles are  implementations of [IFilePublisher](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/Deployment/IFilePublisher.cs) and define how to further proceed with the export files. Built-in are publishing via the file system, email, HTTP POST, FTP or public folder. Any number of publishing profiles can be assigned to an export profile.
+Publishing profiles are implementations of [IFilePublisher](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/Deployment/IFilePublisher.cs) and define how to further proceed with the export files. Built-in are publishing via the file system, email, HTTP POST, FTP or public folder. Any number of publishing profiles can be assigned to an export profile.
+
+After a successful export the data exporter instantiates every publisher associated with the export profile and calls its `PublishAsync` method together with the [ExportDeployment](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Domain/ExportDeployment.cs) entity containing all details of the deployment.
+
+## Data grid and exports
+
+Sometimes it's usefull to show a button or menu above a data grid to let the user directly export all or selected entities of the grid. Some steps needed to implement this. First you need an IResultFilter to specify which data grids to extend and register a view component:
+
+```csharp
+public class MyDatagridToolbarFilter : IResultFilter
+{
+    private readonly Lazy<IWidgetProvider> _widgetProvider;
+
+    public MyDatagridToolbarFilter(Lazy<IWidgetProvider> widgetProvider)
+    {
+        _widgetProvider = widgetProvider;
+    }
+
+    public void OnResultExecuting(ResultExecutingContext context)
+    {
+        if (context.Result.IsHtmlViewResult())
+        {
+            var controller = context.RouteData.Values.GetControllerName();
+            var action = context.RouteData.Values.GetActionName();
+
+            if (controller.EqualsNoCase("Customer") && action.EqualsNoCase("List"))
+            {
+                _widgetProvider.Value.RegisterViewComponent<MyDataGridToolbarViewComponent>("datagrid_toolbar_omega");
+            }
+        }
+    }
+
+    public void OnResultExecuted(ResultExecutedContext context) { }
+}
+```
+
+Your view component should check if the user is authorized to execute exports:
+
+```csharp
+// _permissionService is of type IPermissionService
+var isAuthorized = await _permissionService.AuthorizeAsync(Permissions.Configuration.Export.Execute);
+```
 
 ## Appendix
 
