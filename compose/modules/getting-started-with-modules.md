@@ -2,7 +2,7 @@
 
 ## Overview
 
-Smartstore modules are designed to extend Smartstore's functionality in any way you can imagine. There are no limits to what features they can add.
+Modules are designed to extend Smartstore functionality in any way you can imagine. There are no limits to what features they can add.
 
 Here are a few examples of what modules can do:
 
@@ -11,31 +11,31 @@ Here are a few examples of what modules can do:
 * modify / extend UI
 * overwrite services
 
-Modules are sets of extensions that compile into a single assembly in order to be re-used in other Smartstore shops. Eventhough it may use Smartstore APIs, they are no necessity. The only to requirements for a module project are:
+Modules are sets of extensions that compile into a single assembly in order to be re-used in other Smartstore shops. Even though it may use Smartstore APIs, they are no necessity. The only two requirements for a module project are:
 
 * `module.json`: A manifest file describing the metadata of a module.
-* `Module.cs`: A class that implements IModule and contains (un-) installation routines.
+* `Module.cs`: A class that implements `IModule` and contains (un-)installation routines.
 
-Some special, mostly commerce related, features are encapsulated as [_providers_ ](../../framework/platform/modularity-and-providers.md)in the Smartstore ecosystem. A module can expose as many of these providers needed.
+Some special, mostly commerce related features are encapsulated as [_providers_ ](../../framework/platform/modularity-and-providers.md)in the Smartstore ecosystem. A module can expose as many of these providers as needed.
 
 Represented by their interfaces, provider types are:
 
-* `IPaymentMethod`: Payment providers (PayPal, AmazonPay, offline payment etc.)
+* `IPaymentMethod`: Payment providers (PayPal, Stripe, AmazonPay, offline payment etc.)
 * `ITaxProvider`: Tax calculation
 * `IShippingRateComputationMethod`: Shipping fee calculation
 * `IExportProvider`: Data export (Shops, products, orders etc.)
 * `IMediaStorageProvider`: Storage for media file blobs
-* `IOutputCacheProvider`: Storage for ouput cache items
+* `IOutputCacheProvider`: Storage for output cache items
 * `IWidget`: Content rendering in UI
 * `IExternalAuthenticationMethod`: External authenticators (Google, Facebook etc.)
-* `IExchangeRateProvider`: Live curreny rates
+* `IExchangeRateProvider`: Live currency rates
 
 ## Module structure
 
-A module is a regular _Class Library_ project in the solution. It should be placed in the **/src/Smartstore.Modules/** directory in the root of your solution.
+A module is a regular **Class Library** project in the solution. It should be placed in the _/src/Smartstore.Modules/_ directory in the root of your solution.
 
 {% hint style="warning" %}
-Do not confuse this with the **/src/Smartstore.Web/Modules/** directory, which is the build target for module. From here the application loads module assemblies into the app-domain dyncamically.
+Do not confuse this with the **/src/Smartstore.Web/Modules/** directory, which is the build target for module. From here the application loads module assemblies into the app-domain dynamically.
 {% endhint %}
 
 If your project directory is located elsewhere, you should create a _symlink_ that links to the actual location.
@@ -58,13 +58,13 @@ If your module is called **MyOrg.MyGreatModule**, the _.csproj_ project file sho
 </Project>
 ```
 
-Each time the solution get's built, your module will be compiled and copied to the `OutputPath` directory specified here.
+Each time the solution is built, your module will be compiled and copied to the `OutputPath` directory specified here.
 
 ### Smartstore.Module.props
 
 The file _Smartstore.Build/Smartstore.Module.props_ defines shared properties for modules. It is auto-included into every project located in _Smartstore.Modules/_.
 
-Among other things it specifies files and directories:
+Among other things it specifies files and directories...:
 
 * to be copied to the `OutputPath`, if they exist.
   * _module.json_
@@ -82,7 +82,7 @@ This is important, because the build process would copy the whole dependency gra
 All projects located in the _Smartstore.Modules_ directory reference `Smartstore`, `Smartstore.Core` and `Smartstore.Web.Common` projects by default.
 
 {% hint style="info" %}
-You can also reference `Smartstore.Web` to access model types declared there. But add the following lines to the project file, to prevent your project copying dependant files to your `OutputPath`:
+You can also reference `Smartstore.Web` to access model types declared there. But add the following lines to the project file to prevent your project copying dependent files to your `OutputPath`:
 
 ```xml
 <ItemGroup>
@@ -95,7 +95,7 @@ You can also reference `Smartstore.Web` to access model types declared there. Bu
 ```
 {% endhint %}
 
-You can reference any NuGet package you wish, but special consideration is required for private packages. These packages are **not** referenced by the app core.
+You can reference any NuGet package you wish, but special consideration is required for private packages. These packages are **nt** referenced by the app core.
 
 {% hint style="info" %}
 Copying dependencies is completely suppressed. To copy these files anyway you must declare them in `module.json`.
@@ -138,7 +138,7 @@ Here is an example of a working `module.json` file.
 The properties `SystemName`, `FriendlyName` and `Version` are required.
 {% endhint %}
 
-The following table explains the Schema.
+The following table explains the schema.
 
 | Name                  | Type    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | --------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -171,7 +171,7 @@ The installation method `IModule.InstallAsync()` is called every time the module
 It is good practice **not** to delete any custom module data from the database while uninstalling, in case the user wants to re-install the module later.
 {% endhint %}
 
-By convention the file named `Module.cs`, is `internal` and is placed in the project's root directory.
+By convention the file named `Module.cs` is `internal` and is placed in the project's root directory.
 
 {% hint style="info" %}
 If your module contains exactly one feature provider, it is recommended to let the entry class implement the provider interface directly.
