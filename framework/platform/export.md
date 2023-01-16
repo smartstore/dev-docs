@@ -143,29 +143,41 @@ After a successful export the data exporter instantiates every publisher associa
 
 ## Data grid and exports
 
-Sometimes it's usefull to show a button or menu above a data grid to let the user directly export all or selected entities of the grid. Some steps needed to implement this. First you need an IResultFilter to specify which data grids to extend and register a view component:
+Sometimes it's usefull to show a button or menu above a data grid, for example to let the user directly export all or selected orders via the orders grid. Some steps needed to implement this. First you need to add an `IResultFilter` to register your `PartialViewWidget` or alternatively a view component:
 
 ```csharp
-public class MyDatagridToolbarFilter : IResultFilter
+internal class Startup : StarterBase
 {
+    public override void ConfigureServices(IServiceCollection services, IApplicationContext appContext)
+    {
+        services.Configure<MvcOptions>(o =>
+        {
+            o.Filters.AddConditional<MyOrdersGridToolbarFilter>(
+                context => context.ControllerIs<OrderController>(x => x.List()) && !context.HttpContext.Request.IsAjax());
+        });
+    }
+}
+
+public class MyOrdersGridToolbarFilter : IResultFilter
+{
+    private readonly IPermissionService _permissionService;
     private readonly Lazy<IWidgetProvider> _widgetProvider;
 
-    public MyDatagridToolbarFilter(Lazy<IWidgetProvider> widgetProvider)
+    public MyOrdersGridToolbarFilter(
+        IPermissionService permissionService,
+        Lazy<IWidgetProvider> widgetProvider)
     {
+        _permissionService = permissionService;
         _widgetProvider = widgetProvider;
     }
 
     public void OnResultExecuting(ResultExecutingContext context)
     {
-        if (context.Result.IsHtmlViewResult())
+        if (context.Result.IsHtmlViewResult() 
+            && _permissionService.Authorize(Permissions.Configuration.Export.Execute))
         {
-            var controller = context.RouteData.Values.GetControllerName();
-            var action = context.RouteData.Values.GetActionName();
-
-            if (controller.EqualsNoCase("Customer") && action.EqualsNoCase("List"))
-            {
-                _widgetProvider.Value.RegisterViewComponent<MyDataGridToolbarViewComponent>("datagrid_toolbar_omega");
-            }
+            _widgetProvider.Value.RegisterWidget("datagrid_toolbar_omega",
+                new PartialViewWidget("_MyOrdersGridExportMenu", null, "MyCompany.MyModule"));
         }
     }
 
@@ -173,11 +185,65 @@ public class MyDatagridToolbarFilter : IResultFilter
 }
 ```
 
-Your view component should check if the user is authorized to execute exports:
+Your partial view with the toobar menu may look like this:
 
-```csharp
-// _permissionService is of type IPermissionService
-var isAuthorized = await _permissionService.AuthorizeAsync(Permissions.Configuration.Export.Execute);
+```cshtml
+<div class="dg-toolbar-group">
+    <div class="dropdown">
+        <button type="button" class="btn btn-light btn-flat dropdown-toggle" 
+            data-toggle="dropdown" data-boundary="window">
+            @T("Plugins.MyCompany.MyModule.Export")
+        </button>
+        <div class="dropdown-menu">
+            <a href="javascript:;" class="dropdown-item mycompany-order-export 
+               export-selected-data"
+               v-bind:class="{ disabled: !grid.hasSelection }"
+               data-grid-id="orders-grid"
+               data-url="@Url.Action("Export", "MyController", new { all=false })">
+                <i class="fa fa-fw fa-code"></i>
+                <span>@T("Plugins.MyCompany.MyModule.ExportSelected")</span>
+            </a>
+
+            <a href="javascript:;" class="dropdown-item mycompany-order-export"
+               data-url="@Url.Action("Export", "MyController", new { all=true })">
+                <i class="fa fa-fw fa-code"></i>
+                <span>@T("Plugins.MyCompany.MyModule.ExportAll")</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script sm-target-zone="scripts" data-origin="mycompany-order-export">
+    $(function () {
+        $('.mycompany-order-export').on('click', function (e) {
+            e.preventDefault();
+
+            var link = $(this);
+            var selectedIds = '';
+
+            if (!link.hasClass('disabled')) {
+                if (link.hasClass('export-selected-data')) {
+                    var elGrid = $('#' + link.data('grid-id'));
+
+                    if (!elGrid.length) {
+                        alert2('Cannot find order grid.');
+                        return false;
+                    }
+
+                    selectedIds = elGrid.parent().data('datagrid').selectedRowKeys;
+                }
+
+                $({}).postData({
+                    url: link.data('url'),
+                    data: selectedIds != "" ? { selectedIds } : null,
+                    ask: @T("Admin.Common.AskToProceed").JsValue,
+                });
+            }
+
+            return false;
+        });
+    });
+</script>
 ```
 
 ## Appendix
