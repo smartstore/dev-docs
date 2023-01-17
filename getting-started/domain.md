@@ -2,38 +2,53 @@
 description: Entities and O/R Mapping
 ---
 
-# 🥚 Domain
+# 🍪 Domain
 
 ## Overview
 
-* Domain tier contains all entity classes that are mapped to database tables
-* Among the most frequently used classes are:
-  * [Product](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Products/Domain/Product.cs)
-  * [Category](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Categories/Domain/Category.cs)
-  * [Manufacturer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Brands/Domain/Manufacturer.cs)
-  * [Order](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Checkout/Orders/Domain/Order.cs)
-  * [ShoppingCart](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Checkout/Cart/Domain/ShoppingCart.cs)
-  * [Customer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Identity/Domain/Customer.cs)
-  * [MediaFile](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Content/Media/Domain/MediaFile.cs)
-  * and many many more...
-* Entity classes are "Plain old CLR objects" (POCO)
-* Each entity class usually represents one database table
-* Each entity property usually represents one column in this table
-* You can establish any relationship between entities (1:1, 1:n, n:m)
+The domain tier contains all entity classes that are mapped to database tables.
+
+Some of the most used classes are:
+
+* [Product](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Products/Domain/Product.cs)
+* [Category](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Categories/Domain/Category.cs)
+* [Manufacturer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Brands/Domain/Manufacturer.cs)
+* [Order](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Checkout/Orders/Domain/Order.cs)
+* [ShoppingCart](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Checkout/Cart/Domain/ShoppingCart.cs)
+* [Customer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Identity/Domain/Customer.cs)
+* [MediaFile](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Content/Media/Domain/MediaFile.cs)
+
+An entity class is a "Plain old CLR object" ([POCO](https://en.wikipedia.org/wiki/Plain\_old\_CLR\_object)). It usually represents one database table, with each property typically representing one column in the table.
+
+{% hint style="info" %}
+You can establish any relationship between entities (1:1, 1:n, n:m)
+{% endhint %}
 
 ## BaseEntity
 
-* A concrete entity class **must** derive from the abstract [BaseEntity](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Domain/BaseEntity.cs) class
-* `BaseEntity.Id` is PK by convention
-* By convention, all public properties with a getter and a setter will be included in the database schema. To customize the default mapping conventions:
-  * Use _DataAnnotation_ attributes on class and property level...
-  * Write _Fluent API_ mapping code...
-  * ...or mix both.
-  * Refer to [Entity Framework Core: Creating and configuring a model](https://learn.microsoft.com/en-us/ef/core/modeling/) to learn more about data modelling in EF.
-  * TIPP: It may seem a bit cluttered at first glance, but it is good practice to keep entity class and Fluent API mapping in a single code file
-* For performance reasons, Smartstore does not use proxy classes for lazy loading, but the `ILazyLoader` instead.
-* Because of this an entity class requires two constructors (but only if the entity contains at least one navigation property)...
-* ...and special consideration is required for navigation properties:
+A concrete entity class **must** derive from the abstract class [BaseEntity](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Domain/BaseEntity.cs).
+
+By convention:
+
+* `BaseEntity.Id` is used as the primary key.
+* All public properties with a getter and a setter will be included in the database schema.
+
+To customize the default mapping conventions:
+
+* Use the _DataAnnotation_ attributes on classes and properties.
+* Write _Fluent API_ mapping code.
+
+{% hint style="info" %}
+Refer to [Entity Framework Core: Creating and configuring a model](https://learn.microsoft.com/en-us/ef/core/modeling/) to learn more about data modelling in _Entity Framework_.
+{% endhint %}
+
+{% hint style="success" %}
+It may seem a bit cluttered at first glance, but it is good practice to keep entity class and _Fluent API_ mapping in a single code file.
+{% endhint %}
+
+For performance reasons, Smartstore does not use proxy classes for lazy loading, but the `ILazyLoader` interface instead. Because of this an entity class requires two constructors as long as the entity contains at least one [navigation property](https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/navigation-property).
+
+Special consideration is required for navigation properties:
 
 ```csharp
 public class MyEntity : BaseEntity 
@@ -73,8 +88,9 @@ public class MyEntity : BaseEntity
 
 ## Domain assemblies
 
-* By default, Smartstore scans all application core assemblies for entity types on app startup.
-* So, if you created a new entity class in a core project, all you need to do is to extend the partial `SmartDbContext` class to make it accessible:
+On app start-up Smartstore scans all application core assemblies for entity types. If you created a new entity class and want to make it accessible, there are different approaches depending on the project type.
+
+In a core project simply extend the partial `SmartDbContext` class.
 
 ```csharp
 public partial class SmartDbContext
@@ -83,8 +99,9 @@ public partial class SmartDbContext
 }
 ```
 
-* If you however created a new entity class in a module project, there are more steps involved.
-* First you need to inform EF that your module assembly contains entity types that it should pickup and register on startup. This is done in a starter class:
+In a module project you need to inform Entity Framework that your module assembly contains entity types to pickup and register on start-up.
+
+For this you need a starter class.
 
 ```csharp
 internal class Startup : StarterBase
@@ -107,7 +124,7 @@ internal class Startup : StarterBase
 }
 ```
 
-* The next step is optional but it gives you more comfort while developing:
+For more comfort while developing you can add this extension:
 
 {% code title="Extensions/SmartDbContextExtensions.cs" %}
 ```csharp
@@ -121,8 +138,9 @@ public static class SmartDbContextExtensions
 
 ## Entity characteristics
 
-* There are numerous interfaces you can implement and some abstract base classes you can derive from to specify what an entity _has/is, supports_ or _represents_.
-* These types declare some properties that your entity must implement in order to follow the contract
+Numerous interfaces can be implemented and some abstract base classes can be derived from to specify what an entity _has_/_is_, _supports_ or _represents_.
+
+The following types declare some properties your entity must implement in order to follow the contract.
 
 ### Interfaces
 
