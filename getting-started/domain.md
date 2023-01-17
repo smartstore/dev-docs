@@ -6,9 +6,7 @@ description: Entities and O/R Mapping
 
 ## Overview
 
-The domain tier contains all entity classes that are mapped to database tables.
-
-Some of the most used classes are:
+The domain tier contains all entity classes that are mapped to database tables. Some of the most used classes are:
 
 * [Product](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Products/Domain/Product.cs)
 * [Category](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Categories/Domain/Category.cs)
@@ -26,9 +24,7 @@ You can establish any relationship between entities (1:1, 1:n, n:m)
 
 ## BaseEntity
 
-A concrete entity class **must** derive from the abstract class [BaseEntity](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Domain/BaseEntity.cs).
-
-By convention:
+A concrete entity class **must** derive from the abstract class [BaseEntity](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Domain/BaseEntity.cs). By convention:
 
 * `BaseEntity.Id` is used as the primary key.
 * All public properties with a getter and a setter will be included in the database schema.
