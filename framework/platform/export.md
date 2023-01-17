@@ -252,9 +252,9 @@ Your partial view with the toobar menu may look like this:
 
 #### All entity types
 
-| Property name (type)         | Description                                                                                                                                                                                                                                                                                      |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| \_Localized (List\<dynamic>) | <p>List of all localized values of all languages for an entity. Properties of an item are</p><p><em>Culture</em>: the language culture.</p><p><em>LocaleKey</em>: the key of the localized value (usually the property name of the entity).</p><p><em>LocaleValue</em>: the localized value.</p> |
+| Property name (type)         | Description                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| \_Localized (List\<dynamic>) | <p>List of all localized values of all languages for an entity. <code>null</code> if the entity has no localized properties. Properties of an item are</p><p><em>Culture</em>: the language culture.</p><p><em>LocaleKey</em>: the key of the localized value (usually the property name of the entity).</p><p><em>LocaleValue</em>: the localized value.</p> |
 
 #### Products
 
@@ -264,9 +264,10 @@ Your partial view with the toobar menu may look like this:
 | \_CategoryName (string)                                             | The name of the first assigned category.                                                                                                     |
 | \_CategoryPath (string)                                             | The breadcrumb (path) of the first assigned category.                                                                                        |
 | \_AttributeCombinationValues (IList\<ProductVariantAttributeValue>) | A list of all attribute values if an attribute combination is exported as a product.                                                         |
+| \_UniqueId (string)                                                 | A unique ID consisting of product ID and attribute combination ID if an attribute combination is exported as a product.                      |
 | \_AttributeCombinationId (int)                                      | The attribute combination ID if it's exported as a product.                                                                                  |
 | \_Price (CalculatedPrice)                                           | The calculated product price.                                                                                                                |
-|                                                                     |                                                                                                                                              |
+| \_DetailUrl (string)                                                | URL to product detail page.                                                                                                                  |
 |                                                                     |                                                                                                                                              |
 |                                                                     |                                                                                                                                              |
 
