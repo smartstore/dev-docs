@@ -97,10 +97,6 @@ You can also reference `Smartstore.Web` to access model types declared there. Bu
 
 You can reference any NuGet package you wish, but special consideration is required for packages that are **not** referenced by the app core (private). These need to be listed under `PrivateReferences` in _module.json_ (see below), otherwise a runtime error is thrown.
 
-{% hint style="info" %}
-Copying dependencies is completely suppressed. To copy these files anyway you must declare them in `module.json`.
-{% endhint %}
-
 ### Manifest: module.json
 
 This file describes your module to the system and is used by the _Plugin Manager_ in it's administration screen.
