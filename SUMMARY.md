@@ -24,7 +24,7 @@
   * [Import](framework/platform/import.md)
   * [Logging](framework/platform/logging.md)
   * [Data modelling](framework/platform/data-modelling/README.md)
-    * [🥚 Model mapping](framework/platform/data-modelling/model-mapping.md)
+    * [🐣 Model mapping](framework/platform/data-modelling/model-mapping.md)
   * [Modularity & Providers](framework/platform/modularity-and-providers.md)
   * [Output Cache](framework/platform/output-cache.md)
   * [🥚 Profiling](framework/platform/diagnostics.md)
