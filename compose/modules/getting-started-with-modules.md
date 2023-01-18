@@ -1,4 +1,4 @@
-# 🍪 Getting started with modules
+# ✔ Getting started with modules
 
 ## Overview
 
@@ -95,7 +95,7 @@ You can also reference `Smartstore.Web` to access model types declared there. Bu
 ```
 {% endhint %}
 
-You can reference any NuGet package you wish, but special consideration is required for private packages. These packages are **nt** referenced by the app core.
+You can reference any NuGet package you wish, but special consideration is required for packages that are **not** referenced by the app core (private). These need to be listed under `PrivateReferences` in _module.json_ (see below), otherwise a runtime error is thrown.
 
 {% hint style="info" %}
 Copying dependencies is completely suppressed. To copy these files anyway you must declare them in `module.json`.
