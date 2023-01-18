@@ -6,33 +6,23 @@ description: Object mapping made easy
 
 ## Overview
 
-Automatic object mapping is useful whenever you need to convert from type A to type B. Instead of manually assigning each member one at a time, an object mapper does this in a very generic way using reflection.
-
-For example, you can convert an entity type (such as `Product`) to a view model type (such as `ProductModel`) or vice-versa.
-
-Smartstore comes with object mapping utilities that are ultra-lightweight and fast.
+Automatic object mapping is useful whenever you need to convert from type A to type B. Instead of manually assigning each member one at a time, an object mapper does this in a very generic way using reflection. For example, you can convert an entity type (such as `Product`) to a view model type (such as `ProductModel`) or vice-versa. Smartstore comes with object mapping utilities that are ultra-lightweight and fast.
 
 {% hint style="success" %}
 The best thing about it: It’s a one-liner!
 {% endhint %}
 
-| Utility                                                                                                            | Description                                 | Call                               |
-| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------- | ---------------------------------- |
-| [MiniMapper](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/ComponentModel/MiniMapper.cs)       | Very simple object mapping                  | `MiniMapper.Map(From, To)`         |
-| [MapperFactory](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/ComponentModel/MapperFactory.cs) | Advanced, customizable and flexible mapping | `MapperFactory.MapAsync(From, To)` |
+| Utility                                                                                                            | Description                                | Call                               |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------ | ---------------------------------- |
+| [MiniMapper](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/ComponentModel/MiniMapper.cs)       | Very simple object mapper                  | `MiniMapper.Map(From, To)`         |
+| [MapperFactory](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/ComponentModel/MapperFactory.cs) | Advanced, customizable and flexible mapper | `MapperFactory.MapAsync(From, To)` |
 
 ## MiniMapper
 
-The `MiniMapper` is a lightweight and simple object mapping utility that attempts to map properties **of the same name** between two objects.
-
-{% hint style="info" %}
-It uses reflection under the hood to query and access properties.
-{% endhint %}
-
-If matched properties have different types, the mapper tries to convert them using the [type conversion system](../../advanced/type-conversion.md). If this fails, the property is simply skipped and no exception is thrown.&#x20;
+The `MiniMapper` is a lightweight and simple object mapping utility that attempts to map properties **of the same name** between two objects. It uses reflection under the hood to query and access properties. If matched properties have different types, the mapper tries to convert them using the [type conversion system](../../advanced/type-conversion.md). If this fails, the property is simply skipped and no exception is thrown.&#x20;
 
 {% hint style="success" %}
-Use `MiniMapper` if:
+Use `MiniMapper` when:
 
 * source and target type look more or less the same
 * you don't need full control over mapping
@@ -61,17 +51,13 @@ MiniMapper.Map(settings, model);
 The `MapperFactory` is a static factory that can create custom type mapper instances ([`IMapper<TFrom, TTo>`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/ComponentModel/IMapper.cs)).
 
 {% hint style="success" %}
-Use `MapperFactory` if:
+Use `MapperFactory` when:
 
-* source and target type are mismatched
+* source and target type are very different
 * you need more control over mapping
 {% endhint %}
 
-Upon initialization, `MapperFactory` automatically scans for all concrete `IMapper<TFrom, TTo>` classes in all loaded assemblies.
-
-{% hint style="info" %}
-Because the mapper is DI-enabled it can depend on any registered service.
-{% endhint %}
+Upon initialization, `MapperFactory` automatically scans for all concrete `IMapper<TFrom, TTo>` classes in all loaded assemblies. Because the mapper is DI-enabled it can depend on any registered service.
 
 | Call                                    | Description                                           |
 | --------------------------------------- | ----------------------------------------------------- |
@@ -84,13 +70,7 @@ If no mapper is found for a specific mapping operation, a generic mapper is used
 
 ### Implementing a mapper
 
-To add a mapper using `MapperFactory`, create a class that implements `IMapper<TFrom, TTo>`.
-
-{% hint style="info" %}
-There is nothing wrong with implementing multiple interfaces in a single class (e.g. `IMapper<News, NewsModel>` and `IMapper<NewsModel, News>`).
-{% endhint %}
-
-There is no need to register the mapper in DI.
+To add a mapper using `MapperFactory`, create a class that implements `IMapper<TFrom, TTo>`. There is nothing wrong with implementing multiple interfaces in a single class (e.g. `IMapper<News, NewsModel>` and `IMapper<NewsModel, News>`). There is no need to register the mapper in DI.
 
 {% hint style="info" %}
 It is good practice to keep the model and mapper classes in the same file.
