@@ -6,9 +6,7 @@ description: Application configuration framework
 
 ## Overview
 
-Configuring an application is usually done by the user in the backend via the **Configuration / Settings** UI. Modules can provide their own settings and a form to edit them.
-
-At the lowest tier, each individual setting is just a record in the database represented by the [Setting](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Configuration/Domain/Setting.cs) entity. A setting's value is saved in the `Value` field as plain text.
+Configuring an application is usually done by the user in the backend via the **Configuration / Settings** UI. Modules can provide their own settings and a form to edit themAt the lowest tier, each individual setting is just a record in the database represented by the [Setting](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Configuration/Domain/Setting.cs) entity. A setting's value is saved in the `Value` field as plain text.
 
 To make things easy to work with, settings are grouped and combined into POCO classes. Here are some examples:
 
@@ -19,17 +17,13 @@ To make things easy to work with, settings are grouped and combined into POCO cl
 
 ## Technical concept
 
-Every settings class needs to implement the `ISettings` interface and **must have** a public constructor without parameters.
-
-Each property in the class represents an individual setting which name in the database is a combination of the class and property name.
+Every settings class needs to implement the `ISettings` interface and **must have** a public constructor without parameters. Each property in the class represents an individual setting which name in the database is a combination of the class and property name.
 
 {% hint style="info" %}
 The `DefaultTheme` property in the `ThemeSettings` class results in: _ThemeSettings.DefaultTheme_.
 {% endhint %}
 
-The settings database value is the string representation of the property value, which means that the property type must be convertible **to** and **from** a string.
-
-Only public properties with a getter and a setter are eligible as persistent settings. All other properties (or members in general) are ignored.
+The settings database value is the string representation of the property value, which means that the property type must be convertible **to** and **from** a string. Only public properties with a getter and a setter are eligible as persistent settings. All other properties (or members in general) are ignored.
 
 {% hint style="info" %}
 The application's own [type conversion system](../advanced/type-conversion.md) is used to convert between types.
@@ -45,9 +39,7 @@ Don't use complex types for setting properties. But if you must, [create and reg
 
 ### By `Dependency Injection`
 
-The easiest and most widely used setting access pattern is to pass them around as dependencies.
-
-A special component registration source registers all classes implementing `ISettings` dynamically as **singleton** dependencies.
+The easiest and most widely used setting access pattern is to pass them around as dependencies A special component registration source registers all classes implementing `ISettings` dynamically as **singleton** dependencies.
 
 ```csharp
 private readonly MySettings1 _mySettings1;
@@ -61,16 +53,12 @@ public MyFakeService(MySettings1 mySettings1, MySettings2 mySettings2)
 ```
 
 {% hint style="warning" %}
-Don't update setting properties programmatically. Because setting classes are singletons, your changes will live as long as the app runs or the cache is cleared.
-
-But if you must, you need to save your changes (read further below).
+Don't update setting properties programmatically. Because setting classes are singletons, your changes will live as long as the app runs or the cache is cleared. But if you must, you need to save your changes (read further below).
 {% endhint %}
 
 ### By `ISettingFactory`
 
-The singleton [ISettingFactory](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Configuration/Services/ISettingFactory.cs) is responsible for activating and populating setting class instances that implement `ISettings.`
-
-The method for loading settings is `LoadSettingsAsync<TSettings>()`. It tries to load `TSettings` for a given store from cache or from database, if it’s not yet cached.
+The singleton [ISettingFactory](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Configuration/Services/ISettingFactory.cs) is responsible for activating and populating setting class instances that implement `ISettings`. The method for loading settings is `LoadSettingsAsync<TSettings>()`. It tries to load `TSettings` for a given store from cache or from database, if it’s not yet cached.
 
 Similarly the method for saving settings is `SaveSettingsAsync<TSettings>()`. It saves a settings instance for a given store in the database.
 
@@ -78,18 +66,14 @@ Similarly the method for saving settings is `SaveSettingsAsync<TSettings>()`. It
 public void UpdateSettings(string name, int storeId)
 {
     var mySettings = await Services.SettingFactory.LoadSettingsAsync<MySettings>(storeId);
-
     mySettings.Name = name;
-
     await Services.SettingFactory.SaveSettingsAsync(mySettings, storeId);
 }
 ```
 
 ### Accessing individual setting entries
 
-You can also access individual entries by using the [ISettingService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Configuration/Services/ISettingService.cs).
-
-Updating individual entries automatically invalidates the classes cache. An example of which would be that updating or deleting the `ThemeSettings.DefaultTheme` entry removes all `ThemeSettings` instances from cache.
+You can also access individual entries by using the [ISettingService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Configuration/Services/ISettingService.cs). Updating individual entries automatically invalidates the classes cache. For example, updating or deleting the `ThemeSettings.DefaultTheme` entry will remove all `ThemeSettings` instances from the cache.
 
 {% hint style="info" %}
 You are not restricted to setting classes. Any setting entry can be created and accessed, without being part of a setting class.
@@ -97,7 +81,7 @@ You are not restricted to setting classes. Any setting entry can be created and 
 
 ## Tutorial
 
-The following code shows how to provide custom settings with a full-blown multi-store enabled editor. It also provides some useful code for a pseudo-Blog module.
+The following code shows how to provide custom settings with a full-blown multi-store enabled editor. It also provides some useful code for a pseudo Blog module.
 
 ### Create settings class
 
@@ -249,9 +233,9 @@ Refer to:
 
 Decorate the GET action with the `LoadSetting` Attribute, and the POST action with the `SaveSetting` Attribute. They are not required, but save you from writing tedious, repetitive code.
 
-The `LoadSetting` Attribute resolves all setting class action parameters automatically from Dependency Injection (in this case `BlogSettings`) and passes them to the method. It’s also fills the parameter `int storeScope` with the current store id, if it is stated.
+The `LoadSetting` Attribute resolves all setting class action parameters automatically from Dependency Injection (in this case `BlogSettings`) and passes them to the method. It also fills the parameter `int storeScope` with the current store id if one is specified.
 
-The `SaveSetting` Attribute does roughly the same including:
+The `SaveSetting` Attribute does roughly the same, including:
 
 * Patching the model parameter according to current store scope and leaving out non-overwritten properties.
 * Saving the setting instance to database.
