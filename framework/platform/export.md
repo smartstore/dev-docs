@@ -260,17 +260,39 @@ Your partial view with the toobar menu may look like this:
 
 | Property name (type)                                                | Description                                                                                                                                  |
 | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| \_UniqueId (string)                                                 | A unique ID consisting of product ID and attribute combination ID if an attribute combination is exported as a product.                      |
 | \_IsParent (bool)                                                   | A value indicating whether the product is a "parent" where attribute combinations are exported as products and are considered as "children". |
+| \_AttributeCombinationId (int)                                      | The attribute combination ID if it's exported as a product.                                                                                  |
+| \_AttributeCombinationValues (IList\<ProductVariantAttributeValue>) | A list of all attribute values if an attribute combination is exported as a product.                                                         |
+| \_Brand (string)                                                    | Namen of the first assigned manufacturer.                                                                                                    |
 | \_CategoryName (string)                                             | The name of the first assigned category.                                                                                                     |
 | \_CategoryPath (string)                                             | The breadcrumb (path) of the first assigned category.                                                                                        |
-| \_AttributeCombinationValues (IList\<ProductVariantAttributeValue>) | A list of all attribute values if an attribute combination is exported as a product.                                                         |
-| \_UniqueId (string)                                                 | A unique ID consisting of product ID and attribute combination ID if an attribute combination is exported as a product.                      |
-| \_AttributeCombinationId (int)                                      | The attribute combination ID if it's exported as a product.                                                                                  |
-| \_Price (CalculatedPrice)                                           | The calculated product price.                                                                                                                |
 | \_DetailUrl (string)                                                | URL to product detail page.                                                                                                                  |
-|                                                                     |                                                                                                                                              |
-|                                                                     |                                                                                                                                              |
+| \_Price (CalculatedPrice)                                           | The calculated product price.                                                                                                                |
+| \_BasePriceInfo (string)                                            | Base price info of the product.                                                                                                              |
+| \_MainPictureUrl (string)                                           | Absolute URL of the product's main picture.                                                                                                  |
+| \_MainPictureRelativeUrl (string)                                   | Relative URL of the product's main picture.                                                                                                  |
+| \_FreeShippingThreshold (decimal?)                                  | Free shipping threshold from projection settings.                                                                                            |
+| \_ShippingCosts (decimal?)                                          | Shipping costs or the projected costs if the product price is greater than or equal to the free shipping threshold.                          |
+| \_ShippingTime (string)                                             | Delivery time name or projected time if none is specified for the product.                                                                   |
+| \_ProductTemplateViewPath (string)                                  | The view path of the assigned product template.                                                                                              |
 
+#### Customers
 
+| Property name (type)                 | Description                                                                                                                                      |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| \_FullName (string)                  | Full customer name.                                                                                                                              |
+| \_AvatarPictureUrl (string)          | Absolute URL of the avatar (if any).                                                                                                             |
+| \_RewardPointsBalance (int)          | Current reward points balance.                                                                                                                   |
+| \_HasNewsletterSubscription (bool)   | A value  indicating whether the customer is subscribed to the newsletter.                                                                        |
+| \_GenericAttributes (List\<dynamic>) | List of associated generic attributes. Only VatNumber and ImpersonatedCustomerId are exported. The dynamic items are of type `GenericAttribute`. |
 
-TODO: appendix with all extra data attached to DynamicEntity.
+#### MediaFile
+
+| Property name (type)        | Description                                                                                                 |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| \_FileName (string)         | Name of the file.                                                                                           |
+| \_RelativeUrl (string)      | Relative URL.                                                                                               |
+| \_ThumbImageUrl (string)    | Absolute URL of the thumbnail.                                                                              |
+| \_ImageUrl (string)         | Absolute URL of the image in the size shown on a detail page. If not available, then the thumbnail is used. |
+| \_FullSizeImageUrl (string) | Absolute URL of the full size image.                                                                        |
