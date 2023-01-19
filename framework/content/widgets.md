@@ -6,9 +6,9 @@ description: Inject content into zones
 
 ## Overview
 
-Widgets are blocks of HTML content that can be inserted into the [widget zones](widgets.md#zones) of a page. The ability to inject external content into existing pages is essential for modular applications like Smartstore. Common scenarios include:
+Widgets are pieces/snippets of HTML content that can be injected into the [widget zones](widgets.md#zones) of a page. The ability to inject external content into existing pages is essential for modular applications like Smartstore. Common scenarios include:
 
-* Inject additional JavaScript code into the HEAD section of your page.
+* Include additional JavaScript code into the HEAD section of your page.
 * Add more menu items to the navigation bar.
 * Implement a custom sidebar.
 * Add more content to:
@@ -16,17 +16,17 @@ Widgets are blocks of HTML content that can be inserted into the [widget zones](
   * product listings and details
   * the shopping cart
 
-Smartstore has a widget abstraction called [Widget](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/Widget.cs). This is because view components and partials are technically two different things, though they behave very similarly to widgets in ASP.NET Core. In order to use them in Smartstore, they need to be unified so that widgets can be fed from different content sources.
+Smartstore has a widget abstraction called [Widget](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/Widget.cs). This is because ASP.NET Core _view components_ and _partial views_ are technically two different things, though they behave very similarly to widgets in Smartstore. In order to use them in Smartstore, they need to be unified so that widgets can be fed from different content sources.
 
 * `HtmlWidget`: Renders any `IHTMLContent` instance
-* `ComponentWidget`: Invokes and renders a view component
-* `PartialViewWidget`: Invokes and renders a partial view
+* `ComponentWidget`: Invokes and renders an ASP.NET Core view component
+* `PartialViewWidget`: Invokes and renders an ASP.NET Core partial view
 
 {% hint style="info" %}
 By deriving from `Widget` and overriding the `InvokeAsync` method, you can implement a custom widget class. You can just return your content directly if the output is simple enough. Otherwise, implement the rendering portion as an [`IWidgetInvoker<TWidget>`](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/Services/IWidgetInvoker.cs). Then the `Widget.InvokeAsync` method should resolve and call the invoker.
 {% endhint %}
 
-In addition, the [`widget` tag helper](../../compose/theming/tag-helpers.md#widget-tag-helper) allows you to compose HTML content in any view template and insert it into any zone, much like the section directive in ASP.NET.
+In addition, the [widget](widgets.md#widget-tag-helper) Tag Helper allows you to compose HTML content in any view template and inject it into any zone, much like the _section_ directive in ASP.NET.
 
 ## Zones
 
