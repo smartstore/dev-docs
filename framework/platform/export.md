@@ -69,7 +69,7 @@ public class MyCompanyProductExportProvider : ExportProviderBase
 ```
 {% endcode %}
 
-Your provider is displayed in the provider select box when adding a new export profile.
+Your provider is displayed in the provider select box when adding a new export profile. For another example, see the [Google Merchant Center export provider](https://app.gitbook.com/s/xEglYk98G3GeRbq1BLlc/).
 
 It is recommended to give your provider a friendly localized name and description using string resources and the localization XML files of your module:
 
