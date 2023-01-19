@@ -8,10 +8,6 @@ description: Object mapping made easy
 
 Automatic object mapping is useful whenever you need to convert from type A to type B. Instead of manually assigning each member one at a time, an object mapper does this in a very generic way using reflection. For example, you can convert an entity type (such as `Product`) to a view model type (such as `ProductModel`) or vice-versa. Smartstore comes with object mapping utilities that are ultra-lightweight and fast.
 
-{% hint style="success" %}
-The best thing about it: It’s a one-liner!
-{% endhint %}
-
 | Utility                                                                                                            | Description                                | Call                               |
 | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------ | ---------------------------------- |
 | [MiniMapper](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/ComponentModel/MiniMapper.cs)       | Very simple object mapper                  | `MiniMapper.Map(From, To)`         |
@@ -70,7 +66,7 @@ If no mapper is found for a specific mapping operation, a generic mapper is used
 
 ### Implementing a mapper
 
-To add a mapper using `MapperFactory`, create a class that implements `IMapper<TFrom, TTo>`. There is nothing wrong with implementing multiple interfaces in a single class (e.g. `IMapper<News, NewsModel>` and `IMapper<NewsModel, News>`). There is no need to register the mapper in DI.
+To add a mapper using `MapperFactory`, create a class that implements `IMapper<TFrom, TTo>`. There is nothing wrong with having more than one interface implemented in a single class (e.g. `IMapper<News, NewsModel>` and `IMapper<NewsModel, News>`). There is no need for the mapper to be registered in DI.
 
 {% hint style="info" %}
 It is good practice to keep the model and mapper classes in the same file.
