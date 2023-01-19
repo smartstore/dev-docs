@@ -11,10 +11,6 @@
 
 The data exporter is an [IDataExporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IDataExporter.cs) implementation and the main core component of the export infrastructure. Its purpose is to provide the export data to [export providers](export.md#export-provider) in a high-performance way and to manage general tasks such as file management or data preview.
 
-### Events
-
-The [RowExportingEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Events/RowExportingEvent.cs) is fired before an entity is exported. It can be used, for example, to attach and export additional data.
-
 ## Export provider
 
 The provider implements [IExportProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/IExportProvider.cs) or it inherits from [ExportProviderBase](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Export/ExportProviderBase.cs). This documentation refers to a provider that inherits from `ExportProviderBase`.
