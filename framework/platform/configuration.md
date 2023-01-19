@@ -233,9 +233,9 @@ Refer to:
 
 Decorate the GET action with the `LoadSetting` attribute and the POST action with the `SaveSetting` attribute. These are not required, but they will save you from having to write tedious, repetitive code.
 
-The `LoadSetting` Attribute resolves all setting class action parameters automatically from Dependency Injection (in this case `BlogSettings`) and passes them on to the method. If one is specified, the `int storeScope` parameter will also be filled with the current store id.
+The `LoadSetting` attribute resolves all setting class action parameters automatically from Dependency Injection (in this case `BlogSettings`) and passes them on to the method. If one is specified, the `int storeScope` parameter will also be filled with the current store id.
 
-The `SaveSetting` Attribute does roughly the same, including:
+The `SaveSetting` attribute does roughly the same, including:
 
 * Patch model parameters according to the current store scope and omit properties that have not been overwritten.
 * Saving the setting instance to the database.
