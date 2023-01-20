@@ -6,20 +6,17 @@ description: Getting started to access the application database
 
 ## Overview
 
-* Every store is represented by a single database
-* Smartstore currently supports **Microsoft SQL Server** and **MySQL** database systems and uses the [Entity Framework Core (EF)](https://learn.microsoft.com/en-us/ef/core/) O/R-Mapper to access the store database:
-  * It enables .NET developers to work with a database using .NET objects.
-  * It eliminates the need for most of the data-access code that typically needs to be written.
-  * Because EF abstracts the way a database is accessed, we can write provider-agnostic data access code that just works, regardless of the underlying database provider
-* The main gateway to the application database is `SmartDbContext`:
-  * It represents the database **Unit of Work**: The context keeps track of everything you do during a request or transaction that can affect the database. When you're done, it figures out everything that needs to be done to alter the database as a result of your work.
-  * It defines properties and extensions methods that expose the **Repositories** to interact with particular database tables. Each table is represented by a special entity type that derives from the `BaseEntity` type.
+Every store is represented by a single database, even when using the multi-store option. Each table is represented by a special entity type derived from the `BaseEntity` type. Smartstore currently supports **Microsoft SQL Server** and **MySQL** database systems and uses the [Entity Framework Core (EF)](https://learn.microsoft.com/en-us/ef/core/) Object-relational-Mapper (O/R-Mapper) to access the store database.
+
+* It enables .NET developers to work with a database using .NET objects.
+* Most of the data access code that would normally be written can be omitted.
+* Write provider-agnostic data access code, regardless of the underlying database provider.
+
+The main gateway to the application database is the `SmartDbContext`, representing the **Unit of Work**. The context keeps track of everything you do during a request / transaction that affects the database. It figures out everything that needs to be done to alter the database as a result of your work. Properties and extension methods that expose **repositories** to interact with specific database tables are also defined by it.
 
 ## SmartDbContext
 
-* Is the main EF `DbContext` implementation for the application database
-* `SmartDbContext` is registered as a scoped dependency in DI container.
-* To resolve an instance of `SmartDbContext` just pass its type around as dependency:
+The main EF `DbContext` implementation for the application database is the `SmarDbContext`. It is registered as a scoped dependency in the DI container, and as such its type can easily be passed around as a dependency to get resolved.
 
 ```csharp
 public class MyService : IMyService
@@ -38,19 +35,24 @@ public class MyService : IMyService
 }
 ```
 
-* TIPP: It is good practice to name the data context parameter `db`**,** or `_db` if field. Simple and short!
+{% hint style="info" %}
+It is good practice to name the data context parameter `db`, or `_db` if used in a field. Keep it simple and short!
+{% endhint %}
 
 ## Pooled factory
 
-* Actually a `SmartDbContext` instance is not directly resolved from DI container, but from the pooled `IDbContextFactory<SmartDbContext>` which is configured and created on app startup. The factory (registered as singleton) is responsible for creating and pooling `SmartDbContext` instances.
-* An instance created by the factory is returned to the pool upon disposal, and not really disposed (but reset to initial state)
-* Every time a `SmartDbContext` instance is requested, the pool will return an already existing unleased instance instead of creating a new one - or will create a new instance if pool is depleted.
-* In high load scenarios pooling is very advantageous when it comes to performance because the factory prevents itself from instantiating too many objects.
-* Therefore the `SmartDbContext` DI registration is actually a delegate that leases an instance from this pool, and not from the DI container.
-* By default, the pool size is set to **1024** instances.
-  * NOTE: The default pool size can be altered via `appsettings.json` --> `DbContextPoolSize` setting.
-* In some situations it may be required to lease a context instance from the pool manually. For example, in singleton objects you cannot pass `SmartDbContext` as dependency because it is scoped (refer to [dependency-injection.md](dependency-injection.md "mention") to learn more about DI and scopes). Or you need granular control about your unit of work.
-* In this case you could do:
+A `SmartDbContext` instance is not directly resolved from DI container, but from the pooled `IDbContextFactory<SmartDbContext>` which is configured and created on app start-up. The factory, registered as a singleton, is responsible for creating and pooling the `SmartDbContext` instances.
+
+An instance created by the factory is returned to the pool upon disposal and is reset to its initial state. The pool returns an existing unused instance each time a `SmartDbContext` instance is requested, instead of creating a new one. In case of a depleted pool, a new instance will be created. Therefore, the `SmartDbContext` DI registration is a delegate that leases an instance from this pool, not from the DI container.
+
+Pooling is very beneficial for performance in high-load scenarios, because the factory prevents too many objects from being instantiated. By default, the pool size is set to **1024** instances and can be altered via `appsettings.json` using the `DbContextPoolSize` setting.
+
+In some situations, it may be necessary to manually lease a context instance from the pool. Two scenarios in which this occurs are:
+
+* You cannot pass the `SmartDbContext` as a dependency in singleton objects, because of its [scope](dependency-injection.md).
+* You need granular control of your unit of work.
+
+In these cases, you might want to do one of the following:
 
 ```csharp
 public class MySingletonService : IMySingletonService 
