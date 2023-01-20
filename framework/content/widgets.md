@@ -2,14 +2,14 @@
 description: Inject content into zones
 ---
 
-# 🥚 Widgets
+# 🐣 Widgets
 
 ## Overview
 
 Widgets are pieces/snippets of HTML content that can be injected into the [widget zones](widgets.md#zones) of a page. The ability to inject external content into existing pages is essential for modular applications like Smartstore. Common scenarios include:
 
-* Include additional JavaScript code into the HEAD section of your page.
-* Add more menu items to the navigation bar.
+* Place further JavaScript code into the HEAD section of your page.
+* Extend the navigation bar by adding menu items.
 * Implement a custom sidebar.
 * Add more content to:
   * data grids or pages
@@ -30,16 +30,30 @@ In addition, the [widget](widgets.md#widget-tag-helper) Tag Helper allows you to
 
 ## Zones
 
-* Zones allow you to define spots in any view file where widgets may inject custom markup
-* They are similar to ASP.NET _Sections_, but much more powerful
-* The Smartstore view templates contain hundreds of zones. See below for a complete list.
-* You can define zones in any Razor view with the `zone` Tag Helper.
+Zones allow you to define places in any view file where widgets should be able to inject custom markup. They are similar to ASP.NET Sections, but much more powerful.
+
+There are hundreds of zones in the Smartstore view templates. Here are some of the areas that these zones fall into:
+
+* Homepage header / footer
+* Navigation bar
+* Category details
+* Product details
+* Account menu
+* Search
+* Reviews
+* Checkout
+
+{% hint style="info" %}
+See below for a [complete list](widgets.md#list-of-all-core-widget-zone-names) of widget zone names.
+{% endhint %}
+
+You can define your own zones in any Razor view by using the [zone Tag Helper](../../compose/theming/tag-helpers.md#zone-tag-helper).
 
 ```cshtml
 <zone name="wishlist_items_top" />
 ```
 
-* Zones can also contain default content
+You can specify default content for zones and whether to replace it when a widget injects content.
 
 ```cshtml
 @* 
@@ -56,7 +70,7 @@ In addition, the [widget](widgets.md#widget-tag-helper) Tag Helper allows you to
 </zone>
 ```
 
-* Some HTML tags can also act like a zone: `div`, `span`, `p`, `section`, `aside`, `header`, `footer`
+There are other HTML tags that can function as zones: `div`, `span`, `p`, `section`, `aside`, `header`, `footer`.
 
 ```cshtml
 @* 
@@ -66,7 +80,7 @@ In addition, the [widget](widgets.md#widget-tag-helper) Tag Helper allows you to
 <div name="wishlist_items_top" remove-if-empty="true"></div>
 ```
 
-* Sometimes you may need to check whether a zone has content _before_ declaring the `zone` tag. This is the case if the `zone` tag is wrapped, and the wrapper HTML output should be suppressed if no content exists:
+Sometimes you may need to check whether a zone has content and suppress it if it has none, _before_ declaring the `zone` tag. There are two ways of doing this depending on what you need. You can wrap the `zone` tag in a conditional block and suppress the wrapper HTML output.
 
 ```aspnet
 @if (await Display.ZoneHasContentAsync("wishlist_items_top")) 
@@ -77,7 +91,7 @@ In addition, the [widget](widgets.md#widget-tag-helper) Tag Helper allows you to
 }
 ```
 
-Another way to suppress surrounding content: `sm-suppress-if-empty-zone` Tag Helper. This sort of pre-renders a given zone, and, if the zone content is empty or whitespace, suppresses the output of the parent tag:
+Or you can suppress surrounding content by using the `sm-suppress-if-empty-zone` Tag Helper. This will pre-render a given zone and suppress the output of the parent tag if the zone content is empty or consists only of whitespaces.
 
 ```aspnet
 <div sm-suppress-if-empty-zone="wishlist_items_top" class="some-wrapper">
@@ -89,7 +103,7 @@ Another way to suppress surrounding content: `sm-suppress-if-empty-zone` Tag Hel
 
 ## Widget Tag Helper
 
-* The `widget` Tag Helper allows you to compose HTML content in any view template and to inject it into any zone (much like the _section_ directive in ASP.NET)
+The `widget` Tag Helper allows you to compose HTML content in any view template and to inject it into any zone. It behaves much like the section directive in ASP.NET.
 
 ```cshtml
 @*
@@ -105,9 +119,9 @@ Another way to suppress surrounding content: `sm-suppress-if-empty-zone` Tag Hel
 </widget>
 ```
 
-* Some HTML tags can also act like widgets: `div`, `span`, `section`, `form`, `script`, `style`, `link`, `meta`, `ul`, `ol`, `svg`, `img`, `a` &#x20;
-* The attribute names must be prefixed with **sm-** in this case
-* Unlike `widget`,  a _widgetized_ HTML tag is moved completely to its designated zone, whereas `widget` moves the child content only (the root tag `widget` is removed from output).
+These HTML tags can also act as widgets: `div`, `span`, `section`, `form`, `script`, `style`, `link`, `meta`, `ul`, `ol`, `svg`, `img`, `a`. The widget attribute names must be prefixed with **sm-**, for example `sm-target-zone` and `sm-key`.
+
+The difference between a _widgetized_ HTML tag and a `widget` is, that it is moved completely to its designated zone, whereas `widget` only moves the child content, removing the `widget` root tag from the output.
 
 ```cshtml
 @*
@@ -132,8 +146,7 @@ Another way to suppress surrounding content: `sm-suppress-if-empty-zone` Tag Hel
 
 ## Widget class
 
-* Unifies view component, partial view and `IHtmlContent`
-* Before injecting or rendering a widget we have to create an instance:
+The [widget](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/Widget.cs) class unifies _view components_, _partial views_ and the `IHtmlContent` interface, so that widgets can be instantiated using each. Before injecting or rendering a widget an instance needs to be created.
 
 ```csharp
 // From view component: by type.
@@ -174,7 +187,7 @@ tag.InnerHtml.SetContent("Lorem ipsum");
 var widget = new HtmlWidget(tag);
 ```
 
-* The most common way to inject a widget into a zone is by using [IWidgetProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/Services/IWidgetProvider.cs). It is a request scoped registrar for widget instances.
+Using the [IWidgetProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/Services/IWidgetProvider.cs) Interface is the most common way to inject a widget into a zone. It’s a request scoped registrar for widget instances.
 
 ```csharp
 internal class CookieConsentFilter : IResultFilter
@@ -200,18 +213,37 @@ internal class CookieConsentFilter : IResultFilter
 }
 ```
 
-* The `RegisterWidget` method has also some overloads that let you pass an array of zone names or even a regular expression.
-* `HasWidgets` method lets you check whether a zone contains at least one injected widget
-* `GetWidgets` method lets you enumerate all injected widgets in a given zone
+| Method           | Description                                                                                                   |
+| ---------------- | ------------------------------------------------------------------------------------------------------------- |
+| `RegisterWidget` | Registers a custom widget for widget zones. The zones can also be passed as an array or a regular expression. |
+| `HasWidgets`     | Checks whether a zone contains at least one injected widget.                                                  |
+| `GetWidgets`     | Enumerates all injected widgets in a given zone.                                                              |
 
 ## Static widgets (aka widget providers)
 
-* The legacy way of handling widgets
-* [IActivatableWidget](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/IActivatableWidget.cs) interface makes an application feature provider a widget (see [modularity-and-providers.md](../platform/modularity-and-providers.md "mention") for more info about providers)
-* The provider class defines _what_ to render (`GetDisplayWidget` method), and _where_ to render it (`GetWidgetZones` method).
-* Example: [Google Analytics Module](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Modules/Smartstore.Google.Analytics/Module.cs) injects script content into the _head_ zone.
-* INFO: Static widgets require explicit activation by the user in the backend (**CMS / Widgets**), otherwise they are not rendered. But by decorating a non-widget provider with the [DependentWidgetsAttribute](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/DependentWidgetsAttribute.cs), you can specify widget providers, which should automatically get (de)activated when the provider gets (de)activated. This is useful in scenarios where separate widgets are responsible for the displaying of provider data.
+You can also handle widgets implementing a widget provider, although this is the legacy way of doing so. Implementing the [IActivatableWidget](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/IActivatableWidget.cs) interface turns an application feature provider into a widget (see [Modularity & Providers](../platform/modularity-and-providers.md) for more information about providers).
+
+The provider class defines what to render (`GetDisplayWidget`), and where to render it (`GetWidgetZones`). Here's an excerpt from the [Google Analytics Module](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Modules/Smartstore.Google.Analytics/Module.cs) that injects script content into the head zone using those methods.
+
+```csharp
+internal class Module : ModuleBase, IConfigurable, IActivatableWidget, ICookiePublisher
+{
+    // Other code is omitted for brevity.
+
+    public Widget GetDisplayWidget(string widgetZone, object model, int storeId)
+        => new ComponentWidget(typeof(GoogleAnalyticsViewComponent), model);
+
+    public string[] GetWidgetZones()
+        => new[] { "head" };
+
+    // Other code is omitted for brevity.
+}
+```
+
+{% hint style="info" %}
+Static widgets require explicit activation by the user in the backend (**CMS / Widgets**), otherwise they will not be rendered. However, by decorating a non-widget provider with the [DependentWidgetsAttribute](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/DependentWidgetsAttribute.cs), you can specify widget providers, that should be automatically (de)activated when the provider is. This is useful in scenarios where separate widgets are responsible for the displaying of provider data.
+{% endhint %}
 
 ## List of all core widget zone names
 
-A list of common zone names are recorded in the file _App\_Data/widgetzones.json_.&#x20;
+A list of common zone names are recorded in the file _App\_Data/widgetzones.json_.

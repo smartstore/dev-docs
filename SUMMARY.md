@@ -42,7 +42,7 @@
   * [Blocks (Page Builder)](framework/content/page-builder-and-blocks.md)
   * [SEO](framework/content/seo.md)
   * [Topics & Pages](framework/content/topics-and-pages.md)
-  * [🥚 Widgets](framework/content/widgets.md)
+  * [🐣 Widgets](framework/content/widgets.md)
 * [Commerce](framework/commerce/README.md)
   * [Cart](framework/commerce/cart.md)
   * [Catalog](framework/commerce/catalog.md)
