@@ -30,7 +30,7 @@ In addition, the [widget](widgets.md#widget-tag-helper) Tag Helper allows you to
 
 ## Zones
 
-Zones allow you to define places in any view file where widgets should be able to inject custom markup. They are similar to ASP.NET Sections, but much more powerful.
+Zones allow you to define places in any view file where widgets should be able to inject custom markup. They are similar to ASP.NET _Sections_, but much more powerful.
 
 There are hundreds of zones in the Smartstore view templates. Here are some of the areas that these zones fall into:
 
@@ -91,7 +91,7 @@ Sometimes you may need to check whether a zone has content and suppress it if it
 }
 ```
 
-Or you can suppress surrounding content by using the `sm-suppress-if-empty-zone` Tag Helper. This will pre-render a given zone and suppress the output of the parent tag if the zone content is empty or consists only of whitespaces.
+Or you can suppress surrounding content by using the `sm-suppress-if-empty-zone` Tag Helper. This will pre-render a given zone and suppress the output of the parent tag if the zone content is empty or consists only of whitespace.
 
 ```aspnet
 <div sm-suppress-if-empty-zone="wishlist_items_top" class="some-wrapper">
@@ -103,7 +103,7 @@ Or you can suppress surrounding content by using the `sm-suppress-if-empty-zone`
 
 ## Widget Tag Helper
 
-The `widget` Tag Helper allows you to compose HTML content in any view template and to inject it into any zone. It behaves much like the section directive in ASP.NET.
+The `widget` Tag Helper allows you to compose HTML content in any view template and to inject it into any zone. It behaves much like the _section_ directive in ASP.NET.
 
 ```cshtml
 @*
@@ -199,14 +199,14 @@ internal class CookieConsentFilter : IResultFilter
         _widgetProvider = widgetProvider;
     }
     
-    public void OnResultExecuting(ResultExecutingContextFilterContext)
+    public void OnResultExecuting(ResultExecutingContext context)
     {
         _widgetProvider.RegisterWidget(
             "end", // The zone name to render widget into
             new ComponentWidget("CookieManager", null));
     }
     
-    public void OnResultExecuted(ResultExecutedContext filterContext)
+    public void OnResultExecuted(ResultExecutedContext context)
     {
         // Too late for widgets here: page is rendered already.
     }
@@ -231,7 +231,7 @@ internal class Module : ModuleBase, IConfigurable, IActivatableWidget, ICookiePu
     // Other code is omitted for brevity.
 
     public Widget GetDisplayWidget(string widgetZone, object model, int storeId)
-        => new ComponentWidget(typeof(GoogleAnalyticsViewComponent), model);
+        => new ComponentWidget<GoogleAnalyticsViewComponent>(model);
 
     public string[] GetWidgetZones()
         => new[] { "head" };
@@ -241,7 +241,7 @@ internal class Module : ModuleBase, IConfigurable, IActivatableWidget, ICookiePu
 ```
 
 {% hint style="info" %}
-Static widgets require explicit activation by the user in the backend (**CMS / Widgets**), otherwise they will not be rendered. However, by decorating a non-widget provider with the [DependentWidgetsAttribute](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/DependentWidgetsAttribute.cs), you can specify widget providers, that should be automatically (de)activated when the provider is. This is useful in scenarios where separate widgets are responsible for the displaying of provider data.
+Static widgets need to be explicitly enabled by the user in the backend (**CMS / Widgets**), otherwise they will not be rendered. However, by decorating a non-widget provider with the [DependentWidgetsAttribute](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Widgets/DependentWidgetsAttribute.cs), you can specify widget providers, that should be automatically (de)activated when the provider is. This is useful in scenarios where separate widgets are responsible for displaying provider data.
 {% endhint %}
 
 ## List of all core widget zone names
