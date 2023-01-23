@@ -1,2 +1,2 @@
-# 🥚 Data modelling
+# Data modelling
 

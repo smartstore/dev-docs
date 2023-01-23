@@ -27,7 +27,7 @@
     * [🐣 Model mapping](framework/platform/data-modelling/model-mapping.md)
   * [Modularity & Providers](framework/platform/modularity-and-providers.md)
   * [Output Cache](framework/platform/output-cache.md)
-  * [🥚 Profiling](framework/platform/diagnostics.md)
+  * [🐣 Profiling](framework/platform/diagnostics.md)
   * [Validation](framework/platform/validation.md)
   * [✔ Scheduling](framework/platform/scheduling.md)
   * [Search](framework/platform/search.md)
