@@ -2,29 +2,29 @@
 
 ## Overview
 
-Cache is used to store application data for later use. This allows multiple processes to use the same data with a single call. This is very important for better performance, because fewer calls to the application means better speed.
+A cache is used to store application data for later use. This allows multiple processes to use the same data with a single call. This is very important for better performance, because fewer calls to the application means better speed.
 
 ### Static cache
 
-The static or singleton cache is used for persistent objects that should live as long as the application is running or for a specified length of time. It can be utilized with the [ICacheManager](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheManager.cs), which is a composite multi-level cache manager. Although it uses `IMemoryCache` under the hood by default, it provides a unified API for both memory and distributed cache.
+The static or singleton cache is used for persistent objects that should live as long as the application runs or for a specified period of time. It can be utilized with the [ICacheManager](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheManager.cs), which is a composite multi-level cache manager. Although it uses `IMemoryCache` under the hood by default, it provides a unified API for both memory and distributed cache.
 
-If a distributed cache provider (such as [REDIS](https://redis.io/)) is installed, it is accessed in the same way as the memory cache. This is different from how _.NET Core_ handles cache access because it exposes two different APIs: `IMemoryCache` and `IDistributedCache`. Smartstore unifies the two, to take advantage of the multi-level character (see below).
+If a distributed cache provider (such as [REDIS](https://redis.io/)) is installed, it is accessed in the same way as the memory cache. This is different from how _.NET Core_ handles cache access because it exposes two different APIs: `IMemoryCache` and `IDistributedCache`. Smartstore unifies the two to take advantage of the multi-level character (see below).
 
 ### Request cache
 
-The request cache is used to store items that you want to be removed when the request is complete. To operate it, use [IRequestCache](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/IRequestCache.cs), which accesses the `HttpContext.Items` dictionary under the hood. If no `HttpContext` exists, a local dictionary is created instead.
+The request cache is used to store items that you want to be removed when the request is complete. To access the request cache, use [IRequestCache](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/IRequestCache.cs), which accesses the `HttpContext.Items` dictionary under the hood. If no `HttpContext` exists, a local dictionary is created instead.
 
 ## Application cache
 
 ### Multi-level cache
 
-`ICacheManager` is a container for multiple cache stores represented by [ICacheStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheStore.cs). Each [CRUD](https://en.wikipedia.org/wiki/Create,\_read,\_update\_and\_delete) method traverses all registered stores to find, update or delete items. Memory stores are prioritized, distributed stores follow. The default store used by `ICacheManager` is [MemoryCacheStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/MemoryCacheStore.cs), but modules can provide new stores, such as the REDIS module which provides the `RedisCacheStore`.
+`ICacheManager` is a container for multiple cache stores represented by [ICacheStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheStore.cs). Each CRUD method traverses all registered stores to find, update or delete items. Memory stores are prioritized, distributed stores follow. The default store used by `ICacheManager` is [MemoryCacheStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/MemoryCacheStore.cs), but modules can provide new stores, such as the REDIS module which provides the `RedisCacheStore`.
 
 The multi-level cache design guarantees:
 
 * A single API for both memory and distributed store.
-* **Performance**: A memory store is _MUCH_ faster than a distributed store. The `ICacheManager` will always query memory stores first, and will only fall back to distributed stores, if an item does not exist in memory. After retrieving items from a distributed store, the item is also placed in a memory store, so subsequent reads will return the object from memory.
-* The `IMessageBus` is responsible for synchronizing all memory stores across web-farm nodes. If _server A_ causes an item to be deleted from the distributed store, a notification is sent to _server B_ to delete the item from its memory store as well.
+* **Performance**: A memory store is _MUCH_ faster than a distributed store. The `ICacheManager` will always query memory stores first, and will only fall back to distributed stores if an item does not exist in memory. After retrieving items from a distributed store, the item is also placed in the memory store, so subsequent reads will return the object from memory.
+* The `IMessageBus` is responsible for synchronizing all memory stores across web-farm nodes. For example, if server **A** causes an item to be deleted from the distributed store, a notification is sent to server **B** to delete the item from its memory store as well.
 
 {% hint style="warning" %}
 Because of the unified API, you must be careful with object types. Your cached objects must be serializable via JSON (_Newtonsoft_, **not** _System.Text.Json_). You must make sure that your object:
@@ -33,10 +33,10 @@ Because of the unified API, you must be careful with object types. Your cached o
 * Does not have circular references
 * Does not produce a large object graph
 * Does not contain property types that are not serializable
-* Is **not** an entity type deriving from `BaseEntity`. <mark style="color:red;">**Never do that, it is dangerous!**</mark>
+* Is **not** an entity type deriving from `BaseEntity`. <mark style="color:red;">Never do that, really... it is dangerous 😀</mark>
 {% endhint %}
 
-To resolve the primary memory or distributed store explicitly, without relying on the composite multi-level manager, use the [ICacheFactory](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheFactory.cs). There are two methods that resolve an instance of `ICacheManager`.
+To resolve the primary memory or distributed store explicitly, without relying on the composite multi-level manager, use the [ICacheFactory](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheFactory.cs) service. There are two methods that resolve an instance of `ICacheManager`.
 
 | Method                  | Description                                                                                                                                                       |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -116,7 +116,7 @@ Some cache methods support [glob patterns](https://en.wikipedia.org/wiki/Glob\_\
 
 ### Expiration policy
 
-Every item stored in cache has, by default, an infinite lifetime. To limit it you can configure an _absolute_ or _sliding_ expiration per item.
+Every item stored in cache has infinite lifetime by default. To limit it you can configure an _absolute_ or _sliding_ expiration per item.
 
 ```csharp
 ICacheManager cache;
