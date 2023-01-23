@@ -209,4 +209,8 @@ internal class Module : ModuleBase
 
 HINT: if you import product images you must call await `ProductPictureHelper.FixProductMainPictureIds(_db, DateTime.UtcNow)` once at the end of your import. It updates `Product.MainPictureId` if an image has been imported as the new main image of a product. `Product.MainPictureId` is for performance to avoid extra database roundtrips.
 
-Use the [MinimalTaskViewComponent](scheduling.md#system-tasks) if you want to execute your importer from a view of your module (e.g. a configuration page).
+Use the `MinimalTaskViewComponent` if you want to execute your importer from a view of your module (e.g. a configuration page). It renders a link to the profile and task, an info about last execution and a button to start the import:
+
+```csharp
+@await Component.InvokeAsync("MinimalTask", new { taskId = Model.MyImporterTaskId, returnUrl = Context.Request.RawUrl() })
+```

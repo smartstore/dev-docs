@@ -1,50 +1,55 @@
-# 🥚 Caching
+# 🐣 Caching
 
 ## Overview
 
-* Cache is used to store application data to speed things up
-* Crucial for better performance
-* Static/Singleton cache is used for durable objects that should live as long as the app lives (or for a specified custom duration)
-* Request cache is used for objects that should be removed when the request ends
-* Static cache
-  * [ICacheManager](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheManager.cs): a composite multi-level cache manager
-  * By default, accesses `IMemoryCache` under the hood
-  * But provides a unified API for both memory and distributed cache
-  * If a distributed cache provider is installed (like REDIS), it is accessed in the same way as the memory cache
-    * This is different from how .NET Core handles cache access, because it exposes two different APIs: `IMemoryCache` and `IDistributedCache`.
-    * But Smartstore unifies the API because of the multi-level character (read further below)
-* Request cache
-  * [IRequestCache](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/IRequestCache.cs): By default, accesses `HttpContext.Items` dictionary under the hood.
-  * If no `HttpContext` is present, a local dictionary is created instead.
+Cache is used to store application data for later use. This allows multiple processes to use the same data with a single call. This is very important for better performance, because fewer calls to the application means better speed.
+
+### Static cache
+
+The static or singleton cache is used for persistent objects that should live as long as the application is running or for a specified length of time. It can be utilized with the [ICacheManager](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheManager.cs), which is a composite multi-level cache manager. Although it uses `IMemoryCache` under the hood by default, it provides a unified API for both memory and distributed cache.
+
+If a distributed cache provider (such as [REDIS](https://redis.io/)) is installed, it is accessed in the same way as the memory cache. This is different from how _.NET Core_ handles cache access because it exposes two different APIs: `IMemoryCache` and `IDistributedCache`. Smartstore unifies the two, to take advantage of the multi-level character (see below).
+
+### Request cache
+
+The request cache is used to store items that you want to be removed when the request is complete. To operate it, use [IRequestCache](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/IRequestCache.cs), which accesses the `HttpContext.Items` dictionary under the hood. If no `HttpContext` exists, a local dictionary is created instead.
 
 ## Application cache
 
 ### Multi-level cache
 
-* `ICacheManager` is a container for multiple cache stores represented by [ICacheStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheStore.cs).
-* Every CRUD method traverses all registered stores to find, update or delete items (memory stores come first, then distributed).
-* By default, only one store exists: [MemoryCacheStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/MemoryCacheStore.cs).
-* But modules may provide new stores. Like the REDIS module which provides the `RedisCacheStore`.
-* The multi-level cache design guarantees:
-  * Unified API for both memory and distributed store
-  * **Performance**! A memory store is MUCH faster than a distributed store. `ICacheManager` will always query memory store first and will only fallback to distributed store if an item does not exist in memory. After retrieval from distributed store, the item is also put in memory store, so subsequent reads return the object which is in memory.
-  * `IMessageBus` is responsible for syncing all memory stores across web-farm nodes:
-    * If server B caused the deletion of an item in the distributed store, a notification will be sent to server A to delete the item from its memory store as well.
-* WARN: Because of the unified API, you must be careful when it comes to object types. Your cached objects must be serializable by JSON (_Newtonsoft_, not _System.Text.Json_). You must ensure that your object:
-  * Has a public parameterless constructor
-  * Does not have circular references
-  * Does not produce a large object graph
-  * Does not contain property types that are not serializable
-  * Is **not** an entity type deriving from `BaseEntity`. Never do that, really... it's dangerous.
-* To resolve the primary memory or distributed store explicitly (without relying on the composite multi-level manager): use [ICacheFactory](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheFactory.cs):&#x20;
-  * `GetMemoryCache()`: resolves an `ICacheManager` instance that only interacts with the current `IMemoryCacheStore` implementation
-  * `GetDistributedCache()`: resolves an `ICacheManager` instance that only interacts with the current `IDistributedCacheStore` implementation. If no distributed store exists, a memory store manager will be returned instead.
+`ICacheManager` is a container for multiple cache stores represented by [ICacheStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheStore.cs). Each [CRUD](https://en.wikipedia.org/wiki/Create,\_read,\_update\_and\_delete) method traverses all registered stores to find, update or delete items. Memory stores are prioritized, distributed stores follow. The default store used by `ICacheManager` is [MemoryCacheStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/MemoryCacheStore.cs), but modules can provide new stores, such as the REDIS module which provides the `RedisCacheStore`.
+
+The multi-level cache design guarantees:
+
+* A single API for both memory and distributed store.
+* **Performance**: A memory store is _MUCH_ faster than a distributed store. The `ICacheManager` will always query memory stores first, and will only fall back to distributed stores, if an item does not exist in memory. After retrieving items from a distributed store, the item is also placed in a memory store, so subsequent reads will return the object from memory.
+* The `IMessageBus` is responsible for synchronizing all memory stores across web-farm nodes. If _server A_ causes an item to be deleted from the distributed store, a notification is sent to _server B_ to delete the item from its memory store as well.
+
+{% hint style="warning" %}
+Because of the unified API, you must be careful with object types. Your cached objects must be serializable via JSON (_Newtonsoft_, **not** _System.Text.Json_). You must make sure that your object:
+
+* Has a public constructor without parameters
+* Does not have circular references
+* Does not produce a large object graph
+* Does not contain property types that are not serializable
+* Is **not** an entity type deriving from `BaseEntity`. <mark style="color:red;">**Never do that, it is dangerous!**</mark>
+{% endhint %}
+
+To resolve the primary memory or distributed store explicitly, without relying on the composite multi-level manager, use the [ICacheFactory](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheFactory.cs). There are two methods that resolve an instance of `ICacheManager`.
+
+| Method                  | Description                                                                                                                                                       |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GetMemoryCache()`      | The instance only interacts with the current implementation of `IMemoryCacheStore`.                                                                               |
+| `GetDistributedCache()` | The instance only interacts with the current `IDistributedCacheStore` implementation. If no distributed store exists, a memory store manager is returned instead. |
 
 #### Implementing a custom cache store
 
-* To implement a custom cache store create a class that implements [ICacheStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheStore.cs).
-* Follow the contract and implement all members
-* Register your store impl in service container:
+If you want to implement a custom cache store, you must do the following:
+
+1. Create a class that implements [ICacheStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheStore.cs).
+2. Follow the interface contract and implement all members.
+3. Register your store implementation in a service container.
 
 ```csharp
 internal class Startup : StarterBase
@@ -61,8 +66,7 @@ internal class Startup : StarterBase
 
 ### Accessing the cache
 
-* Accessing the static application cache in Smartstore is fairly easy.
-* Just get yourself the `ICacheManager` dependency (which is a singleton):
+Accessing the static application cache in Smartstore is simple. All you need to do is get the singleton `ICacheManager` dependency.
 
 ```csharp
 ICacheManager cache;
@@ -79,36 +83,40 @@ return cache.GetAsync("MyCacheItemKey", async options =>
 });
 ```
 
-* All calls are thread-safe and may be used concurrently from multiple threads.
-* `ICacheManager` provides several methods for reading, adding or updating cache items, as described in the following table.
+All calls are thread-safe and can be used concurrently from multiple threads. As described in the following table, `ICacheManager` provides several methods to read, add or update cache items.
 
-| To do this                                                                                                        | Use this method                                    |
-| ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| Get an item if it exists                                                                                          | `Get<T>(string, bool)`                             |
-| Try to get an item if it exists                                                                                   | `TryGet(string, out T)`                            |
-| Get an item, adding it by calling the passed acquirer function if doesn't exist                                   | `Get<T>(string, Func<CacheEntryOptions, T>, bool)` |
-| Get or create a provider specific hashset. If key does not exist, create a new set and put to cache automatically | `GetHashSet(string, Func<IEnumerable>)`            |
-| Add an item, or update if it exists                                                                               | `Put(string, object, CacheEntryOptions)`           |
-| Remove an item it if exists                                                                                       | `Remove(string)`                                   |
-| Remove many items by key pattern                                                                                  | `RemoveByPattern(string)`                          |
-| Enumerate all existing item keys by optionally passing a key matching glob pattern                                | `Keys(string)`                                     |
-| Set an item's absolute expiration                                                                                 | `SetTimeToLive(string, TimeSpan?)`                 |
-| Get a lock object for the given key used to synchronize access to the underlying cache storage                    | `GetLock(string)`                                  |
+| To do this                                                                                                          | Use this method                                    |
+| ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| Get an item if it exists.                                                                                           | `Get<T>(string, bool)`                             |
+| Try to get an item if it exists.                                                                                    | `TryGet(string, out T)`                            |
+| Get an item, and, if it doesn't exist, add it (by calling the acquirer function `Func<CacheEntryOptions, T>`).      | `Get<T>(string, Func<CacheEntryOptions, T>, bool)` |
+| Get or create a provider-specific hash set. If the key does not exist, create a new set and cache it automatically. | `GetHashSet(string, Func<IEnumerable>)`            |
+| Add or update an item if it already exists.                                                                         | `Put(string, object, CacheEntryOptions)`           |
+| Remove an item if it exists.                                                                                        | `Remove(string)`                                   |
+| Remove many items using a key pattern.                                                                              | `RemoveByPattern(string)`                          |
+| Enumerate all existing item keys. Optionally pass a glob pattern for filtering.                                     | `Keys(string)`                                     |
+| Set the absolute expiration date of an item.                                                                        | `SetTimeToLive(string, TimeSpan?)`                 |
+| Get a lock object for a specified key, which is used to synchronize access to the underlying cache memory.          | `GetLock(string)`                                  |
 
-* NOTE: Nearly all cache access methods have async overloads.
+{% hint style="info" %}
+Almost all cache access methods have asynchronous overloads.
+{% endhint %}
 
 ### Glob patterns
 
-* Some cache methods support glob patterns in order to match keys. Supported patterns are:
-  * **h?llo** matches _hello_, hallo and _hxllo_
-  * **h\*llo** matches _hllo_ and _heeeello_
-  * **h\[ae]llo** matches _hello_ and _hallo_, but not _hillo_
-  * **h\[^e]llo** matches _hallo_, _hbllo_, ... but not _hello_
-  * **h\[a-b]llo** matches _hallo_ and _hbllo_
+Some cache methods support [glob patterns](https://en.wikipedia.org/wiki/Glob\_\(programming\)) in order to match keys. Smartstore supports the following patterns:
+
+| Wildcard   | Description                                         | Example        | Matches                                  | Doesn’t match               |
+| ---------- | --------------------------------------------------- | -------------- | ---------------------------------------- | --------------------------- |
+| **?**      | Matches any single character.                       | h**?**llo      | _h**e**llo_, _h**a**llo_ or _h**x**llo_  | _h**ao**llo_ or _hllo_      |
+| **\***     | Matches any string of characters.                   | h**\***llo     | _hllo_ or _h**eeao**llo_                 | _hlo_ or _llo_              |
+| **\[abc]** | Matches any bracketed character.                    | h**\[ae]**llo  | _h**e**llo_ and _h**a**llo_              | _h**i**llo_ or _h**ae**llo_ |
+| **\[^a]**  | Matches any non-bracketed character.                | h**\[^e]**llo  | _h**a**llo_ and _h**b**llo_              | _h**e**llo_                 |
+| **\[a-z]** | Matches any character in the given character range. | h**\[a-c]**llo | _h**a**llo_, _h**b**llo_ and _h**c**llo_ | _h**e**llo_ or _h**i**llo_  |
 
 ### Expiration policy
 
-* By default, every item put to cache has infinite lifetime. To limit the lifetime you can configure _absolute_ or _sliding_ expiration per item.
+Every item stored in cache has, by default, an infinite lifetime. To limit it you can configure an _absolute_ or _sliding_ expiration per item.
 
 ```csharp
 ICacheManager cache;
@@ -133,7 +141,7 @@ cache.SetTimeToLive(TimeSpan.FromHours(2));
 
 ### Item dependencies
 
-* By default, every item that is removed from cache automatically invalidates items from parent closures. Example:
+By default, every removed cache item automatically invalidates items from parent closures.
 
 ```csharp
 ICacheManager cache;
@@ -151,8 +159,7 @@ return cache.Get("A", () =>
 });
 ```
 
-* To disable this hierarchy dependency chain, pass `independent` parameter to the `Get` method and set its value to `true.` In this case no attempt will be made to invalidate parent cache entries.
-* To specify custom dependency keys for an item, use `CacheEntryOptions.DependsOn(string[])` method:
+To disable this hierarchy dependency chain, pass the _independent_ parameter to the `Get` method and set its value to `true`. No attempt will be made to invalidate the parent cache entries. Specify custom dependency keys for an item, using the `CacheEntryOptions.DependsOn(string[])` method:
 
 ```csharp
 ICacheManager cache;
@@ -171,7 +178,7 @@ return cache.Get("A", o =>
 
 ## Request cache
 
-* Just get yourself the `IRequestCache` dependency (which is request scoped):
+Accessing the application’s request cache in Smartstore works the same way. Just get the `IRequestCache` dependency (request scoped).
 
 ```csharp
 IRequestCache requestCache;
