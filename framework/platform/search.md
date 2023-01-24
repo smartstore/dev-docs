@@ -34,6 +34,54 @@ HINT: these settings can have a huge impact on the performance of a search. For 
 
 The `ICatalogSearchService.PrepareQuery` method lets you build or modify your own catalog search query using LINQ.
 
+`CatalogSearchQueryFactory` has a virtual method `OnConvertedAsync` which can be used to display more facet groups in frontend:
+
+```csharp
+public class MyCatalogSearchQueryFactory : CatalogSearchQueryFactory
+{
+    public MyCatalogSearchQueryFactory(
+        IHttpContextAccessor httpContextAccessor,
+        ICommonServices services,
+        ICatalogSearchQueryAliasMapper catalogSearchQueryAliasMapper,
+        CatalogSettings catalogSettings,
+        SearchSettings searchSettings) : base(
+            httpContextAccessor,
+            services,
+            catalogSearchQueryAliasMapper,
+            catalogSettings,
+            searchSettings)
+    {
+    }
+
+    protected override Task OnConvertedAsync(CatalogSearchQuery query, string origin)
+    {
+        if (!query.IsInstantSearch())
+        {
+            var descriptor = new FacetDescriptor("mycustomid")
+            {
+                IsMultiSelect = true,
+                DisplayOrder = 101,
+                OrderBy = FacetSorting.DisplayOrder,
+                MinHitCount = _searchSettings.FilterMinHitCount,
+                MaxChoicesCount = _searchSettings.FilterMaxChoicesCount
+            };
+
+            // Get your facet values (like entity IDs) from query string
+            // and call query.WithFilter to apply them.
+            // Do not forget to add selected values to the descriptor:
+            // descriptor.AddValue(new FacetValue(valueId, IndexTypeCode.Int32)
+            // {
+            //   IsSelected = true
+            // });
+
+            query.WithFacet(descriptor);
+        }
+
+        return Task.CompletedTask;
+    }
+}
+```
+
 ## Filter
 
 Filters are needed to limit search results, e.g. to display only products of a certain category. They are determined by `CatalogSearchQueryFactory` via the query string and passed on to the search using of `CatalogSearchQuery`. If you want to search programmatically, you can create a `CatalogSearchQuery` instance and define it yourself using fluent notation:
@@ -62,6 +110,58 @@ Facets are provided through `ISearchEngine.GetFacetMapAsync` and `ISearchProvide
 
 The first step is to iterate through `ISearchQuery.FacetDescriptors` to get the actual the requested facets. Next, for a particular descriptor, its metadata is loaded including all values to be faceted (e.g. brand names). Usually, all values are then iteratively applied to the bitset of the current search result via a bitwise and-operation to get the number of set bits (which is the number of search hits after applying a certain filter). This process is of course dependent on the search library.
 
+TIP: faceting can take a while despite all the performance optimisation, because depending on the amount of data, a lot of bit operations have to be performed. If no facets are needed for a search, `SearchQuery.BuildFacetMap(false)` should be called so that none are obtained.
+
+The presentation of facets in frontend can be changed via [IFacetTemplateSelector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Facets/IFacetTemplateSelector.cs). The interface requests a template widget for a `FacetGroup`. In the following example, a view component is used to create a custom representation for the template types `FacetTemplateHint.NumericRange` and `FacetTemplateHint.Custom` (e.g. colour or picture boxes).
+
+```csharp
+public class MyCustomFacetGroupViewComponent : SmartViewComponent
+{
+    public IViewComponentResult Invoke(FacetGroup facetGroup, string templateName)
+    {
+        Guard.NotNull(facetGroup, nameof(facetGroup));
+        Guard.NotEmpty(templateName, nameof(templateName));
+
+        // TODO: add views Box.cshtml and NumericRange.cshtml with custom rendering.
+        return View(templateName, facetGroup);
+    }
+}
+
+public class MyFacetTemplateSelector : IFacetTemplateSelector
+{
+    public int Ordinal => -200;
+
+    public Widget GetTemplateWidget(FacetGroup facetGroup)
+    {
+        if (facetGroup.Kind == FacetGroupKind.Attribute || facetGroup.Kind == FacetGroupKind.Variant)
+        {
+            string templateName;
+            switch (facetGroup.TemplateHint)
+            {
+                case FacetTemplateHint.Custom:
+                case FacetTemplateHint.NumericRange:
+                    templateName = facetGroup.TemplateHint == FacetTemplateHint.Custom ? "Box" : "NumericRange";
+
+                    return new ComponentWidget("MyCustomFacetGroup", Module.SystemName, new { facetGroup, templateName })
+                    {
+                        Order = facetGroup.DisplayOrder
+                    };
+
+                default:
+                    templateName = facetGroup.IsMultiSelect ? "MultiSelect" : "SingleSelect";
+
+                    return new ComponentWidget("FacetGroup", new { facetGroup, templateName })
+                    {
+                        Order = facetGroup.DisplayOrder
+                    };
+            }
+        }
+
+        return null;
+    }
+}
+```
+
 ## Indexing
 
 Search libraries like Lucene.Net determine search hits via the file system instead of accessing databases directly. These files are called index or search index. Smartstore provides a whole range of interfaces for creating and managing search indexes and a _MegaSearch_ module which performs the actual indexing. Essentially, the process is as follows.
@@ -70,7 +170,9 @@ An [IIndexingService](https://github.com/smartstore/Smartstore/blob/main/src/Sma
 
 During an index update, the records to be updated are determined with the help of [IIndexBacklogService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IIndexBacklogService.cs) and [IndexBacklogItem](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IndexBacklogItem.cs). Backlog items are previously determined and saved to the database via a hook, e.g. when a product has been modified.
 
-The collector fires an [IndexSegmentProcessedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexSegmentProcessedEvent.cs) each time after it has processed a segment of entities. The indexing service fires an [IndexingCompletedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexingCompletedEvent.cs) at the end of indexing.
+The collector fires an [IndexSegmentProcessedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexSegmentProcessedEvent.cs) each time after it has processed a segment of entities but before the collected data is written to the index. It can be used to emit additional data to the search index.
+
+The indexing service fires an [IndexingCompletedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexingCompletedEvent.cs) at the end of indexing.
 
 ## Implementing a custom search
 
