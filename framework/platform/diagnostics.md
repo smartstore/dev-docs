@@ -2,7 +2,7 @@
 description: Profiling your shop’s performance
 ---
 
-# 🐣 Profiling
+# ✔ Profiling
 
 ## Overview
 
@@ -22,7 +22,7 @@ The default setup of MiniProfiler is to display a widget in the top left corner 
 
 The MiniProfiler is part of the _Developer Tools_ module, which is installed and enabled by default.
 
-To activate profiling and display the widget, go to **Plugins / Developer Tools** in the admin area and check the **Enable MiniProfiler** checkbox. Only users with _Administrator role_ can see the profiler widget.
+To activate profiling and display the widget, go to **Plugins / Developer Tools** in the admin area and check the **Enable MiniProfiler** checkbox. Only users with **Administrator role** can see the profiler widget.
 
 {% hint style="info" %}
 For more info about the MiniProfiler library, see [https://miniprofiler.com/dotnet/](https://miniprofiler.com/dotnet/)
@@ -32,16 +32,16 @@ For more info about the MiniProfiler library, see [https://miniprofiler.com/dotn
 
 By default, the profiler ignores the following path prefixes:
 
-1. /admin/
-2. /bundle/
-3. /css/
-4. /images/
-5. /js/
-6. /media/
-7. /taskscheduler/
-8. /themes/
+1. **/admin/**
+2. **/bundle/**
+3. **/css/**
+4. **/images/**
+5. **/js/**
+6. **/media/**
+7. **/taskscheduler/**
+8. **/themes/**
 
-To customize this ignore list, simply edit **MiniProfiler ignored paths** and separate each entry with a comma. You can profile backend pages by removing the `/admin/` entry and saving the setting.
+To customize this ignore list, simply edit **MiniProfiler ignored paths** and separate each entry with a comma. You can profile backend pages by removing the **/admin/** entry and saving the setting.
 
 ## Custom timings
 
