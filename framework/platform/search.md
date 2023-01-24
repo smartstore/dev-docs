@@ -108,9 +108,11 @@ Facets are used to refine search results to allow users to narrow a large set of
 
 Facets are provided through `ISearchEngine.GetFacetMapAsync` and `ISearchProvider.GetFacetMap` but in practice a number of further steps are needed to make faceting work. [IFacetMetadataStorage](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Facets/IFacetMetadataStorage.cs) is used to load facet metadata from cache, from the search index or from both. For a drilldown navigation by brand for instance you need all brand\manufacturer names but for performance reason you don't want to load them from database, so you store them in the search index and retrieve them using `IFacetMetadataStorage`.
 
-The first step is to iterate through `ISearchQuery.FacetDescriptors` to get the actual the requested facets. Next, for a particular descriptor, its metadata is loaded including all values to be faceted (e.g. brand names). Usually, all values are then iteratively applied to the bitset of the current search result via a bitwise and-operation to get the number of set bits (which is the number of search hits after applying a certain filter). This process is of course dependent on the search library.
+The first step is to iterate through `ISearchQuery.FacetDescriptors` to get the actual requested facets. Next, for a particular descriptor, its metadata is loaded including all values to be faceted (e.g. brand names). Usually, all values are then iteratively applied to the bitset of the current search result via a bitwise and-operation to get the number of set bits (which is the number of search hits after applying a certain filter). This process is of course dependent on the search library.
 
 TIP: faceting can take a while despite all the performance optimisation, because depending on the amount of data, a lot of bit operations have to be performed. If no facets are needed for a search, `SearchQuery.BuildFacetMap(false)` should be called so that none are obtained.
+
+### Facet presentation
 
 The presentation of facets in frontend can be changed via [IFacetTemplateSelector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Facets/IFacetTemplateSelector.cs). The interface requests a template widget for a `FacetGroup`. In the following example, a view component is used to create a custom representation for the template types `FacetTemplateHint.NumericRange` and `FacetTemplateHint.Custom` (e.g. colour or picture boxes).
 
@@ -119,8 +121,8 @@ public class MyCustomFacetGroupViewComponent : SmartViewComponent
 {
     public IViewComponentResult Invoke(FacetGroup facetGroup, string templateName)
     {
-        Guard.NotNull(facetGroup, nameof(facetGroup));
-        Guard.NotEmpty(templateName, nameof(templateName));
+        Guard.NotNull(facetGroup);
+        Guard.NotEmpty(templateName);
 
         // TODO: add views Box.cshtml and NumericRange.cshtml with custom rendering.
         return View(templateName, facetGroup);
@@ -168,11 +170,11 @@ Search libraries like Lucene.Net determine search hits via the file system inste
 
 An [IIndexingService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexingService.cs) implementation creates or updates the search index, always triggered by its own task. The index scope, that is the information about what kind of index it is, is obtained via the [IIndexScopeManager](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexScopeManager.cs). The indexing service uses a data collector (see [IIndexCollector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexCollector.cs)) to collect all the data to be transferred to the index. The index service does not access the index directly, but uses the [IIndexStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexStore.cs) for this purpose. It ensures that the index can be accessed for writing (during indexing) and reading (during searching).
 
-During an index update, the records to be updated are determined with the help of [IIndexBacklogService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IIndexBacklogService.cs) and [IndexBacklogItem](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IndexBacklogItem.cs). Backlog items are previously determined and saved to the database via a hook, e.g. when a product has been modified.
+During an index update, the records to be updated are determined with the help of [IIndexBacklogService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IIndexBacklogService.cs) and [IndexBacklogItem](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IndexBacklogItem.cs). Backlog items are previously determined and saved to the database via hooks, e.g. when a product has been modified.
 
-The collector fires an [IndexSegmentProcessedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexSegmentProcessedEvent.cs) each time after it has processed a segment of entities but before the collected data is written to the index. It can be used to emit additional data to the search index.
+The collector publishes an [IndexSegmentProcessedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexSegmentProcessedEvent.cs) each time after it has processed a segment of entities but before the collected data is written to the index. It can be used to emit additional data to the search index.
 
-The indexing service fires an [IndexingCompletedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexingCompletedEvent.cs) at the end of indexing.
+The indexing service publishes an [IndexingCompletedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexingCompletedEvent.cs) at the end of indexing.
 
 ## Implementing a custom search
 
