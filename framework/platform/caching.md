@@ -2,7 +2,7 @@
 
 ## Overview
 
-A cache is used to store application data for later use. This allows multiple processes to use the same data with a single call. This is very important for better performance, because fewer calls to the application means better speed.
+Cache is used to store application data for faster performance. This is a critical factor in achieving better performance. Smartstore uses two different types of cache: static and request.
 
 ### Static cache
 
