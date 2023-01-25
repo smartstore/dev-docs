@@ -68,7 +68,13 @@ outStream.Dispose();
 
 The [ExpandedFileSystem](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/IO/ExpandedFileSystem.cs) is a decorator that takes a path prefix and an inner `IFileSystem` instance. Its root path is expanded with the specified prefix.
 
-* _SAMPLE_
+```csharp
+var storeRoot = new LocalFileSystem(System.IO.Directory.GetCurrentDirectory());
+
+// Count all the english email templates
+var efs = new ExpandedFileSystem("\\App_Data\\EmailTemplates", storeRoot);
+var numberOfFiles = efs.CountFiles("en");
+```
 
 ### CompositeFileSystem
 
@@ -82,5 +88,9 @@ The [CompositeFileSystem](https://github.com/smartstore/Smartstore/blob/main/src
 
 The [DirectoryHasher](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/IO/DirectoryHasher.cs) creates a hash of the contents of a directory. It can load and persist the hash code for comparison with any previous state, that are saved in **App\_Data/Tenants/Default/Hash**. By default, it scans flat, but you can choose to scan deep as well.
 
-* _SAMPLE_
+```csharp
+var storeRoot = new LocalFileSystem(System.IO.Directory.GetCurrentDirectory());
+var hasher = storeRoot.GetDirectoryHasher("Controllers");
+var hash = hasher.CurrentHash;
+```
 
