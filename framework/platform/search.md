@@ -361,7 +361,109 @@ The next step is to implement the search modelling. In the catalog search, these
 
 ### Facets
 
-When your search supports facets, then you need a facet URL helper that inherits from `FacetUrlHelperBase`, like `CatalogFacetUrlHelper`.&#x20;
+When your search supports facets, then you need a facet URL helper that inherits from `FacetUrlHelperBase`, like `CatalogFacetUrlHelper`. It is a helper to modify facet URLs easily. If the link of a facet is clicked and the associated filter is applied, then a query string value for this filter must be appended to the URLs. Similarly, a query string value must be removed when the related facet is deactivated. See `CatalogFacetUrlHelper` for details of the implementation.
+
+### Search service
+
+The last part is the search service, the a start-up point for your search. In the catalog search, these are `CatalogSearchService`, `LinqCatalogSearchService` and `CatalogSearchResult`. Your implementation of these classes will probably look very similar, so there is no need to go into detail here. A good idea is to add two events to the search, one immediately before and one after execution (see `CatalogSearchingEvent` and `CatalogSearchedEvent`).
+
+Typically all these services have a scoped registration, so your startup might look like this if you need and implement them all:
+
+```csharp
+internal class Startup : StarterBase
+{
+    public override void ConfigureServices(IServiceCollection services, IApplicationContext appContext)
+    {
+        services.AddScoped<IMyCustomSearchQueryAliasMapper, MyCustomSearchQueryAliasMapper>();
+        services.AddScoped<IMyCustomSearchQueryFactory, MyCustomSearchQueryFactory>();
+        services.AddScoped<IMyCustomSearchService, MyCustomSearchService>();
+        services.AddScoped<MyLinqCustomSearchService>();
+        services.AddScoped<IMyCustomUrlHelper, MyCustomFacetUrlHelper>();
+    }
+}
+```
+
+### Search settings
+
+Custom search settings can be integrated into the existing search settings of the backend via a new tab. Therefore you need a setting class and a model:
+
+```csharp
+public class MyCustomSearchSettings : ISettings
+{
+    //...
+}
+
+[CustomModelPart]
+public class MyCustomSearchSettingsModel : ModelBase
+{
+    //...
+}
+```
+
+and two event handlers to create the tab and to save your settings:
+
+```csharp
+public class Events : IConsumer
+{
+    const string Key = "MyCustomSearchSettings";
+    
+    // Add new tab to search settings page in backend.
+    public async Task HandleEventAsync(TabStripCreated message)
+    {
+        if (message.TabStripName.EqualsNoCase("searchsettings-edit"))
+        {
+            await message.TabFactory.AppendAsync(builder => builder
+                .Text(T("Modules.MyCompany.MyModule.ScopeName"))
+                .Name("tab-mycustom-search-settings")
+                .LinkHtmlAttributes(new { data_tab_name = Key })
+                .Action("MyCustomSearchSettings", "MyController", new { area = "Admin" })
+                .Ajax());
+        }
+    }
+
+    // Save MyCustomSearchSettings.
+    public async Task HandleEventAsync(ModelBoundEvent message,
+        ICommonServices services,
+        MultiStoreSettingHelper settingHelper,
+        Lazy<IForumSearchQueryAliasMapper> forumSearchQueryAliasMapper)
+    {
+        var cp = message.BoundModel.CustomProperties;
+        if (!cp.ContainsKey(Key) || cp[Key] is not MyCustomSearchSettingsModel model)
+        {
+            return;
+        }
+
+        var storeId = services.WorkContext.CurrentCustomer.GenericAttributes.AdminAreaStoreScopeConfiguration;
+        var storeScope = services.StoreContext.GetStoreById(storeId)?.Id ?? 0;
+        var settings = await services.SettingFactory.LoadSettingsAsync<MyCustomSearchSettings>(storeScope);
+
+        settingHelper.Contextualize(storeScope);
+        
+        settings = ((ISettings)settings).Clone() as MyCustomSearchSettings;
+        MiniMapper.Map(model, settings);
+        await services.DbContext.SaveChangesAsync();                    
+        // TODO: clear cached query aliases of facets (if any).
+    }
+}
+```
+
+The action method that provides the partial view with your settings may look like this:
+
+```csharp
+public async Task<IActionResult> MyCustomSearchSettings()
+{
+    // This is important for proper model binding. Set HtmlFieldPrefix early 
+    // because MultiStoreSettingHelper use it to create override key names.
+    ViewData.TemplateInfo.HtmlFieldPrefix = "CustomProperties[MyCustomSearchSettings]";
+
+    var storeScope = GetActiveStoreScopeConfiguration();
+    var settings = await Services.SettingFactory.LoadSettingsAsync<MyCustomSearchSettings>(storeScope);
+    var model = MiniMapper.Map<MyCustomSearchSettings, MyCustomSearchSettingsModel>(settings);
+    //...
+
+    return PartialView(model);
+}
+```
 
 \
 TODO: roughly describe what we did in the forum search...
