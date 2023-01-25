@@ -86,7 +86,7 @@ public class MyCatalogSearchQueryFactory : CatalogSearchQueryFactory
 
 `ICatalogSearchService.SearchAsync` returns `CatalogSearchResult` containing all requested results of a search, including facets map, spell checker suggestions and IDs of found products. The entities of the found products are loaded later when `CatalogSearchResult.GetHitsAsync` is called. For this purpose, `CatalogSearchQuery` contains a method `UseHitsFactory`, via which the standard factory can be replaced if required.
 
-`SearchResultModel` is used to present the result of a search in frontend. The `HitGroups` property is of particular importance here. It is used to display further groups of search hits in the instant search. Depending on installed modules, these include links to the manufacturers and categories of the products found, spell checker suggestions or frequent search terms. You can inject more groups of links here by using an `IAsyncResultFilter`:
+`SearchResultModel` is used to present the result of a search in frontend. The `HitGroups` property is of particular importance here. It is used to display further groups of search hits in the instant search. Depending on installed modules, these include links to the manufacturers and categories of the products found, spell checker suggestions or frequent search terms. You can inject more groups of links here using an `IAsyncResultFilter`:
 
 ```csharp
 internal class Startup : StarterBase
@@ -252,5 +252,111 @@ The indexing service publishes an [IndexingCompletedEvent](https://github.com/sm
 
 ## Implementing a custom search
 
-[IIndexScope](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexScope.cs) and [ISearchProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/ISearchProvider.cs) are used to distinguish between different search scopes, like catalog (built-in search for products) and forum search (search for forum posts offered by forum module). To implement another search for a different entity, the principle of the catalog search must be copied and adapted accordingly.\
+[IIndexScope](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexScope.cs) and [ISearchProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/ISearchProvider.cs) are used to distinguish between different search scopes, like catalog (built-in search for products) and forum search (search for forum posts offered by forum module). To implement another search for a different entity, the principle of the catalog search must be copied and adapted accordingly. This way, any number of additional search indexes can be built using _MegaSearch_.
+
+HINT: this is only a rough description of how to build your own search index, with the aim of showing a possible way. A complete description would go beyond the scope of this documentation.
+
+### Index scope
+
+First implement [IIndexScope](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexScope.cs) and the related interfaces [IIndexCollector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexCollector.cs), [ISearchProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/ISearchProvider.cs) and [IIndexAnalyzer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexAnalyzer.cs). Typically scope and collector have named registrations:
+
+```csharp
+internal class Startup : StarterBase
+{
+    const string Scope = "MySearchIndex";
+    
+    public override void ConfigureContainer(ContainerBuilder builder,
+        IApplicationContext appContext)
+    {
+        builder.RegisterType<MySearchIndexScope>()
+            .As<IIndexScope>()
+            .Named<IIndexScope>(Scope)
+            .WithMetadata<IndexScopeMetadata>(m => m.For(em => em.Name, Scope))
+            .InstancePerLifetimeScope();
+
+        builder.RegisterType<MyIndexCollector>()
+            .Named<IIndexCollector>(Scope)
+            .AsSelf()
+            .InstancePerLifetimeScope();
+    }
+}
+
+public class MySearchIndexScope : IIndexScope
+{
+    private readonly Lazy<MyIndexCollector> _collector;
+    private readonly MySearchSettings _settings;
+
+    public MySearchIndexScope(Lazy<MyIndexCollector> collector,
+        MySearchSettings settings)
+    {
+        _collector = collector;
+        _settings = settings;
+    }
+
+    public string Scope => "MySearchIndex";
+
+    public Widget GetConfigurationWidget() => null;
+
+    public IndexInfo GetIndexInfo() => new IndexInfo(Scope)
+    {
+        IndexingTaskType = typeof(MyIndexingTask),
+        ScopeKey = "Modules.MyCompany.MyModule.ScopeName",
+        DocumentType = "zz", // see SearchDocumentTypes for existing types
+        DocumentTypeKey = "Modules.MyCompany.MyModule.DocumentName"
+    };
+
+    public virtual IIndexCollector GetCollector()
+        => _collector.Value;
+
+    public virtual ISearchProvider GetSearchProvider()
+        => new MySearchProvider(_settings);
+
+    public virtual IIndexAnalyzer GetAnalyzer()
+        => new MyIndexAnalyzer();
+}
+```
+
+### Text analyzer
+
+The `IIndexAnalyzer` defines what text analyzer to be used for your index fields. An analyzer specifies how the content of an index field is to be processed during indexing and searching. An `IIndexAnalyzer` could look like this (copied from the analyzer from the forum module):
+
+```csharp
+public class MyIndexAnalyzer : IIndexAnalyzer
+{
+    public IndexAnalyzerType? GetDefaultAnalyzerType(IndexAnalysisReason reason, IIndexStore indexStore)
+    {
+        return reason == IndexAnalysisReason.Highlight
+            ? IndexAnalyzerType.Whitespace
+            : null;
+    }
+
+    public IList<IndexAnalyzerInfo> GetAnalyzerInfos(IndexAnalysisReason reason, IList<Language> languages, IIndexStore indexStore)
+    {
+        var result = new List<IndexAnalyzerInfo>();
+        var defaultCulture = languages.FirstOrDefault()?.LanguageCulture ?? "en-US";
+
+        if (reason == IndexAnalysisReason.Search || reason == IndexAnalysisReason.CheckSpelling)
+        {
+            result.Add(new IndexAnalyzerInfo(defaultCulture, null, "subject", "text"));
+            result.Add(new IndexAnalyzerInfo(defaultCulture, IndexAnalyzerType.Whitespace, "username"));
+        }
+        else if (reason == IndexAnalysisReason.Highlight)
+        {
+            result.Add(new IndexAnalyzerInfo(defaultCulture, IndexAnalyzerType.Whitespace, "subject", "text"));
+        }
+
+        return result;
+    }
+}
+```
+
+### Modelling
+
+The next step is to implement the search modelling. In the catalog search, these are `CatalogSearchQueryFactory`, `CatalogSearchQueryModelBinder` and `CatalogSearchQueryAliasMapper`. The alias mapper is only needed if the query string can contain alias names that have to be mapped to the actual values (such as entity IDs). Then you need a search query object like `CatalogSearchQuery` that inherits from `SearchQuery`. Don't forget to decorate it with `ValidateNeverAttribute` and `ModelBinderAttribute`. As a result, action methods can contain parameters of the type of your search query object (aka `CatalogSearchQuery`), which are then automatically instantiated via model binding. See the `SearchController` in the Smartstore.Web project.
+
+### Facets
+
+When your search supports facets, then you need a facet URL helper that inherits from `FacetUrlHelperBase`, like `CatalogFacetUrlHelper`.&#x20;
+
+\
 TODO: roughly describe what we did in the forum search...
