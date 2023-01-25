@@ -239,9 +239,11 @@ internal class MyCacheInvalidatorHook : AsyncDbSaveHook<BaseEntity>
 
 #### Check for modified properties
 
-You can check for modified properties If an entity is in the _Modified_ state. But because the row snapshot is reset after saving, this only happens in a **PreSave** handler.
+You can check for modified properties If an entity is in the _Modified_ state. However, because the row snapshot is reset after a save operation, you will only be able to do this in a **PreSave** handler.
 
-| Method                                                                        | Return                                                                                                                                                                                                                                 |
+Here are some `IHookedEntity` methods that deal with property checking.
+
+| Method                                                                        | Returns                                                                                                                                                                                                                                |
 | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `IsPropertyModified(string propertyName)`                                     | A value indicating whether the given property has been modified.                                                                                                                                                                       |
 | `Entry.GetModifiedProperties()`                                               | A dictionary filled with modified properties for the specified entity. The key is the name of the modified property and the value is its ORIGINAL value, which was tracked when the entity was attached to the context the first time. |
@@ -249,7 +251,7 @@ You can check for modified properties If an entity is in the _Modified_ state. B
 
 ### Abstract base class
 
-For more convenience the abstract class [DbSaveHook](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Hooks/DbSaveHook.cs) provides six overridable methods: `OnInserting`, `OnUpdating`, `OnDeleting`, `OnInserted`, `OnUpdated`, `OnDeleted`.
+For more convenience the abstract base class [DbSaveHook](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Hooks/DbSaveHook.cs) provides six overridable methods: `OnInserting`, `OnUpdating`, `OnDeleting`, `OnInserted`, `OnUpdated`, `OnDeleted`.
 
 They all return `HookResult.Void` by default and just need to be overridden to opt-in.
 
@@ -269,28 +271,28 @@ All entities that were handled with `HookResult.Void` in `OnAfterSaveAsync` are 
 
 ### Setting priorities
 
-The `Importance` attribute of a hook specifies its priority of execution. For performance reasons, some callers may reduce the number of hooks executed by specifying the setting `MinHookImportance` for certain units of work.
+The i_mportance_ level of a hook specifies its priority of execution. For performance reasons, some callers may reduce the number of hooks executed by specifying the setting `MinHookImportance` for certain units of work.
 
 E.g., the product import task, which is a long-running process, turns off the execution of `Normal` hooks by changing `MinHookImportance` to `Important`.
 
-This is done by wrapping a DbContextScope around a unit of work. To customize your hook's importance, decorate your hook class with `ImportantAttribute`.
+This is done by wrapping a `DbContextScope` around a unit of work. To customize your hook's importance, decorate your hook class with `ImportantAttribute`.
 
-| Value              | Description                                                                                                                                                                        |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Normal` (default) | The hook can be ignored during long running processes, such as imports. These usually are simple hooks that invalidate cache entries or clean up some resources.                   |
-| `Important`        | The hook is important and should be running, even during long running processes. Not running the hook **may** result in stale or invalid data.                                     |
-| `Essential`        | The hook instance should always run (e.g. _AuditHook_, which is even required during installation). Not running the hook will definitely result in stale data or throw exceptions. |
+| Value              | Description                                                                                                                                                                            |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Normal` (default) | The hook **can be ignored** during long running processes, such as imports. These usually are simple hooks that invalidate cache entries or clean up some resources.                   |
+| `Important`        | The hook is important and **should be running**, even during long running processes. Not running the hook **may** result in stale or invalid data.                                     |
+| `Essential`        | The hook instance **should always run** (e.g. _AuditHook_, which is even required during installation). Not running the hook will definitely result in stale data or throw exceptions. |
 
 ### Specify execution order
 
 The `Order` attribute of a hook determines the order in which hooks appear in the calling queue. Hooks with lower order values are called before hooks with higher ones. To set the order value, decorate your hook class with [OrderAttribute](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Modularity/OrderAttribute.cs) and pass an integer value, the default being `0`.
 
-### Mark entities as unhookable
+### Mark entities as _unhookable_
 
 Some entity types should not be hooked at all, like the [Log](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Logging/Domain/Log.cs) entity. To make sure that the hooking framework will never pass these entities to any hook, decorate your entity class with `HookableAttribute` and pass `false`.
 
 ## Some Tipps
 
-Most hooks just invalidate cache. Separating cache invalidation from cache access makes the code a bit confusing. Therefore, we recommend combining them into a single class:
+Most hooks just invalidate cache entries. Separating cache invalidation from cache access makes the code a bit confusing. Therefore, we recommend combining them into a single class:
 
 * _SAMPLE_ (pattern see: [DiscountService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Discounts/Services/DiscountService.cs), [ProductTagService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Products/Services/ProductTagService.cs), [CurrencyService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Common/Services/CurrencyService.cs), [DeliveryTimeService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Common/Services/DeliveryTimeService.cs) etc.)
