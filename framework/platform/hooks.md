@@ -13,6 +13,7 @@ But unlike triggers, hooks are:
 * high-level
 * data provider agnostic
 * pure managed code
+* similar to MVC filters in the way they behave
 
 Hooks let you focus on the aspect you want to solve without ever touching the core of the app. They are extremely powerful and flexible when it comes to composable, granular application design. Smartstore relies heavily on hooks. Without them:
 
