@@ -82,6 +82,80 @@ public class MyCatalogSearchQueryFactory : CatalogSearchQueryFactory
 }
 ```
 
+## Search result
+
+`ICatalogSearchService.SearchAsync` returns `CatalogSearchResult` containing all requested results of a search, including facets map, spell checker suggestions and IDs of found products. The entities of the found products are loaded later when `CatalogSearchResult.GetHitsAsync` is called. For this purpose, `CatalogSearchQuery` contains a method `UseHitsFactory`, via which the standard factory can be replaced if required.
+
+`SearchResultModel` is used to present the result of a search in frontend. The `HitGroups` property is of particular importance here. It is used to display further groups of search hits in the instant search. Depending on installed modules, these include links to the manufacturers and categories of the products found, spell checker suggestions or frequent search terms. You can inject more groups of links here by using an `IAsyncResultFilter`:
+
+```csharp
+internal class Startup : StarterBase
+{
+    public override void ConfigureServices(IServiceCollection services, IApplicationContext appContext)
+    {
+        services.Configure<MvcOptions>(o =>
+        {
+            o.Filters.AddConditional<TopLinksFilter>(
+                context => context.ControllerIs<SearchController>() && !context.HttpContext.Request.IsAjax(), 200);
+        });
+    }
+}
+
+public class TopLinksFilter : IAsyncResultFilter
+{
+    private readonly MySearchSettings _settings;
+
+    public TopLinksFilter(MySearchSettings settings)
+    {
+        _settings = settings;
+    }
+
+    public async Task OnResultExecutionAsync(ResultExecutingContext filterContext, ResultExecutionDelegate next)
+    {
+        if (!_settings.ShowTopLinks
+            || _settings.MaxTopLinks <= 0
+            || filterContext.Result is not ViewResult viewResult
+            || viewResult.Model is not SearchResultModel model)
+        {
+            await next();
+            return;
+        }
+
+        var myLinks = await GetMyTopLinks();
+        if (myLinks.Count > 0)
+        {
+            var hitGroup = new SearchResultModelBase.HitGroup(model)
+            {
+                Name = "MyTopLinks",
+                DisplayName = "My top links"
+            };
+
+            hitGroup.Hits.AddRange(myLinks.Select(x => new SearchResultModelBase.HitItem
+            {
+                Label = x.Label,
+                Url = x.Url
+            }));
+
+            model.HitGroups.Add(hitGroup);
+        }
+
+        await next();
+    }
+    
+    private Task<List<MyTopLink>> GetMyTopLinks()
+    {
+        // TODO: get my top links from somewhere.
+        return Task.FromResult(new List<MyTopLink>());
+    }    
+}
+
+internal class MyTopLink
+{
+    public string Label { get; set; }
+    public string Url { get; set; }
+}
+```
+
 ## Filter
 
 Filters are needed to limit search results, e.g. to display only products of a certain category. They are determined by `CatalogSearchQueryFactory` via the query string and passed on to the search using of `CatalogSearchQuery`. If you want to search programmatically, you can create a `CatalogSearchQuery` instance and define it yourself using fluent notation:
@@ -170,9 +244,9 @@ Search libraries like Lucene.Net determine search hits via the file system inste
 
 An [IIndexingService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexingService.cs) implementation creates or updates the search index, always triggered by its own task. The index scope, that is the information about what kind of index it is, is obtained via the [IIndexScopeManager](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexScopeManager.cs). The indexing service uses a data collector (see [IIndexCollector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexCollector.cs)) to collect all the data to be transferred to the index. The index service does not access the index directly, but uses the [IIndexStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexStore.cs) for this purpose. It ensures that the index can be accessed for writing (during indexing) and reading (during searching).
 
-During an index update, the records to be updated are determined with the help of [IIndexBacklogService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IIndexBacklogService.cs) and [IndexBacklogItem](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IndexBacklogItem.cs). Backlog items are previously determined and saved to the database via hooks, e.g. when a product has been modified.
+A [hook](hooks.md) is used to determine changes to products that are relevant for updating the index. In this case, [IndexBacklogItems](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IndexBacklogItem.cs) are stored in the database via [IIndexBacklogService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IIndexBacklogService.cs). In case of an index update, [IIndexCollector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexCollector.cs) retrieves these backlogs via [IIndexBacklogService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IIndexBacklogService.cs) and updates the corresponding index entries of the products. This procedure speeds up the indexing, as only the part of the index relevant to the product changes is updated instead of completely rebuilding it.
 
-The collector publishes an [IndexSegmentProcessedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexSegmentProcessedEvent.cs) each time after it has processed a segment of entities but before the collected data is written to the index. It can be used to emit additional data to the search index.
+The [IIndexCollector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexCollector.cs) publishes an [IndexSegmentProcessedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexSegmentProcessedEvent.cs) each time after it has processed a segment of entities but before the collected data is written to the index. It can be used to emit additional data to the search index.
 
 The indexing service publishes an [IndexingCompletedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexingCompletedEvent.cs) at the end of indexing.
 
