@@ -1,4 +1,4 @@
-# 🐣 Caching
+# ✔ Caching
 
 ## Overview
 
@@ -173,8 +173,6 @@ return cache.Get("A", o =>
     return model;
 });
 ```
-
-* Lock recursion (?) --> _maybe too complicated to explain_
 
 ## Request cache
 
