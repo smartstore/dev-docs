@@ -17,10 +17,10 @@ Here are some basic examples:
 var currentDirPath = System.IO.Directory.GetCurrentDirectory();
 var localFS = new LocalFileSystem(currentDirPath);
 
-// Get the "MyTemplates" directory
-var currentDir = localFS.GetDirectory("MyTemplates");
+// Get the current directory
+var currentDir = localFS.GetDirectory(string.Empty);
 
-// Get a list of files in the "MyTemplates" directory
+// Get a list of files in the current directory
 var files = currentDir.EnumerateFiles();
 
 // Get the first file

@@ -323,14 +323,19 @@ The `IIndexAnalyzer` defines what text analyzer to be used for your index fields
 ```csharp
 public class MyIndexAnalyzer : IIndexAnalyzer
 {
-    public IndexAnalyzerType? GetDefaultAnalyzerType(IndexAnalysisReason reason, IIndexStore indexStore)
+    public IndexAnalyzerType? GetDefaultAnalyzerType(
+        IndexAnalysisReason reason, 
+        IIndexStore indexStore)
     {
         return reason == IndexAnalysisReason.Highlight
             ? IndexAnalyzerType.Whitespace
             : null;
     }
 
-    public IList<IndexAnalyzerInfo> GetAnalyzerInfos(IndexAnalysisReason reason, IList<Language> languages, IIndexStore indexStore)
+    public IList<IndexAnalyzerInfo> GetAnalyzerInfos(
+        IndexAnalysisReason reason, 
+        IList<Language> languages, 
+        IIndexStore indexStore)
     {
         var result = new List<IndexAnalyzerInfo>();
         var defaultCulture = languages.FirstOrDefault()?.LanguageCulture ?? "en-US";
