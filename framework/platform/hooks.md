@@ -8,48 +8,49 @@ description: Special pub/sub system for database save operations
 
 Like database triggers, hooks are subscribers that are automatically executed in response to certain save / commit events on a particular `DbContext` instance.
 
-Unlike triggers, hooks are:
+But unlike triggers, hooks are:
 
 * high-level
 * data provider agnostic
 * pure managed code
 
-Hooks let you focus on the aspect you want to solve without ever touching the core of the application. They are extremely powerful and flexible when it comes to composable, granular application design and are similar to MVC action filters.
+Hooks let you focus on the aspect you want to solve without ever touching the core of the app. They are extremely powerful and flexible when it comes to composable, granular application design. Smartstore relies heavily on hooks. Without them:
 
-Smartstore relies heavily on hooks. Without them, granular and isolated application design would be nearly impossible. Modules would be much less flexible.
+* Granular and isolated application design would be nearly impossible.
+* Modules would be much less flexible.
 
 Some examples of what hooks are good for:
 
 * Invalidating cache entries
+* Updating computed data
+* Validate, fix or enrich an entity before saving
+* Removing dependent entities after deleting primary entities
 * Perform logging
 * Sending notifications
-* Removing dependant entities after deleting primary entities
-* Update an index
+* Updating an index
 * Removing orphaned resources
-* Validate, fix or enrich an entity before saving
-* Update computed data
 
 ## Concept
 
-A Hook is a specialized pub / sub system without the _publishing_ part. This means that you can only subscribe to database events, but not publish them. Publishing is done implicitly during a database save operation (such as `DbContext.SaveChanges()`). This is always the case when the main application context `SmartDbContext` commits data, because it derives from [HookingDbContext](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/HookingDbContext.cs), which contains all the hooking logic.
+A hook is a specialized pub / sub system without the _publishing_ part. This means that you can only subscribe to database events, but not publish them. Publishing is done implicitly during a database save operation (such as `DbContext.SaveChanges()`). This is always the case when the main application context `SmartDbContext` commits data, because it derives from [HookingDbContext](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/HookingDbContext.cs), which contains all the hooking logic.
 
 {% hint style="warning" %}
-Bypassing EF and accessing the database directly with raw SQL means no events and no hooking!
+Bypassing EF and accessing the database directly with raw SQL means: no events and no hooking!
 {% endhint %}
 
-Every hook has a _PreSave_ and a _PostSave_ handler. They are run for each entity in the EF change tracker before and after saving respectively.
+Each hook has a **PreSave** and a **PostSave** handler. They are called for each entity in the EF Change Tracker. **PreSave** is called BEFORE saving, then the actual save operation is performed, after which **PostSave** is called.
 
-The _PreSave_ handler’s purpose is:
+The **PreSave** handler’s purpose is:
 
 * Validating an entity.
 * Fix or enrich an entity.
 * Change an entity’s state (e.g. to suppress save).
-* Check which properties have been modified (not possible in _PostSave_ handlers).
+* Check which properties have been modified (which is not possible in **PostSave** handlers).
 
-The _PostSave_ handler’s purpose is to perform an action using a **definitely** saved entity.
+The **PostSave** handler’s purpose is to perform an action using a _definitely_ saved entity.
 
 {% hint style="warning" %}
-Snapshot comparisons aren’t possible in this _PostSave_.
+Snapshot comparisons aren’t possible in the **PostSave** stage.
 {% endhint %}
 
 ## Implementing hooks
@@ -59,20 +60,20 @@ Create a concrete class that either:
 * implements [IDbSaveHook](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Hooks/IDbSaveHook.cs)
 * implements `IDbSaveHook<TContext>` to bind it to a particular `DbContext` type.
 * derives from `Smartstore.Core.Data.AsyncDbSaveHook<TEntity>` to bind it to the main `SmartDbContext` type and given `TEntity` type.
-* derives from [Smartstore.Data.Hooks.AsyncDbSaveHook\<TContext, TEntity>](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Hooks/AsyncDbSaveHook.cs) to bind it to a given `DbContext` and a `TEntity` type.
+* derives from [Smartstore.Data.Hooks.AsyncDbSaveHook\<TContext, TEntity>](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Hooks/AsyncDbSaveHook.cs) to bind it to a particular `DbContext` and given `TEntity` type.
 
 {% hint style="info" %}
 The abstract base classes are nothing special, they just implement `IDbSaveHook` to make your life easier. There are sync counterparts for the base classes with sync method signatures also.
 {% endhint %}
 
 {% hint style="info" %}
-If a hook is bound to entity type `TEntity`, it matches all stored entities that are equal to or a subclasses of `TEntity`.
+When a hook is bound to entity type `TEntity`, it matches all stored entities equal to or subclasses of `TEntity`.
 {% endhint %}
 
 There is no need to register a hook in DI, because it is automatically detected and registered as a scoped service when the application starts. This allows a hook type to take any dependency.
 
 {% hint style="info" %}
-You can also apply the interface / base classes to any existing service class.
+You can also apply the above interface / base classes to any existing service class..
 {% endhint %}
 
 ### Interface definition
@@ -91,10 +92,10 @@ public interface IDbSaveHook
     /// </summary>
     /// <param name="entry">The entity entry</param>
     /// <returns>
-    ///     <see cref="HookResult.Ok"/>: signals the hook handler that it should continue 
-    ///        to call this method for the current EntityType/State/Stage combination,
-    ///     <see cref="HookResult.Void"/>: signals the hook handler that it should stop 
-    ///        executing this method for the current EntityType/State/Stage combination.
+    /// "HookResult.Ok": signals the hook handler that it should continue 
+    /// to call this method for the current EntityType/State/Stage combination,
+    /// "HookResult.Void": signals the hook handler that it should stop 
+    /// executing this method for the current EntityType/State/Stage combination.
     /// </returns>
     Task<HookResult> OnBeforeSaveAsync(
         IHookedEntity entry, 
@@ -105,10 +106,10 @@ public interface IDbSaveHook
     /// </summary>
     /// <param name="entry">The entity entry</param>
     /// <returns>
-    ///     <see cref="HookResult.Ok"/>: signals the hook handler that it should continue 
-    ///        to call this method for the current EntityType/State/Stage combination,
-    ///     <see cref="HookResult.Void"/>: signals the hook handler that it should stop
-    ///        executing this method for the current EntityType/State/Stage combination.
+    /// "HookResult.Ok": signals the hook handler that it should continue 
+    /// to call this method for the current EntityType/State/Stage combination,
+    /// "HookResult.Void": signals the hook handler that it should stop 
+    /// executing this method for the current EntityType/State/Stage combination.
     /// </returns>
     Task<HookResult> OnAfterSaveAsync(
         IHookedEntity entry, 
@@ -173,10 +174,10 @@ public enum HookResult
 
 #### Optimizing performance
 
-For performance reasons it is imperative that you return `HookResult.Void` if the current entity type / state / stage combination is of no interest to the hook and thus will not be handled.
+For performance reasons it is essential that you return `HookResult.Void` if the current entity type / state / stage combination is of no interest to the hook and thus will not be handled.
 
 {% hint style="info" %}
-Instead of returning `HookResult.Void`, you can throw `NotImplementedException` or `NotSupportedException`.
+Instead of returning `HookResult.Void`, you can also throw `NotImplementedException` or `NotSupportedException`.
 {% endhint %}
 
 This way you signal the hooking framework that it should stop executing the hook for the given combination in successive save operations. This is a kind of _filter_ that reduces the number of classes that must be instantiated repeatedly, only to find out that there's nothing to do.
@@ -226,14 +227,14 @@ internal class MyCacheInvalidatorHook : AsyncDbSaveHook<BaseEntity>
 
 `IHookedEntity` is passed to the hook handler method. It represents the entity entry that is being hooked and has the following properties:
 
-| Property          | Description                                                                                                                                                                                                                                                                                                       |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Entry`           | The underlying EF entity entry.                                                                                                                                                                                                                                                                                   |
-| `Entity`          | Instance of the hooked entity.                                                                                                                                                                                                                                                                                    |
-| `State`           | The **current** entity state.                                                                                                                                                                                                                                                                                     |
-| `InitialState`    | The entity state before the save operation. Use this in _PostSave_ handlers.                                                                                                                                                                                                                                      |
-| `HasStateChanged` | Indicated whether the entity state was changed in a _PreSave_ handler.                                                                                                                                                                                                                                            |
-| `IsSoftDeleted`   | Indicates whether the entity is in the soft deleted state. This is the case if the entity is an instance of `ISoftDeletable` and the value of its `Deleted` property is true **AND** it has modified since being tracked. However, if the entity isn’t in its modified state, the snapshot comparison is skipped. |
+| Property          | Description                                                                                                                                                                                                                                                                                                     |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Entry`           | The underlying EF entity entry.                                                                                                                                                                                                                                                                                 |
+| `Entity`          | Instance of the hooked entity.                                                                                                                                                                                                                                                                                  |
+| `State`           | The **current** entity state.                                                                                                                                                                                                                                                                                   |
+| `InitialState`    | The entity state before the save operation. Use this in **PostSave** handlers.                                                                                                                                                                                                                                  |
+| `HasStateChanged` | Indicates whether the entity state has been changed in a **PreSave** handler.                                                                                                                                                                                                                                   |
+| `IsSoftDeleted`   | Indicates whether the entity is in _soft deleted_ state. This is the case if the entity is an instance of `ISoftDeletable` and the value of its `Deleted` property is `true` **AND** it has changed since being tracked. However, if the entity is not in _modified_ state, the snapshot comparison is omitted. |
 
 #### Check for modified properties
 
