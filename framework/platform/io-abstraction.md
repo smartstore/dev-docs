@@ -17,10 +17,10 @@ Here are some basic examples:
 var currentDirPath = System.IO.Directory.GetCurrentDirectory();
 var localFS = new LocalFileSystem(currentDirPath);
 
-// Get the current directory
-var currentDir = localFS.GetDirectory(string.Empty);
+// Get the "MyTemplates" directory
+var currentDir = localFS.GetDirectory("MyTemplates");
 
-// Get a list of files in the current directory
+// Get a list of files in the "MyTemplates" directory
 var files = currentDir.EnumerateFiles();
 
 // Get the first file
@@ -72,7 +72,7 @@ The [ExpandedFileSystem](https://github.com/smartstore/Smartstore/blob/main/src/
 var storeRoot = new LocalFileSystem(System.IO.Directory.GetCurrentDirectory());
 
 // Count all the english email templates
-var efs = new ExpandedFileSystem("\\App_Data\\EmailTemplates", storeRoot);
+var efs = new ExpandedFileSystem("/App_Data/EmailTemplates", storeRoot);
 var numberOfFiles = efs.CountFiles("en");
 ```
 
@@ -80,7 +80,20 @@ var numberOfFiles = efs.CountFiles("en");
 
 The [CompositeFileSystem](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/IO/CompositeFileSystem.cs) is an adapter that looks up files using a collection of `IFileSystem` instances. Because it implements the `IFileSystem` interface, it can be used in the same way.
 
-* _SAMPLE_
+```csharp
+var storeRoot = new LocalFileSystem(System.IO.Directory.GetCurrentDirectory());
+
+var controllerRoot = new LocalFileSystem(
+    storeRoot.GetDirectory("Controllers").PhysicalPath
+);
+var viewRoot = new LocalFileSystem(
+    storeRoot.GetDirectory("Views").PhysicalPath
+);
+var cfs = new CompositeFileSystem(controllerRoot, viewRoot);
+
+var hasShoppingCart_Controller = cfs.FileExists("ShoppingCartController.cs");
+var hasShoppingCart_ViewDir = cfs.DirectoryExists("ShoppingCart");
+```
 
 ## Special utilities
 
@@ -90,7 +103,7 @@ The [DirectoryHasher](https://github.com/smartstore/Smartstore/blob/main/src/Sma
 
 ```csharp
 var storeRoot = new LocalFileSystem(System.IO.Directory.GetCurrentDirectory());
-var hasher = storeRoot.GetDirectoryHasher("Controllers");
+var hasher = storeRoot.GetDirectoryHasher("Controllers", deep: true);
 var hash = hasher.CurrentHash;
 ```
 
