@@ -73,6 +73,7 @@ var storeRoot = new LocalFileSystem(System.IO.Directory.GetCurrentDirectory());
 
 // Count all the english email templates
 var efs = new ExpandedFileSystem("/App_Data/EmailTemplates", storeRoot);
+// "en" actually resolves to "/App_Data/EmailTemplates/en"
 var numberOfFiles = efs.CountFiles("en");
 ```
 
@@ -91,8 +92,8 @@ var viewRoot = new LocalFileSystem(
 );
 var cfs = new CompositeFileSystem(controllerRoot, viewRoot);
 
-var hasShoppingCart_Controller = cfs.FileExists("ShoppingCartController.cs");
-var hasShoppingCart_ViewDir = cfs.DirectoryExists("ShoppingCart");
+var hasShoppingCartController = cfs.FileExists("ShoppingCartController.cs");
+var hasShoppingCartViewDir = cfs.DirectoryExists("ShoppingCart");
 ```
 
 ## Special utilities
