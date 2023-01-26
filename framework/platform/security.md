@@ -3,8 +3,8 @@
 ## Overview
 
 * Extensible permissions system where permissions are assigned to customer roles, which than are assigned to customers.
-* Permissions are organised hierarchically. They can inherit from parent permissions. So a permission can have three statuses: _allowed_, _not allowed_ or _inherited_.
-* Customer roles including assigned permissions can automatically assigned to customers by rule sets.
+* Permissions are organized hierarchically. They can inherit from parent permissions. So a permission can have three statuses: _allowed_, _not allowed_ or _inherited_.
+* Customer roles including assigned permissions can automatically be assigned to customers by rule sets.
 * [IAclRestricted](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Security/Domain/IAclRestricted.cs) marks an entity with restricted access rights.
 
 ## Authorization
