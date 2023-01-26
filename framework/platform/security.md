@@ -1,10 +1,10 @@
-# Security
+# 🥚 Security
 
 ## Overview
 
 * Extensible permissions system where permssions are assigned to customer roles, which than are assigned to customers.
-* Permissions are organised hierarchically. They can inherit from parent permissions. So a permission can have three statuses: _allowed_, _not allowed_ or _inherited_.
-* Customer roles including assigned permissions can automatically assigned to customers by rule sets.
+* Permissions are organized hierarchically. They can inherit from parent permissions. So a permission can have three statuses: _allowed_, _not allowed_ or _inherited_.
+* Customer roles including assigned permissions can automatically be assigned to customers by rule sets.
 
 ## Authorization
 
@@ -28,7 +28,7 @@ An `AccessDeniedException` is thrown when the permission is not granted. In case
 
 ## Add custom permissions
 
-The permission system can be extended to include custom permissions using [IPermissionProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Security/Services/IPermissionProvider.cs). See the [DevToolsPermissionProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Modules/Smartstore.DevTools/Permissions.cs) example. It is recommed to use singular for permission names and to define a root permission _Self_ that doesn't contain any dot by convention:
+The permission system can be extended to include custom permissions using [IPermissionProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Security/Services/IPermissionProvider.cs). See the [DevToolsPermissionProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Modules/Smartstore.DevTools/Permissions.cs) example. It is recommended to use singular for permission names and to define a root permission _Self_ that doesn't contain any dot by convention:
 
 {% code title="MegaSearch root permission" %}
 ```csharp
@@ -36,7 +36,7 @@ public const string Self = "megasearch";
 ```
 {% endcode %}
 
-The localisation is done via string resources and also by a convention. The string resource key is `Permissions.DisplayName.<PermissionName>` for the core and `Modules.Permissions.DisplayName.<PermissionName>` for modules. In most cases only the root permission _Self_ is localised because other permissions are already localised by the core like _read_, _update_, _execute_ etc. See `PermissionService._displayNameResourceKeys` for a complete list.
+The localization is done via string resources and also by a convention. The string resource key is `Permissions.DisplayName.<PermissionName>` for the core and `Modules.Permissions.DisplayName.<PermissionName>` for modules. In most cases only the root permission _Self_ is localized because other permissions are already localised by the core like _read_, _update_, _execute_ etc. See `PermissionService._displayNameResourceKeys` for a complete list.
 
 HINT: module permissions are automatically added when the module is installed and removed when uninstalling the module. Module developers do not need to do anything else here.
 
