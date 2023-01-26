@@ -385,7 +385,7 @@ internal class Startup : StarterBase
 
 ### Search settings
 
-Custom search settings can be integrated into the existing search settings of the backend via a new tab. Therefore you need a setting class and a model:
+Custom search settings can be integrated into the existing search settings of the backend via a new tab. Therefore you need a setting class and a model. Please note the `CustomModelPartAttribute`. It's required for proper binding of your model:
 
 ```csharp
 public class MyCustomSearchSettings : ISettings
@@ -400,7 +400,7 @@ public class MyCustomSearchSettingsModel : ModelBase
 }
 ```
 
-and two event handlers to create the tab and to save your settings:
+Add two event handlers to create the tab and to save your settings:
 
 ```csharp
 public class Events : IConsumer
@@ -465,5 +465,28 @@ public async Task<IActionResult> MyCustomSearchSettings()
 }
 ```
 
-\
-TODO: roughly describe what we did in the forum search...
+And the partial view:
+
+```cshtml
+@model MyCustomSearchSettingsModel
+
+@{
+    Layout = "";
+}
+
+@* VERY IMPORTANT for proper model binding *@
+<input type="hidden" name="CustomProperties[MyCustomSearchSettings].__Type__" value="@Model.GetType().AssemblyQualifiedName" />
+
+<div class="adminContent" id="mycustom-search-settings">
+    @* TODO: HTML of your settings. *@
+</div>
+
+@* In this case omit data-origin attribute. *@
+<script>
+    $(function() {
+        // Init common controls like select2 or tooltips.
+        applyCommonPlugins($('#mycustom-search-settings'));
+        //...
+    });
+</script>
+```
