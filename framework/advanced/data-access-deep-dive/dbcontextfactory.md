@@ -7,12 +7,12 @@ In general, `DbContext` is a lightweight object: creating and disposing it doesn
 
 Context pooling allows you to pay context setup costs only once at program start-up, rather than continuously. Which is why Smartstore configures a pooled `DbContext` factory on start-up. When a context instance is requested from the factory it does one of the following:
 
-* Look up a free / idle instance in pool and return it.
-* Create an instance, return it and put back into the pool on return / dispose.
+* Looks up a free / idle instance in pool and return it, or
+* Creates an instance, return it and put back into the pool on return / dispose.
 
 By default, the maximum number of instances retained by the pool (pool size) is set to **1024** and can be altered via `appsettings.json` using the `DbContextPoolSize` setting. Once the pool size is exceeded, new context instances aren’t cached and EF reverts to non-pooling behavior, creating instances as needed.
 
-Smartstore registers a scoped service factory for the `SmartDbContext` service type, which internally resolves an instance of `SmartDbContext` from the pool. This instance is then returned to the pool when the request completes. So in general you don’t need to call the `CreateDbContext` method of the `IDbContextFactory<SmartDbContext>`.
+Smartstore registers a scoped service factory for the `SmartDbContext` service type, which internally resolves an instance of `SmartDbContext` from the pool. This instance is then returned to the pool when the request completes. So in general you don’t need to call the `CreateDbContext` method of `IDbContextFactory<SmartDbContext>`.
 
 However, there may be situations where working with `IDbContextFactory` is beneficial:
 
