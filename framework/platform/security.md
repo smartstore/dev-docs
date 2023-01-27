@@ -2,10 +2,14 @@
 
 ## Overview
 
-* Extensible permissions system where permissions are assigned to customer roles, which than are assigned to customers.
-* Permissions are organized hierarchically. They can inherit from parent permissions. So a permission can have three statuses: _allowed_, _not allowed_ or _inherited_.
-* Customer roles including assigned permissions can automatically be assigned to customers by rule sets.
-* [IAclRestricted](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Security/Domain/IAclRestricted.cs) marks an entity with restricted access rights.
+* Extensible, hierarchically organized permissions system where permissions are assigned to customer roles, which than are assigned to customers.
+* Customer roles (including assigned permissions) can automatically be assigned to customers by rule sets.
+* [IAclRestricted](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Security/Domain/IAclRestricted.cs) marks an entity with restricted access rights. Only customers assigned to specific customer groups can see or access it.
+* Further security tools like captcha and honeypot.
+
+## Permissions tree
+
+Permissions are organized hierarchically in the form of a tree. A permission is granted when it has either granted itself or one of its parent permissions. The same applies to a permission that is explicitly not permitted. In this way, entire groups of permissions can be activated via a parent permission, where child permissions inherit from their parent. Therefore a permission can have three statuses: _allowed_, _not allowed_ or _inherited_.
 
 ## Authorization
 
