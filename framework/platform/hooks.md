@@ -258,9 +258,13 @@ For more convenience the abstract base class [DbSaveHook](https://github.com/sma
 
 They all return `HookResult.Void` by default and just need to be overridden to opt-in. The following excerpt from [ProductAttributeHook.cs](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Attributes/Hooks/ProductAttributeHook.cs) shows the usage:
 
-{% code overflow="wrap" %}
 ```csharp
-protected override async Task<HookResult> OnDeletingAsync(ProductAttribute entity, IHookedEntity entry, CancellationToken cancelToken)
+private HashSet<int> _deletedAttributeOptionIds = new();
+
+protected override async Task<HookResult> OnDeletingAsync(
+    ProductAttribute entity, 
+    IHookedEntity entry, 
+    CancellationToken cancelToken)
 {
     // Select ProductAttributeOptions associated with the passed ProductAttribute.
     var optionIdsQuery =
@@ -278,19 +282,24 @@ protected override async Task<HookResult> OnDeletingAsync(ProductAttribute entit
     return HookResult.Ok;
 }
 
-public override async Task OnAfterSaveCompletedAsync(IEnumerable<IHookedEntity> entries, CancellationToken cancelToken)
+public override async Task OnAfterSaveCompletedAsync(
+    IEnumerable<IHookedEntity> entries, 
+    CancellationToken cancelToken)
 {
-    // Options exist, that are marked for removal.
+    // Options exist that are marked for removal.
     if (_deletedAttributeOptionIds.Any())
     {
-        // Delete marked options.
+        // Delete remembered options.
         await _db.LocalizedProperties
-            .Where(x => _deletedAttributeOptionIds.Contains(x.EntityId) && x.LocaleKeyGroup == nameof(ProductAttributeOption)).ExecuteDeleteAsync(cancelToken);
+            .Where(x => 
+                _deletedAttributeOptionIds.Contains(x.EntityId) && 
+                x.LocaleKeyGroup == nameof(ProductAttributeOption))
+            .ExecuteDeleteAsync(cancelToken);
+            
         _deletedAttributeOptionIds.Clear();
     }
 }
 ```
-{% endcode %}
 
 ### Batching
 
@@ -306,7 +315,7 @@ All entities that were handled with `HookResult.Void` in `OnAfterSaveAsync` are 
 
 ### Setting priorities
 
-The i_mportance_ level of a hook specifies its priority of execution. For performance reasons, some callers may reduce the number of hooks executed by specifying the setting `MinHookImportance` for certain units of work.
+The _importance_ level of a hook specifies its priority of execution. For performance reasons, some callers may reduce the number of hooks executed by specifying the setting `MinHookImportance` for certain units of work.
 
 E.g., the product import task, which is a long-running process, turns off the execution of `Normal` hooks by changing `MinHookImportance` to `Important`.
 
