@@ -1,4 +1,4 @@
-# 🥚 Tag Helpers
+# ✔ Tag Helpers
 
 Tag Helpers are extensions of existing HTML tags. They can extend the functionality of a tag or even create completely new tags. Smartstore has created a lot of Tag Helpers to write simple and clear code and for better productivity.
 

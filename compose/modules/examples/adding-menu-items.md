@@ -1,4 +1,4 @@
-# 🐣 Adding menu items
+# ✔ Adding menu items
 
 {% hint style="info" %}
 For a more in-depth view on menus, please refer to [Menus](../../../framework/content/menus.md).

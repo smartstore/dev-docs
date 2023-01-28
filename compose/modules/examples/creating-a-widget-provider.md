@@ -1,4 +1,4 @@
-# 🐣 Creating a Widget provider
+# ✔ Creating a Widget provider
 
 {% hint style="info" %}
 For a more in-depth view on widgets, zones and invokers, please refer to [widgets.md](../../../framework/content/widgets.md "mention").
@@ -88,7 +88,8 @@ namespace MyOrg.HelloWorld.Models
     {
         public string MyTabValue { get; set; }
     }
-}</code></pre>
+}
+</code></pre>
 
 ## Adding the ViewComponent
 
@@ -119,7 +120,8 @@ public HelloWorldViewComponent(SmartDbContext db)
 
 Next you'll add the `InvokeAsync` method. It is called each time the widget zones specified in `GetWidgetZones` is about to get rendered. The model is passed from `GetDisplayWidget`.
 
-<pre class="language-csharp"><code class="lang-csharp"><strong>public async Task&#x3C;IViewComponentResult> InvokeAsync(string widgetZone, object model)</strong></code></pre>
+<pre class="language-csharp"><code class="lang-csharp"><strong>public async Task&#x3C;IViewComponentResult> InvokeAsync(string widgetZone, object model)
+</strong></code></pre>
 
 In case you're handling multiple widget zones and need to differentiate between them, you might add an if- or a switch-block for `widgetZone`. If you just want to make sure that your widget isn't displaying anything, when it is not supposed to, add the following lines:
 

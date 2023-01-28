@@ -1,4 +1,4 @@
-# Import
+# 🥚 Import
 
 ## Overview
 
@@ -12,11 +12,11 @@ The data importer is an [IDataImporter](https://github.com/smartstore/Smartstore
 
 ### Events
 
-The [ImportExecutingEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Events/ImportExecutingEvent.cs) is fired before a data import. It can be used, for example, to load custom data into the context object, which needs to be available during the entire import.
+The [ImportExecutingEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Events/ImportExecutingEvent.cs) is published before a data import. It can be used, for example, to load custom data into the context object, which needs to be available during the entire import.
 
-The [ImportBatchExecutedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Events/ImportBatchExecutedEvent.cs) is fired by the `IEntityImporter` after it has imported a batch of data. It can be used, for example, to import the data of additionally attached columns, data of which the `IEntityImporter` has no knowledge.
+The [ImportBatchExecutedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Events/ImportBatchExecutedEvent.cs) is published by the `IEntityImporter` after it has imported a batch of data. It can be used, for example, to import the data of additionally attached columns, data of which the `IEntityImporter` has no knowledge about.
 
-The [ImportExecutedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Events/ImportExecutedEvent.cs) is fired after a data import. It can be used, for example, to remove data from the cache so that the imported data is taken into account the next time it is accessed.
+The [ImportExecutedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Events/ImportExecutedEvent.cs) is published after a data import. It can be used, for example, to remove data from the cache so that the imported data is taken into account the next time it is accessed.
 
 ## Import profile
 
@@ -47,7 +47,10 @@ public class MyEntityImporter : EntityImporterBase
         var segmenter = context.DataSegmenter;
         var batch = segmenter.GetCurrentBatch<MyEntity>();
 
-        using (var scope = new DbContextScope(_services.DbContext, autoDetectChanges: false, minHookImportance: HookImportance.Important, deferCommit: true))
+        using (var scope = new DbContextScope(_services.DbContext, 
+            autoDetectChanges: false, 
+            minHookImportance: HookImportance.Important, 
+            deferCommit: true))
         {
             await context.SetProgressAsync(segmenter.CurrentSegmentFirstRowIndex - 1, segmenter.TotalRows);
 
@@ -120,7 +123,10 @@ public class MyCustomImporter
         var importContext = await CreateMyImportContext();
 
         using (var logger = new TraceLogger(logFile, false))
-        using (var scope = new DbContextScope(_services.DbContext, autoDetectChanges: false, minHookImportance: HookImportance.Important, deferCommit: true))
+        using (var scope = new DbContextScope(_services.DbContext, 
+            autoDetectChanges: false, 
+            minHookImportance: HookImportance.Important, 
+            deferCommit: true))
         {
             importContext.Log = logger;
             await ExecuteCore(scope, context, importContext);
@@ -130,7 +136,10 @@ public class MyCustomImporter
         await _services.EventPublisher.PublishAsync(new ImportBatchExecutedEvent<MyEntity>(context, batch), context.CancelToken);
     }
     
-    private async Task ExecuteCore(DbContextScope scope, TaskExecutionContext context, MyImportExecuteContext importContext)
+    private async Task ExecuteCore(
+        DbContextScope scope, 
+        TaskExecutionContext context, 
+        MyImportExecuteContext importContext)
     {
 	// Tell user what you are doing at the moment.
 	await context.SetProgressAsync(null, "Importing 100 of my entities.");

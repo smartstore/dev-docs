@@ -9,7 +9,16 @@
 
 ## Permissions tree
 
-Permissions are organized hierarchically in the form of a tree. A permission is granted when it has either granted itself or one of its parent permissions. The same applies to a permission that is explicitly not permitted. In this way, entire groups of permissions can be activated via a parent permission, where child permissions inherit from their parent. Therefore a permission can have three statuses: _allowed_, _not allowed_ or _inherited_.
+Permissions are organized hierarchically in the form of a tree. A permission is granted when it has either granted itself or one of its parent permissions. The same applies to a permission that is explicitly not permitted. In this way, entire groups of permissions can be activated via a parent permission, where child permissions inherit from any parent. Therefore a permission can have four statuses:
+
+| Status             |                                                                                                                              Representation                                                                                                                             |
+| ------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| Allow              |              <img src="https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FDOZxBBKmB9QIuwBDsOtV%2Fuploads%2FfB5HSEioUC73HF0ObuEk%2Fallow.png?alt=media&#x26;token=aedbd684-9962-4b88-8bfa-7c336228752c" alt="allow" data-size="original">              |
+| Disallow           |           <img src="https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FDOZxBBKmB9QIuwBDsOtV%2Fuploads%2F5Na3oItBQPT5bjXtED3j%2Fdisallow.png?alt=media&#x26;token=099a22d6-77ab-48ff-9c34-672bb43f5b4b" alt="disallow" data-size="original">           |
+| Inherited allow    |  <img src="https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FDOZxBBKmB9QIuwBDsOtV%2Fuploads%2FEW9i1xSUgMz9tEPW8sNI%2Finherited-allowed.png?alt=media&#x26;token=9a6e78e0-4cca-4ba9-950a-8b4821afa0d8" alt="inherited allowed" data-size="original">  |
+| Inherited disallow | <img src="https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FDOZxBBKmB9QIuwBDsOtV%2Fuploads%2FShqZ28gckwbOQxY3x7ZL%2Finherited-disallow.png?alt=media&#x26;token=1bdd0e95-5e09-47ac-a199-c2dd92c9fea4" alt="inherited disallow" data-size="original"> |
+
+<figure><img src="../../.gitbook/assets/permission-tree.png" alt=""><figcaption><p>Example of a permissions tree (partial view)</p></figcaption></figure>
 
 ## Authorization
 

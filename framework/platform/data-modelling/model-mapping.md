@@ -2,7 +2,7 @@
 description: Object mapping made easy
 ---
 
-# 🐣 Model mapping
+# ✔ Model mapping
 
 ## Overview
 

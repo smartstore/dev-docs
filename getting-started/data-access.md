@@ -43,9 +43,13 @@ It is good practice to name the data context parameter `db`, or `_db` if used in
 
 A `SmartDbContext` instance is not directly resolved from DI container, but from the pooled `IDbContextFactory<SmartDbContext>` which is configured and created on app start-up. The factory, registered as a singleton, is responsible for creating and pooling the `SmartDbContext` instances.
 
-An instance created by the factory is returned to the pool upon disposal and is reset to its initial state. The pool returns an existing unused instance each time a `SmartDbContext` instance is requested, instead of creating a new one. In case of a depleted pool, a new instance will be created. Therefore, the `SmartDbContext` DI registration is a delegate that leases an instance from this pool, not from the DI container.
+An instance created by the factory is returned to the pool upon disposal and is reset to its initial state. Every time a `SmartDbContext` instance is requested, the pool will return an already existing unleased instance instead of creating a new one - or will create a new instance if the pool is depleted. Therefore, the `SmartDbContext` DI registration is actually a delegate that leases an instance from this pool, not from the DI container.
 
-Pooling is very beneficial for performance in high-load scenarios, because the factory prevents too many objects from being instantiated. By default, the pool size is set to **1024** instances and can be altered via `appsettings.json` using the `DbContextPoolSize` setting.
+Pooling is very beneficial for performance in high-load scenarios, because the factory prevents too many objects from being instantiated.
+
+{% hint style="info" %}
+By default, the pool size is set to **1024** instances and can be altered via `appsettings.json` using the `DbContextPoolSize` setting.
+{% endhint %}
 
 In some situations, it may be necessary to manually lease a context instance from the pool. Two scenarios in which this occurs are:
 
