@@ -25,7 +25,7 @@ You can use this _Tag Helper_ in any view, when making them known in the view. D
 
 If you as a developer are faced with the task to extend an existing entity e.g.: _Products_, _Categories_ or _Manufacturers_, you should not do this in the core code itself but attach it to the tab of a module. In the course of this tutorial, you will extend the _HelloWorld_ module, created in the [last tutorial](../tutorials/building-a-simple-hello-world-module.md), adding an `Events.cs` class to the root of the module.
 
-When a tab strip is created, the Tag Helper fires the `TabStripCreated` event. Its event message contains everything to be able to add a custom tab to the tab strip. The code to add a custom tab in the product detail configuration in the admin area looks like this:
+When a tab strip is created, the Tag Helper publishes the `TabStripCreated` event. Its event message contains everything to be able to add a custom tab to the tab strip. The code to add a custom tab in the product detail configuration in the admin area looks like this:
 
 ```csharp
 using System.Threading.Tasks;
@@ -62,14 +62,14 @@ The event message stores the tab id in `TabStripName`. The tab of interest has t
 
 Using the event message’s `TabFactory`, you can inject a new tab.
 
-| Method                 | Description                                                        |
-| ---------------------- | ------------------------------------------------------------------ |
-| **Text**               | The text of the tab item that appears in the tab strip             |
-| **Name**               | Unique name/id of tab item                                         |
-| **Icon**               | The icon of the tab                                                |
-| **LinkHtmlAttributes** | HTML attributes to be added to the tab's link                      |
-| **Action**             | The MVC `action` that should be invoked to display the tab         |
-| **Ajax**               | Specifies whether the tab should be reloaded via Ajax when clicked |
+| Method                 | Description                                                                   |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| **Text**               | The text of the tab item that appears in the tab strip                        |
+| **Name**               | Unique name/id of tab item                                                    |
+| **Icon**               | The icon of the tab                                                           |
+| **LinkHtmlAttributes** | HTML attributes to be added to the tab's link                                 |
+| **Action**             | The MVC `action` that should be invoked to display the tab                    |
+| **Ajax**               | Specifies whether the tab content should be lazy loaded via Ajax when clicked |
 
 Now that the tab has been added, you need to add the action that controls the tab. Open the admin controller and add the following action:
 
