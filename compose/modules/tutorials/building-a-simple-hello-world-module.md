@@ -196,10 +196,10 @@ namespace MyOrg.HelloWorld.Controllers
 ```
 {% endcode %}
 
-The configuration model is still missing, so there will be 3 errors right now. Notice the `area` attribute the controller is decorated with. This means that all its actions are reachable only within this area. If you want to add actions to the module within another area don't forget to decorate these actions with the desired area or add another controller.
+The configuration model is still missing, so there will be 3 errors right now. Notice the `Area` attribute the controller is decorated with. This means that all its actions are reachable only within this area. If you want to add actions to the module within another area don't forget to decorate these actions with the desired area or add another controller.
 
 {% hint style="info" %}
-Using the AdminController automatically adds the `admin` area attribute.
+Using the AdminController automatically adds the _admin_ `Area` attribute.
 {% endhint %}
 
 According to the MVC pattern, there are two actions in this controller to handle the configure view. The first action is for the `GET` request and the second handles the `POST` request.
