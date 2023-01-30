@@ -256,37 +256,7 @@ For more convenience the abstract base class [DbSaveHook](https://github.com/sma
 * **PreSave**: `OnInserting`, `OnUpdating`, `OnDeleting`
 * **PostSave**: `OnInserted`, `OnUpdated`, `OnDeleted`
 
-They all return `HookResult.Void` by default and just need to be overridden to opt-in. The following excerpt from [PriceLabelHook.cs](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Pricing/Hooks/PriceLabelHook.cs) shows the usage:
-
-```csharp
-protected override Task<HookResult> OnDeletingAsync(PriceLabel entity, IHookedEntity entry, CancellationToken cancelToken)
-{
-    if (entity.Id == _priceSettings.DefaultRegularPriceLabelId)
-    {
-        entry.ResetState();
-        _hookErrorMessage = T("Admin.Configuration.PriceLabel.CantDeleteDefaultRegularPriceLabel");
-    }
-    else if (entity.Id == _priceSettings.DefaultComparePriceLabelId)
-    {
-        entry.ResetState();
-        _hookErrorMessage = T("Admin.Configuration.PriceLabel.CantDeleteDefaultComparePriceLabel");
-    }
-
-    return Task.FromResult(HookResult.Ok);
-}
-```
-
-### Batching
-
-Sometimes it may be preferable to hook the entire save batch instead of hooking entities one at a time: for example, if your hook executes some expensive code. Consider the following scenario:
-
-You have an import process that always saves product entities in batches of 100 products each. A **PostSave** product hook handler would be called 100 times for the save operation `OnAfterSaveAsync`. But the batch handler `OnAfterSaveCompletedAsync` would be called only once. All entities that have gone through `OnAfterSaveAsync` before are passed to this method as a collection.
-
-{% hint style="warning" %}
-All entities that were handled with `HookResult.Void` in `OnAfterSaveAsync` are excluded from the entries collection, because they are _not of interest_.
-{% endhint %}
-
-[ProductAttributeHook.cs](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Attributes/Hooks/ProductAttributeHook.cs) shows an example of using `OnAfterSaveCompletedAsync`.
+They all return `HookResult.Void` by default and just need to be overridden to opt-in. The following excerpt from [ProductAttributeHook.cs](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Attributes/Hooks/ProductAttributeHook.cs) shows the usage:
 
 ```csharp
 private HashSet<int> _deletedAttributeOptionIds = new();
@@ -330,6 +300,18 @@ public override async Task OnAfterSaveCompletedAsync(
     }
 }
 ```
+
+### Batching
+
+Sometimes it may be preferable to hook the entire save batch instead of hooking entities one at a time: for example, if your hook executes some expensive code. Consider the following scenario:
+
+You have an import process that always saves product entities in batches of 100 products each. A **PostSave** product hook handler would be called 100 times for the save operation `OnAfterSaveAsync`. But the batch handler `OnAfterSaveCompletedAsync` would be called only once. All entities that have gone through `OnAfterSaveAsync` before are passed to this method as a collection.
+
+{% hint style="warning" %}
+All entities that were handled with `HookResult.Void` in `OnAfterSaveAsync` are excluded from the entries collection, because they are _not of interest_.
+{% endhint %}
+
+[ProductAttributeHook.cs](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Attributes/Hooks/ProductAttributeHook.cs) shows an example of using `OnAfterSaveCompletedAsync` (see [Abstract base class](hooks.md#abstract-base-class)).
 
 ### Setting priorities
 

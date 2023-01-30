@@ -17,8 +17,72 @@ Smartstore registers a scoped service factory for the `SmartDbContext` service t
 However, there may be situations where working with `IDbContextFactory` is beneficial:
 
 * If your code does not run within the scope of an HTTP request like the [SmartDbContextSink](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Logging/Serilog/SmartDbContextSink.cs) that resolves a `SmartDbContext` instance periodically, triggered by a timer.
-  * EXAMPLE/CODE EXCERPT
+
+```csharp
+public async Task EmitBatchAsync(IEnumerable<LogEvent> batch)
+{
+    var db = CreateDbContext();
+
+    if (db != null)
+    {
+        await using (db)
+        {
+            db.MinHookImportance = HookImportance.Important;
+            db.Logs.AddRange(batch.Select(CovertLogEvent));
+            await db.SaveChangesAsync();
+        }
+    }
+}
+
+public Task OnEmptyBatchAsync()
+    => Task.CompletedTask;
+
+private static SmartDbContext CreateDbContext()
+{
+    var engine = EngineContext.Current;
+
+    if (engine == null || !engine.IsStarted)
+    {
+        // App not initialized yet
+        return null;
+    }
+
+    if (!DataSettings.DatabaseIsInstalled())
+    {
+        // Cannot log to non-existent database
+        return null;
+    }
+
+    return engine.Application.Services
+        .Resolve<IDbContextFactory<SmartDbContext>>().CreateDbContext();
+}
+```
+
 * If you need to access `SmartDbContext` inside a singleton class like the [SettingFactory](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Configuration/Services/SettingFactory.cs).
-  * EXAMPLE/CODE EXCERPT
+
+```csharp
+private readonly IDbContextFactory<SmartDbContext> _dbContextFactory;
+
+// ...
+
+private IDisposable GetOrCreateDbContext(out SmartDbContext db)
+{
+    db = _scope?.ResolveOptional<SmartDbContext>() ??
+         _httpContextAccessor.HttpContext?
+         .RequestServices?.GetService<SmartDbContext>();
+
+    if (db != null)
+    {
+        // Don't dispose request scoped main db instance.
+        return ActionDisposable.Empty;
+    }
+
+    // Fetch a fresh DbContext if no scope is given.
+    db = _dbContextFactory.CreateDbContext();
+
+    return db;
+}
+```
+
 * In very long-running processes that load or write a lot of entities. This can gradually decrease performance, because the change tracker tracks too many entities. In this case it may be beneficial to resolve a fresh instance from pool, instead of detaching all entities, after a batch completes.
   * EXAMPLE
