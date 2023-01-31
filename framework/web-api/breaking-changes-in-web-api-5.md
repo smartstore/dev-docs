@@ -2,7 +2,7 @@
 
 #### Authentication
 
-[HMAC authentication](https://en.wikipedia.org/wiki/HMAC) is no longer supported. For the highest level of interoperability with generic clients, the Web API now uses [Basic authentication](https://app.gitbook.com/o/jug3iI9jtm3q3KRxHi73/s/DOZxBBKmB9QIuwBDsOtV/framework/web-api/authentication) over HTTPS, as recommended by the OData protocol version 4.0.
+[HMAC authentication](https://en.wikipedia.org/wiki/HMAC) is no longer supported. For the highest level of interoperability with generic clients, the Web API now uses [Basic authentication](https://app.gitbook.com/o/jug3iI9jtm3q3KRxHi73/s/DOZxBBKmB9QIuwBDsOtV/framework/web-api/authentication) over HTTPS, as recommended by the _OData protocol version 4.0_.
 
 #### Querying related entities
 
@@ -40,7 +40,7 @@ new /Categories(14)?$select=Name
 
 #### Response of PUT and PATCH requests
 
-For PUT and PATCH requests, the HTTP header **Prefer** with the value `return=representation` must be sent to get a `status code 200` with an entity content response. This is the default behavior of AspNetCore.OData v.8, otherwise `204 No Content` is returned.
+For PUT and PATCH requests, the HTTP header **Prefer** with the value `return=representation` must be sent to get a status code `200` with an entity content response. This is the default behavior of _AspNetCore.OData v.8_, otherwise `204 No Content` is returned.
 
 #### Return types of media endpoints
 
@@ -66,23 +66,25 @@ The query string parameter **SmNetFulfill** has been renamed to **SmApiFulfill**
 
 ## Changed endpoints
 
-| Old endpoint                                                                                                                                 | Remarks                                                                                                                                                                                                   |
-| -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET MediaFiles/Download({Id}) -> GET MediaFiles/DownloadFile({id})                                                                           |                                                                                                                                                                                                           |
-| POST OrderItems({id})/Infos -> GET OrderItems/GetShipmentInfo({id})                                                                          |                                                                                                                                                                                                           |
-| <p>POST Orders({id})/Infos -><br>GET Orders/GetShipmentInfo({id})</p>                                                                        |                                                                                                                                                                                                           |
-| <p>POST Orders({id})/Pdf -><br>GET Orders/DownloadPdf({id})</p>                                                                              |                                                                                                                                                                                                           |
-| <p><mark style="color:orange;">GET Payments/Methods</mark> -><br>GET PaymentMethods/GetAllPaymentMethods({active},{storeId})</p>             | New method. Now returns a list of payment method system names.                                                                                                                                            |
-| <p>ProductPictures/... -><br>ProductMediaFiles/...</p>                                                                                       | The controller name has changed.                                                                                                                                                                          |
-| <p>Products/ProductPictures -><br>Products/ProductMediaFiles</p>                                                                             | The navigation property name has changed.                                                                                                                                                                 |
-| <p><mark style="color:orange;">POST Uploads/ProductImages</mark> -><br><mark style="color:green;">POST Products/ProductMediaFiles</mark></p> | New method. Now returns list of **ProductMediaFile**. SKU, GTIN or MPN to identify the product can optionally be sent via query string. ContentDisposition parameter **pictureId** renamed to **fileId**. |
-| <p>POST Products/FinalPrice|LowestPrice -><br>POST Products/CalculatePrice</p>                                                               | New method. Now returns **CalculatedProductPrice**.                                                                                                                                                       |
+| Old endpoint -> New endpoint                                                                                                                 | Remarks                                                                                                                                                                                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET MediaFiles/Download({Id}) -> GET MediaFiles/DownloadFile({id})                                                                           |                                                                                                                                                                                                                                                                 |
+| POST OrderItems({id})/Infos -> GET OrderItems/GetShipmentInfo({id})                                                                          |                                                                                                                                                                                                                                                                 |
+| <p>POST Orders({id})/Infos -><br>GET Orders/GetShipmentInfo({id})</p>                                                                        |                                                                                                                                                                                                                                                                 |
+| <p>POST Orders({id})/Pdf -><br>GET Orders/DownloadPdf({id})</p>                                                                              |                                                                                                                                                                                                                                                                 |
+| <p><mark style="color:orange;">GET Payments/Methods</mark> -><br>GET PaymentMethods/GetAllPaymentMethods({active},{storeId})</p>             | New method. Now returns a list of payment method system names.                                                                                                                                                                                                  |
+| <p>ProductPictures/... -><br>ProductMediaFiles/...</p>                                                                                       | The controller name has changed.                                                                                                                                                                                                                                |
+| <p>Products/ProductPictures -><br>Products/ProductMediaFiles</p>                                                                             | The navigation property name has changed.                                                                                                                                                                                                                       |
+| <p><mark style="color:orange;">POST Uploads/ProductImages</mark> -><br><mark style="color:green;">POST Products/ProductMediaFiles</mark></p> | <p>New method. Now returns a list of <strong>ProductMediaFile</strong>.</p><p>SKU, GTIN or MPN to identify the product can optionally be sent via query string. ContentDisposition parameter <strong>pictureId</strong> renamed to <strong>fileId</strong>.</p> |
+| <p>POST Products/FinalPrice|LowestPrice -><br>POST Products/CalculatePrice</p>                                                               | New method. Now returns **CalculatedProductPrice**.                                                                                                                                                                                                             |
+
+
 
 {% hint style="info" %}
 Notes:
 
 * <mark style="color:orange;">Route</mark> <mark style="color:orange;"></mark><mark style="color:orange;">**/api/v1/**</mark> <mark style="color:orange;"></mark><mark style="color:orange;">no longer exists.</mark>
-* <mark style="color:green;">The parameterization has been changed to support Swagger.</mark>
+* <mark style="color:green;">The parameterization has been changed to support</mark> <mark style="color:green;"></mark>_<mark style="color:green;">Swagger</mark>_<mark style="color:green;">.</mark>
 {% endhint %}
 
 ## Changed response header names
