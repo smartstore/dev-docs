@@ -51,7 +51,7 @@
   * [Rules Engine](framework/commerce/rules-engine.md)
   * [Shipment](framework/commerce/shipment.md)
   * [Tax](framework/commerce/tax.md)
-* [Web API](framework/web-api/README.md)
+* [✔ Web API](framework/web-api/README.md)
   * [✔ Prerequisites](framework/web-api/prerequisites.md)
   * [✔ Help & Tools](framework/web-api/help-and-tools.md)
   * [✔ Breaking changes in Web API 5](framework/web-api/breaking-changes-in-web-api-5.md)
