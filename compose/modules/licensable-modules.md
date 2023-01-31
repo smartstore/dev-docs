@@ -1,4 +1,4 @@
-# Licensable modules
+# 🥚 Licensable modules
 
 ## Overview
 
@@ -61,20 +61,20 @@ HINT: The license check is always performed against the current request URL or a
 
 The license checker is a set of static methods for license validation within `Smartstore.Licensing.dll`.
 
-| Method                                                                 | Description                                                                                                                                                                                                                                                       |
-| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **IsLicensableModule**                                                 | Gets a value indicating whether a module is a licensed piece of code where the user has to enter a license key that has to be activated.                                                                                                                          |
-| <p><strong>GetLicense</strong><br><strong>GetLicenseAsync</strong></p> | Gets information about a license for a given module system name such as the remaining demo days.                                                                                                                                                                  |
-| **ActivateAsync**                                                      | Activates a license key. This is done when the user enters their license key in administration backend.                                                                                                                                                           |
-| <p><strong>Check</strong><br><strong>CheckAsync</strong></p>           | Checks the state of a license for a given module system name and returns various information about the license. If you need a stringified version of the result (German and English localization supported), call the `ToString()` method of the returned object. |
-| <p><strong>CheckState</strong><br><strong>CheckStateAsync</strong></p> | Same as _Check_ or _CheckAsync_ but just returns the license state.                                                                                                                                                                                               |
-| <p><strong>ResetState</strong><br><strong>ResetStateAsync</strong></p> | The license status is cached internally. Only after a certain period there is a live check against the server. With this method, the cached status is reset and immediately checked again live.                                                                   |
+| Method                 | Description                                                                                                                                                                                                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **IsLicensableModule** | Gets a value indicating whether a module is a licensed piece of code where the user has to enter a license key that has to be activated.                                                                                                                          |
+| **GetLicense**         | Gets information about a license for a given module system name such as the remaining demo days.                                                                                                                                                                  |
+| **Activate**           | Activates a license key. This is done when the user enters their license key in administration backend.                                                                                                                                                           |
+| **Check**              | Checks the state of a license for a given module system name and returns various information about the license. If you need a stringified version of the result (German and English localization supported), call the `ToString()` method of the returned object. |
+| **CheckState**         | Same as _Check_ or _CheckAsync_ but just returns the license state.                                                                                                                                                                                               |
+| **ResetState**         | The license status is cached internally. Only after a certain period there is a live check against the server. With this method, the cached status is reset and immediately checked again live.                                                                   |
 
 ### LicenseRequired filter attribute <a href="#howtomakeapluginlicensable-thelicenserequiredfilterattribute" id="howtomakeapluginlicensable-thelicenserequiredfilterattribute"></a>
 
 You can decorate either a whole controller class or just a single action method with the `LicenseRequiredAttribute`. This attribute internally calls `LicenseChecker.CheckAsync()` right before your action is processed, giving it the opportunity to block the action. If the license isn't valid, the _LicenseRequired_ view will be rendered by default, which you can override by setting the property `ViewName` on the attribute. Alternatively, you could just display a notification for which you can use the properties `NotifyOnly`, `NotificationMessage` and `NotificationMessageType`. AJAX requests will be recognized automatically, and a suitable response will be generated according to the negotiated content type (either JSON or HTML).
 
-If you want to block certain methods or even your entire plugin when it is in demo mode, you need to set the property `BlockDemo` to _True,_ otherwise everything will be accessible in the demo mode, as the value of `BlockDemo` is _False_ by default. All properties of `LicenseRequiredAttribute`:
+If you want to block certain methods or even your entire module when it is in demo mode, you need to set the property `BlockDemo` to _True,_ otherwise everything will be accessible in the demo mode, as the value of `BlockDemo` is _False_ by default. All properties of `LicenseRequiredAttribute`:
 
 | Property                    | Description                                                                                                                                                                                                                                                |
 | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -101,7 +101,7 @@ private async Task ProcessProducts()
     // ...
     if (state == LicensingState.Demo)
     {
-        // Leave after 5 products if plugin is in demo mode.
+        // Leave after 5 products if module is in demo mode.
         products = products.Take(5);
     }
     
@@ -148,7 +148,7 @@ protected override async Task ExportAsync(ExportExecuteContext context,
 }
 ```
 
-Additionally, a payment plugin can hide its payment methods at checkout if there is no active license. To enable this to work, you must override the `PaymentMethodBase.IsActive` property.
+Additionally, a payment provider can hide its payment methods at checkout if there is no active license. To enable this to work, you must override the `PaymentMethodBase.IsActive` property.
 
 ```csharp
 public override bool IsActive
