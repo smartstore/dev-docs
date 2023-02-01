@@ -143,7 +143,7 @@ POST http://localhost:59318/odata/v1/Products(211)/ManageAttributes
 ]}
 ```
 
-The request configures a product with the ID `211` with two attributes _Color_ and _Size,_ and its values: _`Red`, `Green`, `Blue`_ and _`Large`, `X-Large`_. If **synchronize** is set to `false`, only missing attributes and attribute values are inserted. If set to `true`, existing records are also updated and values not included in the request body are removed from the database. If you pass an empty value array, the attribute and all its values are removed from the product.
+The request configures a product with the ID `211` with two attributes _Color_ and _Size,_ and its values: _Red, Green, Blue_ and _Large, X-Large_. If **synchronize** is set to `false`, only missing attributes and attribute values are inserted. If set to `true`, existing records are also updated and values not included in the request body are removed from the database. If you pass an empty value array, the attribute and all its values are removed from the product.
 
 ### Create attribute combinations
 
@@ -159,26 +159,8 @@ This creates all possible attribute combinations for a product with the ID `211`
 POST http://localhost:59318/odata/v1/Products/Search?q=notebook
 ```
 
-Searches the catalog for products with the term `notebook`. The API expects the same query string parameters used for searching in the frontend of the shop.
-
-The following table shows query string parameters that can be used to search for products.
-
-|       Query string parameter      | Description                                                              |
-| :-------------------------------: | ------------------------------------------------------------------------ |
-|                 q                 | Search term.                                                             |
-|                 i                 | Page index.                                                              |
-|                 s                 | Page size.                                                               |
-|                 o                 | Order by. `ProductSortingEnum` value.                                    |
-|                 p                 | Price range (from-to \|\| from(-) \|\| -to).                             |
-|                 c                 | Category identifiers.                                                    |
-|                 m                 | Manufacturer identifiers.                                                |
-|                 r                 | Minimum rating. Value from 1 to 5.                                       |
-|                 a                 | Product availability by stock.                                           |
-|                 n                 | New arrivals.                                                            |
-|                 d                 | Delivery time identifiers.                                               |
-|                 \*                | Variants & attributes. MegaSearchPlus module required.                   |
-| <mark style="color:red;">v</mark> | <mark style="color:red;">View mode. Has no relevance for the API.</mark> |
+Searches the catalog for products with the term _notebook_. The API expects the same query string parameters used for searching in the frontend of the shop. See [Search query](../../platform/search.md#search-query) for a complete list of all query string parameters.
 
 {% hint style="info" %}
-The paging parameters `$top` and `$skip` are ignored. Instead use the query string parameters above for _page index_ and _page size_. The maximum page size is determined by the same configuration setting that is used for all other API requests.
+The paging parameters `$top` and `$skip` are ignored. Instead use the query string parameters mentioned in [Search query](../../platform/search.md#search-query) for _page index_ and _page size_. The maximum page size is determined by the same configuration setting that is used for all other API requests.
 {% endhint %}
