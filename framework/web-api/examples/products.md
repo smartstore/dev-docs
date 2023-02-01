@@ -60,10 +60,10 @@ POST http://localhost:59318/odata/v1/Products(1)/ProductManufacturers(12)
 ```
 
 {% hint style="info" %}
-* The request body is optional but sending the content type header with _application/json_ is required otherwise 404 _Not Found_ is returned_._
+* The request body is optional but sending the content type header with _application/json_ is required otherwise `404 Not Found` is returned_._
 * Use the DELETE method to remove an assignment.
-* Omit the category/manufacturer identifier if you want to remove all related assignments for a product.
-* It doesn't matter if one of the assignments already exists. The Web API automatically ensures that a product has no duplicate categories or manufacturer assignments.
+* Omit the category / manufacturer identifier if you want to remove all related assignments for a product.
+* It doesn't matter if one of the assignments already exists. The Web API automatically ensures that a product has no duplicate category or manufacturer assignments.
 * Such navigation links are only available for a few navigation properties at the moment.
 {% endhint %}
 
@@ -81,12 +81,12 @@ PATCH http://localhost:59318/odata/v1/ProductMediaFiles(66)
 ```
 
 {% hint style="info" %}
-66 is the ID of _ProductMediaFile_, not the ID of _MediaFile_. _ProductMediaFile_ is a mapping between a product and a media file (image).
+66 is the ID of the _ProductMediaFile_, not the ID of the _MediaFile_. _ProductMediaFile_ is a mapping between a product and a media file (image).
 {% endhint %}
 
 ### Upload product images
 
-Multiple images can be uploaded for a product by a single multipart form data POST request. The product ID can be 0 and the product can be identified by query string parameter _sku_, _gtin_ or _mpn_.
+Multiple images can be uploaded for a product by a single multipart form data POST request. The product ID can be `0` and the product can be identified by query string parameter _sku_, _gtin_ or _mpn_.
 
 ```http
 POST http://localhost:59318/odata/v1/Products(1)/SaveFiles
@@ -108,7 +108,7 @@ Content-Disposition: form-data; name="my-file-3"; filename="my-file3.jpg"
 It doesn't matter if one of the uploaded images already exists. The Web API automatically ensures that a product has no duplicate images by comparing both binary data streams.
 {% endhint %}
 
-It is also possible to update/replace an existing image. To do so simply add the file identifier as `fileId` attribute in the content disposition header of the file. The example updates the picture entity with the Id 6166.
+It is also possible to update or replace an existing image. To do so simply add the file identifier as the `fileId` attribute in the _content disposition_ header of the file. The example updates the picture entity with the Id `6166`.
 
 ```
 POST http://localhost:59318/odata/v1/Products(0)/SaveFiles?sku=p9658742
@@ -119,7 +119,7 @@ Content-Disposition: form-data; name="img"; filename="new-image.jpg"; fileId="61
 ```
 
 {% hint style="info" %}
-Image uploading can be a resource-intensive process. We recommend the use of the async and await syntax or any other parallel asynchronous mechanism targeting payload efficiency.
+Image uploading can be a resource-intensive process. We recommend the use of the `async` and `await` syntax or any other parallel asynchronous mechanism targeting payload efficiency.
 {% endhint %}
 
 ### Managing attributes
@@ -143,7 +143,7 @@ POST http://localhost:59318/odata/v1/Products(211)/ManageAttributes
 ]}
 ```
 
-The request configures a product with the ID 211 with two attributes, _Color_ and _Size,_ and its values, _Red, Green, Blue_ and _Large, X-Large_. If `synchronize` is set to `false`, only missing attributes and attribute values are inserted. If set to `true`, existing records are also updated and values not included in the request body are removed from the database. If you pass an empty value array, the attribute and all its values are removed from the product.
+The request configures a product with the ID `211` with two attributes _Color_ and _Size,_ and its values: _`Red`, `Green`, `Blue`_ and _`Large`, `X-Large`_. If **synchronize** is set to `false`, only missing attributes and attribute values are inserted. If set to `true`, existing records are also updated and values not included in the request body are removed from the database. If you pass an empty value array, the attribute and all its values are removed from the product.
 
 ### Create attribute combinations
 
@@ -151,7 +151,7 @@ The request configures a product with the ID 211 with two attributes, _Color_ an
 POST http://localhost:59318/odata/v1/Products(211)/CreateAttributeCombinations
 ```
 
-This creates all possible attribute combinations for a product with the ID 211. As a first step, this action always deletes all existing attribute combinations for the given product.
+This creates all possible attribute combinations for a product with the ID `211`. As a first step, this action always deletes all existing attribute combinations for the given product.
 
 ### Search products
 
@@ -159,7 +159,9 @@ This creates all possible attribute combinations for a product with the ID 211. 
 POST http://localhost:59318/odata/v1/Products/Search?q=notebook
 ```
 
-Searches the catalog for products with the term _notebook_. The API expect the same query string parameters used for searching in the shop frontend. The following table shows query string parameters that can be used for searching products.
+Searches the catalog for products with the term `notebook`. The API expects the same query string parameters used for searching in the frontend of the shop.
+
+The following table shows query string parameters that can be used to search for products.
 
 |       Query string parameter      | Description                                                              |
 | :-------------------------------: | ------------------------------------------------------------------------ |
@@ -178,5 +180,5 @@ Searches the catalog for products with the term _notebook_. The API expect the s
 | <mark style="color:red;">v</mark> | <mark style="color:red;">View mode. Has no relevance for the API.</mark> |
 
 {% hint style="info" %}
-Paging parameter $top and $skip are ignored. Instead use the above query string parameters for page index and page size. The maximum page size is determined by the same configuration setting that is used for all other API requests.
+The paging parameters `$top` and `$skip` are ignored. Instead use the query string parameters above for _page index_ and _page size_. The maximum page size is determined by the same configuration setting that is used for all other API requests.
 {% endhint %}
