@@ -2,7 +2,7 @@
 
 ## The OData metadata document <a href="#helpandtools-theodatametadatadocument" id="helpandtools-theodatametadatadocument"></a>
 
-The metadata document describes the \_Entity Data Model\_ (EDM) of the OData service, using an XML language called the \__Conceptual Schema Definition Language\__ (CSDL). The metadata document shows the structure of the data in the OData service and can be used to generate client code. This is the recommended overview for the consumer to indicate the location of a particular resource or API endpoint. To retrieve the metadata document, send the following request:
+The metadata document describes the _Entity Data Model_ (EDM) of the OData service, using an XML language called the _Conceptual Schema Definition Language_ (CSDL). The metadata document shows the structure of the data in the OData service and can be used to generate client code. This is the recommended overview for the consumer to indicate the location of a particular resource or API endpoint. To retrieve the metadata document, send the following request:
 
 ```http
 GET http://localhost:59318/odata/v1/$metadata
@@ -10,7 +10,7 @@ GET http://localhost:59318/odata/v1/$metadata
 
 ## Swagger Web API help <a href="#helpandtools-swaggerwebapihelp" id="helpandtools-swaggerwebapihelp"></a>
 
-Swagger is a machine-readable representation of a RESTful API that enables support for interactive documentation, client SDK generation and discoverability. It is capable of sending test requests to the API via a **Try It Out** button. To open the Swagger help pages, send the following request:
+Swagger is a machine-readable representation of a RESTful API that enables support for interactive documentation and discoverability. It is capable of sending test requests to the API via a **Try It Out** button. To open the Swagger help pages, send the following request:
 
 ```
 GET http://localhost:59318/docs/api
