@@ -76,7 +76,7 @@ DELETE http://localhost:59318/odata/v1/Products(1)/ProductMediaFiles(66)
 ### **Update display order of image assignment 66 at product 1**
 
 ```
-PATCH http://localhost:59318/odata/v1/ProductMediaFiles(66)
+PATCH http://localhost:59318/odata/v1/Products(1)/ProductMediaFiles(66)
 { "DisplayOrder": 5 }
 ```
 
