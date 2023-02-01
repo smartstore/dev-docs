@@ -6,20 +6,20 @@
 GET http://localhost:59318/odata/v1/Orders(145)/ShippingAddress
 ```
 
-### **Get order items of an order including product data**
+### **Get order items from an order including product data**
 
 ```
 GET http://localhost:59318/odata/v1/OrderItems?$filter=OrderId eq 145&$expand=Product
 ```
 
-### **Get orders with note "mystring"**
+### **Get orders with the note "mystring"**
 
 ```
 GET http://localhost:59318/odata/v1/OrderNotes
 ?$filter=Note eq 'mystring'&$expand=Order
 ```
 
-### **Get orders without note "mystring"**
+### **Get orders without the note "mystring"**
 
 ```
 GET http://localhost:59318/odata/v1/OrderNotes
@@ -33,7 +33,7 @@ POST http://localhost:59318/odata/v1/Orders(145)/PaymentPaid
 { "paymentMethodName": "Payments.Sofortueberweisung" }
 ```
 
-The example also sets the system name of the payment method to `Payments.Sofortueberweisung`for the order.
+The example also sets the system name of the payment method for the order to `Payments.Sofortueberweisung`.
 
 ### Refund an order
 
@@ -42,7 +42,7 @@ POST http://localhost:59318/odata/v1/Orders(146)/PaymentRefund
 { "online": true }
 ```
 
-The parameter **online** indicates whether to call the related payment gateway to refund the payment. `True` would refund against the payment gateway. `False` just sets the status offline without calling any payment gateway.
+The **online** parameter indicates whether to call the related payment gateway to refund the payment. `True` would refund against the payment gateway. `False` just sets the status offline without calling any payment gateway.
 
 ### Complete an order
 
@@ -63,7 +63,7 @@ POST http://localhost:59318/odata/v1/Orders(150)/AddShipment
 { "trackingNumber": "987654321", "isShipped": true }
 ```
 
-The method also adds shipment items for all order items. Example: an order consists of product A with a quantity of 1 and product B with a quantity of 2. `AddShipment` then adds a shipment with two shipment items, one for product A with a quantity of 1 and one for product B with a quantity of 2.
+The method also adds shipment items for all order items. For example, an order that consists of **product A** with a quantity of 1 and **product B** with a quantity of 2. `AddShipment` then adds a shipment with two shipment items, one for **product A** with a quantity of 1 and one for **product B** with a quantity of 2.
 
 `isShipped` with a value of `true` marks order and shipment as shipped, adds an order note and sends a notification message to the customer that the shipment has been sent.
 
