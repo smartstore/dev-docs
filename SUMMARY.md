@@ -57,7 +57,7 @@
   * [✔ Breaking changes in Web API 5](framework/web-api/breaking-changes-in-web-api-5.md)
   * [✔ Web API in detail](framework/web-api/web-api-in-detail.md)
   * [✔ Authentication](framework/web-api/authentication.md)
-  * [Examples](framework/web-api/examples/README.md)
+  * [✔ Examples](framework/web-api/examples/README.md)
     * [✔ Products](framework/web-api/examples/products.md)
     * [✔ Orders](framework/web-api/examples/orders.md)
     * [✔ Customers](framework/web-api/examples/customers.md)
