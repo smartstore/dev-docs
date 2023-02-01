@@ -2,21 +2,25 @@
 
 ## Overview
 
+If you are offering your module on the [SmartStore Community Marketplace](http://community.smartstore.com/index.php?/files/), you can easily make it licensable. A licensed module behaves as follows:
+
+* The module can be used for free for 30 days (demonstration mode). After this period, it has to be licensed.
+* A shop administrator receives a license key after purchasing the module on the [SmartStore Marketplace](http://community.smartstore.com/index.php?/files/). To activate the license key, it has to be entered in the administration backend (_Plugins > Manage Plugins_).
+* The license status is periodically checked to ensure that nobody is misusing your module.
+
+HINT: A license key is only valid for the IP address that activated the key.
+
+## LicensableModule attribute <a href="#howtomakeapluginlicensable-thelicensablemoduleattribute" id="howtomakeapluginlicensable-thelicensablemoduleattribute"></a>
+
 A module can be marked as licensable piece of code by decorating the module class (inherited from `ModuleBase`) with the `LicensableModuleAttribute`.
 
 HINT: There must be a dependency on the _Smartstore.Web.Common_ project for the module to use the licensing component.
 
-To be able to fully use the module, the shop administrator must enter a license key in the administration backend, which he has previously purchased on the [Smartstore Marketplace](http://community.smartstore.com/index.php?/files/). The key is activated after it is entered.
-
-HINT: A license key is only valid for the IP address that activated the key.
-
 `LicensableModuleAttribute` has an option `HasSingleLicenseForAllStores` related to multi-stores. If set to _True_, then the license key has no domain binding and is therefore valid for all stores. Recommended is the default value _False_, i.e. a new license key is required for each store.
-
-The module should perform a license check at the beginning of important functions and disable or restrict them if there is no valid license.
 
 ## License check
 
-The module should check the license when executing important functions. It is recommended to do this not permanently but throttled via `Throttle.Check`.
+The module should check the license status when executing important functions and disable or restrict them if there is no valid license. It is recommended to do this not permanently but throttled via `Throttle.Check`.
 
 WARN: Always use the system name of the module to check a license, not those of a provider!
 
