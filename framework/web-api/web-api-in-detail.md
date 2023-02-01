@@ -4,8 +4,8 @@ You can consume API services in a RESTful manner via HTTPS calls by using HTTPS 
 
 * `GET`: Get the resource.
 * `POST`: Create a new resource.
-* `PUT`: Update or replace the existing resource.
-* `PATCH`: Update or replace a part of the existing resource.
+* `PUT`: Update the existing resource.
+* `PATCH`: Update a part of the existing resource.
 * `DELETE`: Remove the resource.
 
 OData query options (such a `$expand`, `$filter`, `$top`, `$select`, etc.) and API specific options (such as `SmApiFulfillCountry`) can be passed via query strings.
@@ -52,12 +52,12 @@ For example, imagine you want to add a German address, but you don't have the ID
 
 The API can fulfill the following properties:
 
-| property\_name  | Example                        | Description                               |
-| --------------- | ------------------------------ | ----------------------------------------- |
-| `Country`       | `SmApiFulfillCountry=USA`      | The two or three letter ISO country code. |
-| `StateProvince` | `SmApiFulfillStateProvince=CA` | The abbreviation of a state or province.  |
-| `Language`      | `SmApiFulfillLanguage=de-DE`   | The culture of a language.                |
-| `Currency`      | `SmApiFulfillCurrency=EUR`     | The ISO code of a currency.               |
+| Entity property   | Expected query value                      | Query string example             |
+| ----------------- | ----------------------------------------- | -------------------------------- |
+| **Country**       | The two or three letter ISO country code. | SmApiFulfill**Country**=USA      |
+| **StateProvince** | The abbreviation of a state or province.  | SmApiFulfill**StateProvince**=CA |
+| **Language**      | The culture of a language.                | SmApiFulfill**Language**=de-DE   |
+| **Currency**      | The ISO code of a currency.               | SmApiFulfill**Currency**=EUR     |
 
 {% hint style="warning" %}
 `SmApiFulfill` sets the relationship only if none exists yet. An existing relationship cannot be modified with this option.
