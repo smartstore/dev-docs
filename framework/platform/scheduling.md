@@ -25,7 +25,7 @@ Users also have the option to manually trigger a task in the backend, and any ru
 
 To implement a task, create a concrete class that implements the [ITask](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Scheduling/Services/ITask.cs) interface. It does not need to be registered in the DI, but is automatically detected and registered as a _scoped service_ when the application starts. This allows task types to have dependencies.
 
-The `Run` method is the task handler. There is **no synchronized** counterpart! The task executor calls this method asynchronously and waits for it to complete.
+The `Run` method is the task handler. There is **no synchronous** counterpart! The task executor calls this method asynchronously and waits for it to complete.
 
 If an exception occurs during task execution (either unhandled or thrown explicitly), the task execution stops and the error is logged. If the `StopOnError` property of the task descriptor is set to `true`, the task is disabled and will not be executed again unless the user re-enables it.
 
@@ -224,7 +224,7 @@ public async Task<IActionResult> ApplyRules(int id)
 
 ## Task leasing
 
-By default, tasks are run exclusively. This means that the task is locked during execution. So even in a web farm, only one server can execute a single task. The first server always wins. Other servers will skip an already running task. To change this behavior (so that each server in a web farm can run a task), set `TaskDescriptor.RunPerMachine` to `true`. This makes sense if your task does something that needs to be done on each server. E.g.: cleaning up local files, creating redundant / replicated indexes, etc.
+By default, tasks are run exclusively. This means that the task is locked during execution. So even in a web farm, only one server can execute a single task. The first server always wins. Other servers will skip an already running task. To change this behavior (so that each server in a web farm can run a task in parallel), set `TaskDescriptor.RunPerMachine` to `true`. This makes sense if your task does something that needs to be done on each server. E.g.: cleaning up local files, creating redundant / replicated indexes, etc.
 
 {% hint style="info" %}
 The user cannot edit the `RunPerMachine` setting in the backend.
