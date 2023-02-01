@@ -11,10 +11,10 @@
 ### OData
 
 * `IActionResult` is used when multiple return types are possible, otherwise `ActionResult<T>` can be used. The type property of `ProducesResponseTypeAttribute` can be excluded for `ActionResult<T>`.
-* OData **functions** can be only HttpGet, OData **actions** only HttpPost.
-* By protocol specification `enums` are serialized using the enum member string, not the enum member value.
+* OData **functions** can only be `HttpGet`, OData **actions** can only be `HttpPost`.
+* By protocol specification `enums` are serialized using the enum member's _string_, not its _value_.
 * [Routing conventions](https://learn.microsoft.com/en-us/odata/webapi/built-in-routing-conventions) (only partly applicable for AspNetCore.OData v.8).
-* [$ref](https://learn.microsoft.com/en-us/aspnet/web-api/overview/odata-support-in-aspnet-web-api/odata-v4/entity-relations-in-odata-v4#creating-a-relationship-between-entities) (not supported).
+* [$ref](https://learn.microsoft.com/en-us/aspnet/web-api/overview/odata-support-in-aspnet-web-api/odata-v4/entity-relations-in-odata-v4#creating-a-relationship-between-entities) is not supported.
 * Reasonably accurate OData [examples](https://github.com/dotnet/aspnet-api-versioning/tree/93bd8dc7582ec14c8ec97997c01cfe297b085e17/examples/AspNetCore/OData).
 
 ### [Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
