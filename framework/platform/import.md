@@ -1,32 +1,36 @@
-# 🥚 Import
+# 🐣 Import
 
 ## Overview
 
-* The [data importer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/DataImporter.cs) provides batches of data that are imported by an [IEntityImporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/IDataImporter.cs) implementation.
-* [Import profiles](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Domain/ImportProfile.cs) are entities that are binding the import to an [ImportEntityType](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Domain/ImportEnums.cs) and combining and storing all aspects of an import like assignment of import fields and settings making it configurable by the user.
-* When an import is executed, a task associated with the import profile is started, which performs the actual import via data importer and `IEntityImporter` implementation. The task can be triggered manually or scheduled.
+The [DataImporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/DataImporter.cs) provides batches of data that are imported by an [IEntityImporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/IDataImporter.cs) implementation. The data is assigned to specific [Import profiles](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Domain/ImportProfile.cs). These are entities that bind the import to an [ImportEntityType](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Domain/ImportEnums.cs) and combine and store all aspects of an import, such as import field mappings and settings. It makes them configurable by the user.
+
+When an import is executed, a task associated with the import profile is started, to perform the actual import via the `DataImporter` and the `IEntityImporter` implementations. The task can be scheduled using cron expressions or triggered manually.
 
 ## Data importer
 
-The data importer is an [IDataImporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/IDataImporter.cs) implementation with the purpose to provide batches of import data to `IEntityImporter` implementations in a high-performance way.
+The DataImporter is an [IDataImporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/IDataImporter.cs) implementation designed to provide batches of import data to `IEntityImporter` implementations in a high-performance way.
 
 ### Events
 
-The [ImportExecutingEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Events/ImportExecutingEvent.cs) is published before a data import. It can be used, for example, to load custom data into the context object, which needs to be available during the entire import.
+The three published events surrounding the data import are:
 
-The [ImportBatchExecutedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Events/ImportBatchExecutedEvent.cs) is published by the `IEntityImporter` after it has imported a batch of data. It can be used, for example, to import the data of additionally attached columns, data of which the `IEntityImporter` has no knowledge about.
-
-The [ImportExecutedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Events/ImportExecutedEvent.cs) is published after a data import. It can be used, for example, to remove data from the cache so that the imported data is taken into account the next time it is accessed.
+* [ImportExecutingEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Events/ImportExecutingEvent.cs): published before a data import. It can be used to load custom data into the context object, that must be available throughout the import.
+* [ImportBatchExecutedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Events/ImportBatchExecutedEvent.cs): published by the `IEntityImporter` after it has imported a batch of data. It can be used to import the data of newly attached columns, data the `IEntityImporter` does not know about.
+* [ImportExecutedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Events/ImportExecutedEvent.cs): published after a data import. It can be used, for example, to remove data from the cache so that the next time it is accessed the imported data is considered.
 
 ## Import profile
 
-Import profiles combine all aspects of an import to make it configurable by the user: import file(s), key fields to identify existing records, CSV configuration and assignment of import fields. Use [IImportProfileService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/IImportProfileService.cs) to manage import profiles, for example to get a list of import files assigned to a profile.
+Import profiles combine all aspects of an import to make it configurable by the user: import file(s), key fields to identify existing records, CSV configuration, and import field mappings. You can use the [IImportProfileService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/IImportProfileService.cs) to manage import profiles, for example to get a list of import files associated with a profile.
 
 ## Entity importer
 
-An import is realised via an [IEntityImporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/IDataImporter.cs) implementation or it can inherit from [EntityImporterBase](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/EntityImporterBase.cs) which provides helper methods which can be used by all importers, like importing localized properties. This documentation refers to an importer that inherits from `EntityImporterBase`.
+An import is achieved via an [IEntityImporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/IDataImporter.cs) implementation or can inherit from [EntityImporterBase](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/EntityImporterBase.cs). This provides helper methods that can be used by all importers, like importing localized properties.&#x20;
 
-`ProcessBatchAsync` is the main method to import data. It is called several times by the data importer during an import (once for each data batch). The importer is created anew for each batch via its own dependency scope. This ensures that there are no unwanted interactions with the scope of the data importer.
+{% hint style="info" %}
+This documentation refers to an importer that inherits from `EntityImporterBase`.
+{% endhint %}
+
+`ProcessBatchAsync` is the main method provided by `EntityImporterBase` to import data. It is called several times by the data importer during an import (once for each data batch). The importer is rebuilt for each batch via its own dependency scope. This ensures that there are no unwanted interactions with the scope of the data importer.
 
 {% code title="A simple entity importer" %}
 ```csharp
@@ -73,7 +77,7 @@ public class MyEntityImporter : EntityImporterBase
 
 For more sample code, see the core's built-in importers such as `ProductImporter`, `CategoryImporter` etc.
 
-HINT: avoid reloading the same data for each batch. Use `ImportExecuteContext.CustomProperties` for storing extra data which needs to be available during the entire import. You can load them once using the `ImportExecutingEvent` or a helper method like:
+Avoid reloading the same data each batch. Use `ImportExecuteContext.CustomProperties` to store extra data that needs to be available during the entire import. You can load them once using the `ImportExecutingEvent` or a helper method like:
 
 ```csharp
 private async Task<MyImporterCargoData> GetCargoData(ImportExecuteContext context)
@@ -100,16 +104,25 @@ private async Task<MyImporterCargoData> GetCargoData(ImportExecuteContext contex
 }
 ```
 
-TIP: often there is data that can only be imported after all others have been imported. To handle this, call `context.DataSegmenter.IsLastSegment` if you want to know whether the current batch is the last one (i.e. no more will follow).
+{% hint style="info" %}
+Often there is data that can only be imported after all others have been imported. To handle this, call `context.DataSegmenter.IsLastSegment` if you want to know whether the current batch is the last one (i.e. no more will follow).
+{% endhint %}
 
 ## Media importer
 
-The media importer `IMediaImporter` is a helper for importing media files like images. It can and should be used by any other importer. Its purpose is to download files if required and to avoid importing duplicate files by comparing binary contents. It also uses `IMediaService.BatchSaveFilesAsync` to save files in a performant way. For how to use `IMediaImporter`, see the built-in importers such as `ProductImporter`, `CategoryImporter` etc.\
-WARN: importing new images may result in image duplicates if the `TinyImage` module is installed or the images are larger than _Maximum image size_ media setting.
+The media importer `IMediaImporter` is a helper for importing media files like images. It can and should be used by any importer. Its purpose is to download files if required and to avoid importing duplicate files by comparing their binary contents. It also uses `IMediaService.BatchSaveFilesAsync` to save files in an efficient way.
+
+{% hint style="info" %}
+To see how to use `IMediaImporter`, check out built-in importers like [ProductImporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Products/Import/ProductImporter.cs), [CategoryImporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Categories/Import/CategoryImporter.cs) etc.
+{% endhint %}
+
+{% hint style="warning" %}
+Importing new images may result in duplicates if the `TinyImage` module is installed or the images are larger than the _Maximum image size_ media setting.
+{% endhint %}
 
 ## Custom import via module
 
-There is no provider mechanism available for data imports like in export infrastructure. So you cannot simply bind your custom importer to an import profile. This would require an extension of the core. In order to realise a custom import via a module, you have to provide an importer from scratch and a task that calls it directly. First, implement your importer and register it:
+There is no provider mechanism available for data imports like in the export infrastructure. So you cannot simply bind your custom importer to an import profile. This would require a core extension. To realise a custom import via a module, you have to provide an importer from scratch and a task that calls it directly. First, implement your importer and register it:
 
 ```csharp
 public class MyCustomImporter
@@ -171,7 +184,7 @@ internal class Startup : StarterBase
 }
 ```
 
-Then add a task which executes your importer:
+Then add a task that runs your importer:
 
 ```csharp
 public class MyCustomImportTask : ITask
@@ -216,6 +229,8 @@ internal class Module : ModuleBase
 }
 ```
 
-HINT: if you import product images you must call await `ProductPictureHelper.FixProductMainPictureIds(_db, DateTime.UtcNow)` once at the end of your import. It updates `Product.MainPictureId` if an image has been imported as the new main image of a product. `Product.MainPictureId` is for performance to avoid extra database roundtrips.
+{% hint style="info" %}
+If you import product images, you must call await `ProductPictureHelper.FixProductMainPictureIds(_db, DateTime.UtcNow)` once at the end of your import. It updates `Product.MainPictureId` if an image has been imported as the new main image of a product. `Product.MainPictureId` exists for performance reasons to avoid extra database roundtrips.
+{% endhint %}
 
 Use the [MinimalTaskViewComponent](scheduling.md#system-tasks) if you want to execute your importer from a view of your module (e.g. a configuration page).
