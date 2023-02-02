@@ -21,7 +21,7 @@
   * [🥚 Hooks](framework/platform/hooks.md)
   * [Identity](framework/platform/identity.md)
   * [🐣 IO abstraction](framework/platform/io-abstraction.md)
-  * [🐣 Import](framework/platform/import.md)
+  * [✔ Import](framework/platform/import.md)
   * [Logging](framework/platform/logging.md)
   * [Data modelling](framework/platform/data-modelling/README.md)
     * [✔ Model mapping](framework/platform/data-modelling/model-mapping.md)

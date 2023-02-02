@@ -1,10 +1,10 @@
-# 🐣 Import
+# ✔ Import
 
 ## Overview
 
-The [DataImporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/DataImporter.cs) provides batches of data that are imported by an [IEntityImporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/IDataImporter.cs) implementation. The data is assigned to specific [Import profiles](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Domain/ImportProfile.cs). These are entities that bind the import to an [ImportEntityType](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Domain/ImportEnums.cs) and combine and store all aspects of an import, such as import field mappings and settings. It makes them configurable by the user.
+The [DataImporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/DataImporter.cs) provides batches of data that are imported by an [IEntityImporter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Import/IDataImporter.cs) implementation. [Import profiles](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Domain/ImportProfile.cs) are entities that bind the import to an [ImportEntityType](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/DataExchange/Domain/ImportEnums.cs) and combine and store all aspects of an import, such as import field mappings and settings. It makes them configurable by the user.
 
-When an import is executed, a task associated with the import profile is started, to perform the actual import via the `DataImporter` and the `IEntityImporter` implementations. The task can be scheduled using cron expressions or triggered manually.
+When an import is executed, a task associated with the import profile is started, to perform the actual import via the `DataImporter` and the `IEntityImporter`. The task can be scheduled using cron expressions or triggered manually.
 
 ## Data importer
 
