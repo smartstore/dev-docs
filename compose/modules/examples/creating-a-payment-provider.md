@@ -72,17 +72,6 @@ For details about `SystemName` etc. see [providers](../../../framework/platform/
 | **ProcessRecurringPaymentAsync** | Processes a recurring payment.                                                                                                                                                                                                                                                                        |
 | **CancelRecurringPaymentAsync**  | Cancels a recurring payment.                                                                                                                                                                                                                                                                          |
 
-### Payment method types
-
-| Payment method type        | Description                                                                                                                                                              |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Unknown**                | Type is unknown.                                                                                                                                                         |
-| **Standard**               | All payment information is entered on the payment selection page.                                                                                                        |
-| **Redirection**            | A customer is redirected to a third-party site to complete the payment after (!) the order has been placed. This type of processing is required for older payment types. |
-| **Button**                 | Payment via button on cart page.                                                                                                                                         |
-| **StandardAndButton**      | All payment information is entered on the payment selection page and is available via button on cart page.                                                               |
-| **StandardAndRedirection** | Payment information is entered in checkout and customer is redirected to complete payment (e.g. 3D Secure) after the order has been placed.                              |
-
 ## Payment method filter
 
 Payment methods can be filtered using [IPaymentMethodFilter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Checkout/Payment/Service/IPaymentMethodFilter.cs). Such an implementation is useful, for example, when a payment method should generally only be offered if a certain shopping cart amount is exceeded.
@@ -161,3 +150,119 @@ public partial class MyCustomPaymentFilter : IPaymentMethodFilter
 }
 ```
 {% endcode %}
+
+## Custom checkout state
+
+In most cases, session-based data must be stored during the checkout in order to communicate with the payment provider's API. This includes, for example, the ID of the payment transaction or session. Use the `CheckoutState` property of [ICheckoutStateAccessor](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Checkout/Orders/Services/ICheckoutStateAccessor.cs) to store any custom session data during checkout. Your state object must inherit from `ObservableObject`.
+
+{% code title="Custom checkout state object example" %}
+```csharp
+[Serializable]
+public class MyCustomCheckoutState : ObservableObject
+{
+    /// <summary>
+    /// Technical transaction ID used in URLs for communication between 
+    /// the module and API.
+    /// </summary>
+    public string Id
+    {
+        get => GetProperty<string>();
+        set => SetProperty(value);
+    }
+
+    public string TransactionDataHash
+    {
+        get => GetProperty<string>();
+        set => SetProperty(value);
+    }
+
+    public MyPaymentDecision Decision
+    {
+        get => GetProperty<MyPaymentDecision>();
+        set => SetProperty(value);
+    }
+}
+```
+{% endcode %}
+
+The `ObservableObject` allows changes to the state object to be automatically applied to the session. So no `Set` or `Save` etc. has to be executed.
+
+```csharp
+public override Task<ProcessPaymentRequest> GetPaymentInfoAsync(IFormCollection form)
+{
+    var state = _checkoutStateAccessor.CheckoutState.GetCustomState<MyCustomCheckoutState>();
+    var (id, hash) = await CreateTransaction();
+    state.Id = id;
+    state.TransactionDataHash = hash;
+
+    return new ProcessPaymentRequest
+    {
+        OrderGuid = Guid.NewGuid()
+    };
+}
+
+private Task<(string ID, string DataHash)> CreateTransaction()
+{
+    // TODO: create a transaction using API and get back its ID.
+    var id = "1.de.4145.1-0303135329-211";
+    var hash = "1c05aa56405c447e6678b7f312
+    return Task.FromResult((id, hash));
+}
+```
+
+WARN: the checkout state has a limited scope by design. This starts from the shopping cart page and ends with the creation of the order. On the checkout completed page, for example, the checkout state no longer exists. If you want to keep data longer, then you have to either store it in the database or put it in a separate session object.
+
+## Storing additional order data
+
+TODO: explain...
+
+## Webhooks and IPNs
+
+Webhooks and IPNs (Instant Payment Notification) are HTTP-based callback functions the payment provider uses to send payment related messages to a shop, e.g. a payment status change. It is a kind of cross web application event system. The message handler typically updates the [payment status](creating-a-payment-provider.md#payment-status) of an order according to the message. See the `AmazonPayController` as an example of an IPN handler.
+
+WARN: In case of misuse, these messages do not originate from the payment provider. The transmitted data should not be processed or stored directly. Instead, another call to the API of the payment provider is required and the returned data is then processed. This ensures the authenticity of the data. Some providers additionally give out IP addresses from which their IPNs originate, which can then be additionally verified.
+
+### WebhookEndpoint attribute
+
+Each action method that receives and processes webhooks or IPNs must be decorated with the `WebhookEndpointAttribute`. It's a marker filter with the purpose to suppress customer resolution for such endpoints. The attribute prevents unnecessary creation of guest customers (as long as HTTP callbacks do not send any cookies). Instead, a system account with the system name `WebhookClient` is used.
+
+### Testing webhooks and IPNs
+
+We recommend using the [ngrok](https://ngrok.com/) service to test webhooks and IPNs. The service allows you to receive webhook messages and IPNs over an HTTP or HTTPS tunnel locally on localhost. It comes with a console windows app named `ngrok.exe` that you have to download. The messages then reach your local shop through this tunnel, as long as the `ngrok.exe` is running and the tunnel is alive. The advantage of this service is that it is simply attached to your development environment. You don't have to change or switching anything at your existing system like firewall, host, SSL, DDNS etc.
+
+TIP: it will be even easier if you run `ngrok.exe` via a simple batch script which already contains your localhost URL.
+
+{% code title="ngrok-localhost-59318.bat" %}
+```actionscript
+%SystemRoot%\system32\cmd /C "C:\Tools\ngrok\ngrok.exe http 59318 -host-header="localhost:59318""
+pause
+```
+{% endcode %}
+
+<figure><img src="../../../.gitbook/assets/ngrok.png" alt=""><figcaption><p>Active ngrok HTTP tunnel making a local shop reachable under localhost:59318.</p></figcaption></figure>
+
+Under **Forwarding** you see the two URLs that you can use to receive messages. You can enter them in the backend of the payment provider, together with the path to the action method that receives and processes payment messages. If the payment provider does not provide a setting for this and the URL must be supplied by code, then you can also add a setting for the ngrok URL in the configuration of your payment method, which should only be visible in developer mode.
+
+## Appendix
+
+### Payment method types
+
+| Payment method type        | Description                                                                                                                                                              |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Unknown**                | Type is unknown.                                                                                                                                                         |
+| **Standard**               | All payment information is entered on the payment selection page.                                                                                                        |
+| **Redirection**            | A customer is redirected to a third-party site to complete the payment after (!) the order has been placed. This type of processing is required for older payment types. |
+| **Button**                 | Payment via button on cart page.                                                                                                                                         |
+| **StandardAndButton**      | All payment information is entered on the payment selection page and is available via button on cart page.                                                               |
+| **StandardAndRedirection** | Payment information is entered in checkout and customer is redirected to complete payment (e.g. 3D Secure) after the order has been placed.                              |
+
+### Payment status
+
+|                       |                                                                                                                                                           |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Pending**           | The initial payment status if no further status information is available yet.                                                                             |
+| **Authorized**        | The payment has been authorized (but not captured) by the payment provider. Usually this means that the payment amount is reserved for later capturing.   |
+| **Paid**              | The payment has been captured against the payment gateway. It does not necessarily mean that the paid amount has been credited to the merchant's account. |
+| **PartiallyRefunded** | The paid amount has been partially refunded.                                                                                                              |
+| **Refunded**          | The paid amount has been fully refunded.                                                                                                                  |
+| **Voided**            | The payment has been cancelled.                                                                                                                           |
