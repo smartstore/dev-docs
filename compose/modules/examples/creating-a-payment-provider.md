@@ -214,7 +214,45 @@ WARN: the checkout state has a limited scope by design. This starts from the sho
 
 ## Storing additional order data
 
-TODO: explain...
+The payment module provides payment data via result objects such as `ProcessPaymentResult`, which are stored by the core directly to the related order entity. The most important of these properties are listed in the following table.
+
+| Property                           | Description                                                                                                                    |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **AuthorizationTransactionId**     | The ID of a payment authorization. Usually this comes from a payment gateway.                                                  |
+| **AuthorizationTransactionCode**   | A payment transaction code. Not used by Smartstore. This can be any data that the payment provider needs for later processing. |
+| **AuthorizationTransactionResult** | A short result info about the payment authorization.                                                                           |
+| **CaptureTransactionId**           | The ID of a payment capture. Usually this comes from a payment gateway. Can be equal to `AuthorizationTransactionId`.          |
+| **CaptureTransactionResult**       | A short result info about the payment capture.                                                                                 |
+| **SubscriptionTransactionId**      | The ID for payment subscription. Usually used for recurring payment.                                                           |
+
+If more payment data needs to be stored in the database for an order, then this should be done using the `GenericAttribute` entity. Suppose you have a provider for installment payment. Then the following code saves the interest and the order total including interest for a certain order.
+
+```csharp
+[Serializable]
+public class MyPaymentOrderData
+{
+    [JsonIgnore]
+    public static string Key => "MyCompany.MyModule.OrderAttribute";
+
+    public decimal Interest { get; set; }
+    public decimal TotalInclInterest { get; set; }
+}
+
+public override async Task PostProcessPaymentAsync(
+    PostProcessPaymentRequest postProcessPaymentRequest)
+{
+    Order order = postProcessPaymentRequest.Order;    
+    // TODO: get "decision" from somewhere, e.g. custom checkout state.
+    string json = JsonConvert.SerializeObject(new MyPaymentOrderData
+    {
+        Interest = decision.Interest,
+        TotalInclInterest = decision.TotalInclInterest
+    });
+    
+    order.GenericAttributes.Set(MyPaymentOrderData.Key, json, order.StoreId);
+    await order.GenericAttributes.SaveChangesAsync();    
+}
+```
 
 ## Webhooks and IPNs
 
