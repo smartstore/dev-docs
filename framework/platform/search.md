@@ -2,39 +2,53 @@
 
 ## Overview
 
-[ICatalogSearchService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Search/ICatalogSearchService.cs) enables product searches based on search terms. The interface has two implementations. `CatalogSearchService` searches for products by implementations of [IIndexProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexProvider.cs), [IIndexStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexStore.cs) and [ISearchEngine](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/ISearchEngine.cs). An example of such an extension is the Smartstore _MegaSearch_ module, which connects the search library Lucene.Net to Smartstore. Without such an extension, `LinqCatalogSearchService` is used, which searches the database directly for hits using LINQ.
+[ICatalogSearchService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Search/ICatalogSearchService.cs) provides a product search based on search terms. The interface has two implementations:
 
-The `CatalogSearchingEvent` is published right before a catalog search regardless of whether the search is performed with `CatalogSearchService` or `LinqCatalogSearchService`. Accordingly, `CatalogSearchedEvent` is published at the end of a search.
+| Implementation             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CatalogSearchService`     | <p>Searches for products by implementations of <a href="https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexProvider.cs">IIndexProvider</a>, <a href="https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexStore.cs">IIndexStore</a> and <a href="https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/ISearchEngine.cs">ISearchEngine</a>.</p><p>An example of this is the Smartstore <em>MegaSearch</em> module, which connects the search library Lucene.Net to Smartstore.</p> |
+| `LinqCatalogSearchService` | Searches the database directly for hits using LINQ.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+
+The `CatalogSearchingEvent` is published right before a catalog search regardless of the implementation. `CatalogSearchedEvent` is published at the end of a search.
 
 ## Search query
 
 `CatalogSearchQueryFactory` reads query string parameters and creates a `CatalogSearchQuery` from it, which contains all the information needed for the search engine to perform the search. Parameters are typically used to filter the search result. Possible parameters:
 
-| Query token | Type    | Description                                                                                                    |
-| ----------: | ------- | -------------------------------------------------------------------------------------------------------------- |
-|       **q** | string  | Search **query**/term.                                                                                         |
-|       **i** | int     | Specifies the **page index** (starting from 1).                                                                |
-|       **s** | int     | Specifies the **page size** of search hits.                                                                    |
-|       **o** | int     | Specifies how to **order** the search hits. For supported values see `ProductSortingEnum`.                     |
-|       **p** | decimal | Filters products by a **price range**. Supported formats: _from\~to_, _from(\~)_ or _\~to_.                    |
-|       **c** | int     | Filters products by assigned **categories**. Supports a comma separated list of category identifiers.          |
-|       **m** | int     | Filters products by assigned **manufacturers**. Supports a comma separated list of manufacturer identifiers.   |
-|       **r** | double  | Filters products by their minimum **rating**. Supports values from 0 to 5.                                     |
-|       **a** | bool    | Filters products by their **stock level**.                                                                     |
-|       **n** | bool    | Filters for **newly arrived products**.                                                                        |
-|       **d** | in      | Filters products by assigned **delivery times**. Supports a comma separated list of delivery time identifiers. |
-|       **v** | string  | Specifies the **view mode** for search hits. Supported value are _grid_ or _list_.                             |
+| Query token | Type    | Description                                                                                                                                                                                                |
+| ----------: | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|       **q** | string  | Specifies the search **query**/term.                                                                                                                                                                       |
+|       **i** | int     | Specifies the **page index** (starting from 1).                                                                                                                                                            |
+|       **s** | int     | Specifies the **page size** of search hits.                                                                                                                                                                |
+|       **o** | int     | Specifies how to **order** the search hits. For supported values see [ProductSortingEnum](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Products/Domain/ProductEnums.cs). |
+|       **p** | decimal | Filters products by a **price range**. Supported formats: _from\~to_, _from(\~)_ or _\~to_.                                                                                                                |
+|       **c** | int     | Filters products by assigned **categories**. Supports a comma separated list of category identifiers.                                                                                                      |
+|       **m** | int     | Filters products by assigned **manufacturers**. Supports a comma separated list of manufacturer identifiers.                                                                                               |
+|       **r** | double  | Filters products by their minimum **rating**. Supports values from 0 to 5.                                                                                                                                 |
+|       **a** | bool    | Filters products by their **stock level**.                                                                                                                                                                 |
+|       **n** | bool    | Filters for **newly arrived products**.                                                                                                                                                                    |
+|       **d** | int     | Filters products by assigned **delivery times**. Supports a comma separated list of delivery time identifiers.                                                                                             |
+|       **v** | string  | Specifies the **view mode** for search hits. Supported value are _grid_ or _list_.                                                                                                                         |
 
-More parameters available for filtering products by variants and attributes if the _MegaSearchPlus_ module is installed. They are prefixed by _attr_ (product attribute), _vari_ (product variant) or _opt_ (option value of attribute or variant).
+More parameters are available for filtering products by variants and attributes, if the _MegaSearchPlus_ module is installed. They are prefixed by _attr_ (product attribute), _vari_ (product variant) and _opt_ (option value of an attribute or variant).
 
-HINT: parameter tokens can be overwritten by the user in the backend via alias fields (see [ISearchAlias](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/ISearchAlias.cs)). For example if the manufacturer's name should appear in the URL instead of the token _m_.
+{% hint style="info" %}
+Parameter tokens can be overwritten by the user in the backend via alias fields (see [ISearchAlias](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/ISearchAlias.cs)). For example if the manufacturer's name should appear in the URL instead of the token _m_.
+{% endhint %}
 
-`CatalogSearchQuery` also contains the search term, the field(s) to be searched, the search mode and many other settings.\
-HINT: these settings can have a huge impact on the performance of a search. For instance `SearchMode.Contains` is significantly slower than `SearchMode.ExactMatch`. If you do not need facets to be returned, turn it off by calling `BuildFacetMap(false)`. If you do not need spell check, turn it off by calling `CheckSpelling(0)`.
+`CatalogSearchQuery` also contains the search term, the field(s) to be searched, the search mode and many other settings.
+
+{% hint style="info" %}
+These settings can have a huge impact on the performance of a search. For instance:
+
+* `SearchMode.Contains` is significantly slower than `SearchMode.ExactMatch`.
+* If you do not need facets to be returned, turn it off by calling `BuildFacetMap(false)`.
+* If you do not need spell check, turn it off by calling `CheckSpelling(0)`.
+{% endhint %}
 
 The `ICatalogSearchService.PrepareQuery` method lets you build or modify your own catalog search query using LINQ.
 
-`CatalogSearchQueryFactory` has a virtual method `OnConvertedAsync` which can be used to display more facet groups in frontend:
+`CatalogSearchQueryFactory` has a virtual method `OnConvertedAsync` which can be used to display more facet groups in the frontend:
 
 ```csharp
 public class MyCatalogSearchQueryFactory : CatalogSearchQueryFactory
