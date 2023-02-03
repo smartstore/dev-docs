@@ -1,4 +1,4 @@
-# 🥚 Search
+# ✔ Search
 
 ## Overview
 
@@ -98,9 +98,21 @@ public class MyCatalogSearchQueryFactory : CatalogSearchQueryFactory
 
 ## Search result
 
-`ICatalogSearchService.SearchAsync` returns `CatalogSearchResult` containing all requested results of a search, including facets map, spell checker suggestions and IDs of found products. The entities of the found products are loaded later when `CatalogSearchResult.GetHitsAsync` is called. For this purpose, `CatalogSearchQuery` contains a method `UseHitsFactory`, via which the standard factory can be replaced if required.
+`ICatalogSearchService.SearchAsync` returns `CatalogSearchResult` containing all requested results of a search, including:
 
-`SearchResultModel` is used to present the result of a search in frontend. The `HitGroups` property is of particular importance here. It is used to display further groups of search hits in the instant search. Depending on installed modules, these include links to the manufacturers and categories of the products found, spell checker suggestions or frequent search terms. You can inject more groups of links here using an `IAsyncResultFilter`:
+* Facets map
+* Spell checker suggestions
+* IDs of found products
+
+The entities of the found products are loaded later when `CatalogSearchResult.GetHitsAsync` is called. For this purpose, `CatalogSearchQuery` contains a method `UseHitsFactory`, which can be used to replace the default factory if required.
+
+The `SearchResultModel` is used to present the result of a search in the frontend. The `HitGroups` property is of particular importance here. It is used to display additional groups of search hits in the instant search. Depending on installed modules, these may include:
+
+* Links to the manufacturers and categories of the products
+* Spell checker suggestions
+* Common search terms
+
+You can inject more groups of links here using an `IAsyncResultFilter`:
 
 ```csharp
 internal class Startup : StarterBase
@@ -172,7 +184,7 @@ internal class MyTopLink
 
 ## Filter
 
-Filters are needed to limit search results, e.g. to display only products of a certain category. They are determined by `CatalogSearchQueryFactory` via the query string and passed on to the search using of `CatalogSearchQuery`. If you want to search programmatically, you can create a `CatalogSearchQuery` instance and define it yourself using fluent notation:
+Filters are used to limit search results, e.g. to only display products of a certain category. They are determined by the `CatalogSearchQueryFactory` using the query string and passed on to the search using the `CatalogSearchQuery`. If you want to search programmatically, you can create a `CatalogSearchQuery` instance and define it yourself using fluent notation:
 
 ```csharp
 var searchQuery = new CatalogSearchQuery()
@@ -186,23 +198,34 @@ var searchQuery = new CatalogSearchQuery()
 var searchResult = await _catalogSearchService.SearchAsync(searchQuery);
 ```
 
-There are several types of filters, which all inherit from `ISearchFilter`. `ICombinedSearchFilter` is needed, for example, when filtering for several category IDs (logically OR combined). `IRangeSearchFilter` is used when filtering for a price range.
+There are several types of filters, which all inherit from `ISearchFilter`:
 
-A LINQ search like `LinqCatalogSearchService` translates the filters in `CatalogSearchQuery` into an `IQueryable<Product>` that can be used to load product entities directly from the database. The `ISearchEngine` implementation of _MegaSearch_ translates them into a query filter that is compatible with Lucene.Net.
+| Filter                                        | Description                                                                                                                                       |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ICombinedSearchFilter`                       | Filter multiple category IDs (combined using logic OR)                                                                                            |
+| `IRangeSearchFilter`                          | Filter a price range                                                                                                                              |
+| A LINQ search like `LinqCatalogSearchService` | Translates the filters in `CatalogSearchQuery` into an `IQueryable<Product>` that can be used to load product entities directly from the database |
+| MegaSearch’s `ISearchEngine` implementation   | Translates product entities into a Lucene.Net compatible query filter                                                                             |
 
 ## Facets
 
-Facets are used to refine search results to allow users to narrow a large set of products down to only those that match specific criteria. This includes also to reduce the amount of filters to those which are able to further narrow down the search result. This process is often also referred to as **drilldown navigation**. A search library like Lucene.Net is needed to obtain facets.
+Facets are used to refine search results, allowing users to narrow a large set of products down to only those that match specific criteria. This includes reducing the number of filters to those that can further refine the search results. This process is often called **drilldown navigation**. A search library like Lucene.Net is required to obtain facets.
 
-Facets are provided through `ISearchEngine.GetFacetMapAsync` and `ISearchProvider.GetFacetMap` but in practice a number of further steps are needed to make faceting work. [IFacetMetadataStorage](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Facets/IFacetMetadataStorage.cs) is used to load facet metadata from cache, from the search index or from both. For a drilldown navigation by brand for instance you need all brand\manufacturer names but for performance reason you don't want to load them from database, so you store them in the search index and retrieve them using `IFacetMetadataStorage`.
+Facets are obtained using `ISearchEngine.GetFacetMapAsync` and `ISearchProvider.GetFacetMap`, but in practice several more steps are needed to make faceting work. [IFacetMetadataStorage](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Facets/IFacetMetadataStorage.cs) is used to load facet metadata from cache, the search index or both. For drilldown navigation by brand for instance, you need all brand / manufacturer names. For performance reasons you shouldn’t load them from the database, but store them in the search index and retrieve them using `IFacetMetadataStorage`.
 
-The first step is to iterate through `ISearchQuery.FacetDescriptors` to get the actual requested facets. Next, for a particular descriptor, its metadata is loaded including all values to be faceted (e.g. brand names). Usually, all values are then iteratively applied to the bitset of the current search result via a bitwise and-operation to get the number of set bits (which is the number of search hits after applying a certain filter). This process is of course dependent on the search library.
+The first step is to iterate through `ISearchQuery.FacetDescriptors` to get the actual requested facets. Next, for a particular descriptor, its metadata is loaded including all values to be faceted (e.g. brand names). Usually, all values are applied iteratively to the bitset of the current search result using a bitwise AND-operation to get the number of set bits (which is the number of search hits after applying a certain filter). This process depends on the search library.
 
-TIP: faceting can take a while despite all the performance optimisation, because depending on the amount of data, a lot of bit operations have to be performed. If no facets are needed for a search, `SearchQuery.BuildFacetMap(false)` should be called so that none are obtained.
+{% hint style="info" %}
+Faceting can take a while despite all the performance optimisation. Depending on the amount of data, a lot of bit operations have to be performed.
+
+If no facets are needed for a search, `SearchQuery.BuildFacetMap(false)` should be called so that none are obtained.
+{% endhint %}
 
 ### Facet presentation
 
-The presentation of facets in frontend can be changed via [IFacetTemplateSelector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Facets/IFacetTemplateSelector.cs). The interface requests a template widget for a `FacetGroup`. In the following example, a view component is used to create a custom representation for the template types `FacetTemplateHint.NumericRange` and `FacetTemplateHint.Custom` (e.g. colour or picture boxes).
+The presentation of facets in the frontend can be changed via [IFacetTemplateSelector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Facets/IFacetTemplateSelector.cs). The interface requests a template widget for a `FacetGroup`.
+
+In the following example, a view component is used to create a custom representation for the template types `FacetTemplateHint.NumericRange` and `FacetTemplateHint.Custom` (e.g. color or picture boxes).
 
 ```csharp
 public class MyCustomFacetGroupViewComponent : SmartViewComponent
@@ -254,25 +277,27 @@ public class MyFacetTemplateSelector : IFacetTemplateSelector
 
 ## Indexing
 
-Search libraries like Lucene.Net determine search hits via the file system instead of accessing databases directly. These files are called index or search index. Smartstore provides a whole range of interfaces for creating and managing search indexes and a _MegaSearch_ module which performs the actual indexing. Essentially, the process is as follows.
+Search libraries like Lucene.Net determine hits through the file system instead of accessing databases directly. These files are called indexes or search indexes. Smartstore provides a whole range of interfaces for creating and managing search indexes and the _MegaSearch_ module which performs the actual indexing. Essentially, the process is as follows.
 
-An [IIndexingService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexingService.cs) implementation creates or updates the search index, always triggered by its own task. The index scope, that is the information about what kind of index it is, is obtained via the [IIndexScopeManager](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexScopeManager.cs). The indexing service uses a data collector (see [IIndexCollector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexCollector.cs)) to collect all the data to be transferred to the index. The index service does not access the index directly, but uses the [IIndexStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexStore.cs) for this purpose. It ensures that the index can be accessed for writing (during indexing) and reading (during searching).
+An [IIndexingService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexingService.cs) implementation creates or updates the search index, always triggered by its own task. The index scope (information about what kind of index it is), is obtained via the [IIndexScopeManager](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexScopeManager.cs). The indexing service uses a data collector (see [IIndexCollector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexCollector.cs)) to collect all the data to be transferred to the index. The index service does not access the index directly, but uses the [IIndexStore](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexStore.cs) for that. It ensures that the index can be accessed for writing (during indexing) and reading (during searching).
 
-A [hook](hooks.md) is used to determine changes to products that are relevant for updating the index. In this case, [IndexBacklogItems](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IndexBacklogItem.cs) are stored in the database via [IIndexBacklogService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IIndexBacklogService.cs). In case of an index update, [IIndexCollector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexCollector.cs) retrieves these backlogs via [IIndexBacklogService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IIndexBacklogService.cs) and updates the corresponding index entries of the products. This procedure speeds up the indexing, as only the part of the index relevant to the product changes is updated instead of completely rebuilding it.
+A [hook](hooks.md) is used to determine changes to products that are relevant for updating the index. In this case, [IndexBacklogItems](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IndexBacklogItem.cs) are stored in the database using [IIndexBacklogService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IIndexBacklogService.cs). In case of an index update, [IIndexCollector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexCollector.cs) retrieves these backlogs via [IIndexBacklogService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Backlog/IIndexBacklogService.cs) and updates the corresponding index entries of the products. This procedure speeds up indexing by updating only the part of the index that is relevant to the product changes, rather than rebuilding the entire index.
 
-The [IIndexCollector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexCollector.cs) publishes an [IndexSegmentProcessedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexSegmentProcessedEvent.cs) each time after it has processed a segment of entities but before the collected data is written to the index. It can be used to emit additional data to the search index.
+The [IIndexCollector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexCollector.cs) publishes an [IndexSegmentProcessedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexSegmentProcessedEvent.cs) each time it's processed a segment of entities but before the collected data is written to the index. It can be used to decorate the search index with additional data.
 
-The indexing service publishes an [IndexingCompletedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexingCompletedEvent.cs) at the end of indexing.
+Finally an [IndexingCompletedEvent](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/Events/IndexingCompletedEvent.cs) is published by the indexing service when the indexing is complete.
 
 ## Implementing a custom search
 
-[IIndexScope](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexScope.cs) and [ISearchProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/ISearchProvider.cs) are used to distinguish between different search scopes, like catalog (built-in search for products) and forum search (search for forum posts offered by forum module). To implement another search for a different entity, the principle of the catalog search must be copied and adapted accordingly. This way, any number of additional search indexes can be built using _MegaSearch_.
+[IIndexScope](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexScope.cs) and [ISearchProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/ISearchProvider.cs) are used to distinguish between different search scopes, like catalog search (built-in search for products) and forum search (search for forum posts offered by the forum module). To implement another search for a different entity, use the basic structure of the catalog search and modify it accordingly. This way, any number of additional search indexes can be built using _MegaSearch_.
 
-HINT: this is only a rough description of how to build your own search index, with the aim of showing a possible way. A complete description would go beyond the scope of this documentation.
+{% hint style="info" %}
+This is a generalized description of building a custom search index, and is only intended to show that the possibility exists. A complete description would go beyond the scope of this documentation.
+{% endhint %}
 
 ### Index scope
 
-First implement [IIndexScope](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexScope.cs) and the related interfaces [IIndexCollector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexCollector.cs), [ISearchProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/ISearchProvider.cs) and [IIndexAnalyzer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexAnalyzer.cs). Typically scope and collector have named registrations:
+First implement [IIndexScope](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexScope.cs) and the related interfaces [IIndexCollector](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexCollector.cs), [ISearchProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/ISearchProvider.cs) and [IIndexAnalyzer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/IIndexAnalyzer.cs). Typically the scope and collector have named registrations:
 
 ```csharp
 internal class Startup : StarterBase
@@ -332,7 +357,7 @@ public class MySearchIndexScope : IIndexScope
 
 ### Text analyzer
 
-The `IIndexAnalyzer` defines what text analyzer to be used for your index fields. An analyzer specifies how the content of an index field is to be processed during indexing and searching. An `IIndexAnalyzer` could look like this (copied from the analyzer from the forum module):
+The `IIndexAnalyzer` defines the text analyzer used on your index fields. An analyzer specifies how the content of an index field is processed during indexing and searching. An implementation of the `IIndexAnalyzer` could look like this (excerpt from the forum modules analyzer):
 
 ```csharp
 public class MyIndexAnalyzer : IIndexAnalyzer
@@ -371,17 +396,23 @@ public class MyIndexAnalyzer : IIndexAnalyzer
 
 ### Modelling
 
-The next step is to implement the search modelling. In the catalog search, these are `CatalogSearchQueryFactory`, `CatalogSearchQueryModelBinder` and `CatalogSearchQueryAliasMapper`. The alias mapper is only needed if the query string can contain alias names that have to be mapped to the actual values (such as entity IDs). Then you need a search query object like `CatalogSearchQuery` that inherits from `SearchQuery`. Don't forget to decorate it with `ValidateNeverAttribute` and `ModelBinderAttribute`. As a result, action methods can contain parameters of the type of your search query object (aka `CatalogSearchQuery`), which are then automatically instantiated via model binding. See the `SearchController` in the Smartstore.Web project.
+The next step is implementing search modelling. In the catalog search, these are `CatalogSearchQueryFactory`, `CatalogSearchQueryModelBinder` and `CatalogSearchQueryAliasMapper`. The alias mapper is only needed if the query string can contain alias names that have to be mapped to actual values (such as entity IDs). Then you need a search query object like `CatalogSearchQuery` that inherits from `SearchQuery`.
+
+Don't forget to decorate it with `ValidateNeverAttribute` and `ModelBinderAttribute`. This means action methods can contain parameters of your search query objects type (aka `CatalogSearchQuery`), which are automatically instantiated via model binding. See the `SearchController` in the Smartstore.Web project.
 
 ### Facets
 
-When your search supports facets, then you need a facet URL helper that inherits from `FacetUrlHelperBase`, like `CatalogFacetUrlHelper`. It is a helper to modify facet URLs easily. If the link of a facet is clicked and the associated filter is applied, then a query string value for this filter must be appended to the URLs. Similarly, a query string value must be removed when the related facet is deactivated. See `CatalogFacetUrlHelper` for details of the implementation.
+When your search supports facets, you need a facet URL helper that inherits from `FacetUrlHelperBase`, like the `CatalogFacetUrlHelper`. This helper lets you modify facet URLs easily. If the link of a facet is clicked and the associated filter is applied, a query string value must be appended to the URLs for this filter. Similarly, a query string value must be removed when the related facet is deactivated. See `CatalogFacetUrlHelper` for details on the implementation.
 
 ### Search service
 
-The last part is the search service, the a start-up point for your search. In the catalog search, these are `CatalogSearchService`, `LinqCatalogSearchService` and `CatalogSearchResult`. Your implementation of these classes will probably look very similar, so there is no need to go into detail here. A good idea is to add two events to the search, one immediately before and one after execution (see `CatalogSearchingEvent` and `CatalogSearchedEvent`).
+The last part is the search service, the start-up point for your search. In the catalog search, these are `CatalogSearchService`, `LinqCatalogSearchService` and `CatalogSearchResult`. Your implementation of these classes will probably look very similar to them, so there is no need to go into detail here.
 
-Typically all these services have a scoped registration, so your startup might look like this if you need and implement them all:
+{% hint style="info" %}
+It's a good idea to add two events to the search, one immediately before and one after execution (see `CatalogSearchingEvent` and `CatalogSearchedEvent`).
+{% endhint %}
+
+Typically all these services have scoped registration, so your start-up might look like this if you need them all and want to implement them:
 
 ```csharp
 internal class Startup : StarterBase
@@ -399,7 +430,7 @@ internal class Startup : StarterBase
 
 ### Search settings
 
-Custom search settings can be integrated into the existing search settings of the backend via a new tab. Therefore you need a setting class and a model. Please note the `CustomModelPartAttribute`. It's required for proper binding of your model:
+Custom search settings can be integrated into the existing settings of the backend using a new tab. To do this you need a setting class and a model. Please note the `CustomModelPartAttribute` attribute that's required for proper model binding:
 
 ```csharp
 public class MyCustomSearchSettings : ISettings
@@ -414,7 +445,7 @@ public class MyCustomSearchSettingsModel : ModelBase
 }
 ```
 
-Add two event handlers to create the tab and to save your settings:
+Add two event handlers to create the tab and save your settings:
 
 ```csharp
 public class Events : IConsumer
