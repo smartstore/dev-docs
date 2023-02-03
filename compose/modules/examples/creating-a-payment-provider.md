@@ -4,11 +4,13 @@
 
 A payment provider represents a payment method with which an order can be paid in the frontend. Furthermore, it contains other optional methods, e.g. to later capture the payment amount when the goods are shipped or to perform a refund. It is recommended to learn about the general functioning of a [provider](../../../framework/platform/modularity-and-providers.md#providers) before going on.
 
+If no SDK is provided for a payment gateway or if you do not want to use it for whatever reason, then it is recommended to write your own HTTP client for communicating with the gateway. See the [PayPal HTTP client](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Modules/Smartstore.PayPal/Client/PayPalHttpClient.cs) as an example.
+
 ## Payment provider
 
 The payment provider contains all important functions for a specific payment method. A module can contain any number of payment providers and thus any number of payment methods.
 
-TIP: It is recommended to implement the payment methods of a payment company (like PayPal) in one module, not in many. In other words, the module should represent a certain payment company.
+TIP: It is recommended to implement the payment methods of a payment company (like PayPal) in one module, not in many. In other words, the module should represent a certain payment company or gateway.
 
 To create a payment provider add a class that inherits from `PaymentMethodBase` and optionally implements `IConfigurable`.
 
@@ -19,6 +21,13 @@ To create a payment provider add a class that inherits from `PaymentMethodBase` 
 [Order(1)]
 public class MyCreditCardProvider : PaymentMethodBase, IConfigurable
 {
+    private readonly ICheckoutStateAccessor _checkoutStateAccessor;
+    
+    public MyCreditCardProvider(ICheckoutStateAccessor checkoutStateAccessor)
+    {
+        _checkoutStateAccessor = checkoutStateAccessor;
+    }
+    
     public RouteInfo GetConfigurationRoute()
         => new(nameof(MyPaymentAdminController.Configure), "MyPaymentAdmin", new { area = "Admin" });
 
@@ -27,11 +36,17 @@ public class MyCreditCardProvider : PaymentMethodBase, IConfigurable
 
     public override Task<ProcessPaymentResult> ProcessPaymentAsync(ProcessPaymentRequest processPaymentRequest)
     {
-        // TODO: authorize payment...
+        var state = _checkoutStateAccessor.CheckoutState.GetCustomState<MyCustomCheckoutState>();
+
+        // TODO: HTTP client that authorizes the payment against the payment gateway.
+        // Uses "state" to temporarily save the result. Throws an exception on any failure.
+        _ = await _httpClient.Authorize(state, processPaymentRequest.StoreId);
 
         return new ProcessPaymentResult
         {
-            NewPaymentStatus = PaymentStatus.Authorized
+            NewPaymentStatus = PaymentStatus.Authorized,
+            AuthorizationTransactionId = state.Decision.TransactionId,
+            AuthorizationTransactionCode = state.Id
         };
     }
 }
@@ -185,7 +200,7 @@ public class MyCustomCheckoutState : ObservableObject
 ```
 {% endcode %}
 
-The `ObservableObject` allows changes to the state object to be automatically applied to the session. So no `Set` or `Save` etc. has to be executed.
+The `ObservableObject` allows changes to the state object to be automatically applied to the session. So no `ISession.TrySetObject` or similar has to be executed.
 
 ```csharp
 public override Task<ProcessPaymentRequest> GetPaymentInfoAsync(IFormCollection form)
@@ -214,7 +229,7 @@ WARN: the checkout state has a limited scope by design. This starts from the sho
 
 ## Storing additional order data
 
-The payment module provides payment data via result objects such as `ProcessPaymentResult`, which are stored by the core directly to the related order entity. The most important of these properties are listed in the following table.
+The payment module provides current payment data via result objects such as `ProcessPaymentResult`, which are stored by the core directly on the related order entity. The most important of these properties are listed in the following table.
 
 | Property                           | Description                                                                                                                    |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
@@ -224,6 +239,8 @@ The payment module provides payment data via result objects such as `ProcessPaym
 | **CaptureTransactionId**           | The ID of a payment capture. Usually this comes from a payment gateway. Can be equal to `AuthorizationTransactionId`.          |
 | **CaptureTransactionResult**       | A short result info about the payment capture.                                                                                 |
 | **SubscriptionTransactionId**      | The ID for payment subscription. Usually used for recurring payment.                                                           |
+
+Except for `AuthorizationTransactionCode` and `SubscriptionTransactionId`, this information is displayed on the order page in the admin backend but they are not further processed or used in any other way by Smartstore.
 
 If more payment data needs to be stored in the database for an order, then this should be done using the `GenericAttribute` entity. Suppose you have a provider for installment payment. Then the following code saves the interest and the order total including interest for a certain order.
 
@@ -256,9 +273,9 @@ public override async Task PostProcessPaymentAsync(
 
 ## Webhooks and IPNs
 
-Webhooks and IPNs (Instant Payment Notification) are HTTP-based callback functions the payment provider uses to send payment related messages to a shop, e.g. a payment status change. It is a kind of cross web application event system. The message handler typically updates the [payment status](creating-a-payment-provider.md#payment-status) of an order according to the message. See the `AmazonPayController` as an example of an IPN handler.
+Webhooks and IPNs (Instant Payment Notification) are HTTP-based callback functions the payment provider uses to send payment related messages to a shop, e.g. a payment status change. It is a kind of cross web application event system. The message handler typically updates the [payment status](creating-a-payment-provider.md#payment-status) of an order according to the message. See the `AmazonPayController.IPNHandler` as an example of an IPN handler.
 
-WARN: In case of misuse, these messages do not originate from the payment provider. The transmitted data should not be processed or stored directly. Instead, another call to the API of the payment provider is required and the returned data is then processed. This ensures the authenticity of the data. Some providers additionally give out IP addresses from which their IPNs originate, which can then be additionally verified.
+WARN: In case of misuse, these messages do not originate from the payment provider. The transmitted data should not be processed or stored directly. Instead, another call to the API of the payment provider is required to verify the authenticity. The handler then processes the data returned from the API. Some providers additionally give out IP addresses from which their IPNs originate, which can then be additionally verified.
 
 ### WebhookEndpoint attribute
 
@@ -281,6 +298,14 @@ pause
 
 Under **Forwarding** you see the two URLs that you can use to receive messages. You can enter them in the backend of the payment provider, together with the path to the action method that receives and processes payment messages. If the payment provider does not provide a setting for this and the URL must be supplied by code, then you can also add a setting for the ngrok URL in the configuration of your payment method, which should only be visible in developer mode.
 
+## Logging and order notes
+
+Much of what a payment module does is done in the background. It is important to store information about it and about the respective payment process in order to be able to track it more easily.
+
+It is recommended to add order notes for each communication with the payment gateway that causes any data update (including webhook messages and IPNs). This allows the merchant to track which and when data has been exchanged with the payment provider. Set `HasNewPaymentNotification` of the order entity to `true` if you receive a webhook message or IPN. A small info badge appears in the order list of the administration backend indicating that a new IPN has been received for this order.
+
+Also log all errors (in detail) that occurred while exchanging data with the payment gateway. This information makes it easier for the payment provider's support to determine the cause of a payment problem.
+
 ## Appendix
 
 ### Payment method types
@@ -296,6 +321,8 @@ Under **Forwarding** you see the two URLs that you can use to receive messages. 
 
 ### Payment status
 
+The payment status is import because it is used to control processes for orders. For example, the button for later capturing of the payment amount is displayed only, if the payment (transaction) has been authorized (payment status `Authorized`).
+
 |                       |                                                                                                                                                           |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Pending**           | The initial payment status if no further status information is available yet.                                                                             |
@@ -304,3 +331,5 @@ Under **Forwarding** you see the two URLs that you can use to receive messages. 
 | **PartiallyRefunded** | The paid amount has been partially refunded.                                                                                                              |
 | **Refunded**          | The paid amount has been fully refunded.                                                                                                                  |
 | **Voided**            | The payment has been cancelled.                                                                                                                           |
+
+One task of a payment provider is therefore to set the payment status to `Authorized` or `Paid` according to the feedback from the payment gateway. Usually this is done in `ProcessPaymentAsync` or an action method for webhooks or IPNs.
