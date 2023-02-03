@@ -1,4 +1,4 @@
-# 🐣 Creating an Export provider
+# ✔ Creating an Export provider
 
 Using export providers you can export your shop data into many different formats. Smartstore primarily uses CSV and XML. In this tutorial, you will write an export provider for the product catalog.
 
@@ -10,7 +10,7 @@ To learn more about export, refer to [Export](../../../framework/platform/export
 
 If you want to make your export provider customizable, you will need a configuration. This step is optional. The configuration is made up of three things:
 
-1. The profile configuration model `ProfileConfigurationModel` that describes the used data.
+1. The profile configuration model `ProfileConfigurationModel` that describes the configurable data.
 2. The view component `HelloWorldConfigurationViewComponent` that converts saved data into usable formats for your view.
 3. The view that is displayed to the user. This acts like a widget view and must abide to the same directory structure.
 
@@ -68,6 +68,7 @@ Create a razor view `Default.cshtml` and add it to _Views / Shared / Components 
 
 ```cshtml
 @model ProfileConfigurationModel
+
 @{
     Layout = null;
 }
@@ -78,7 +79,7 @@ Create a razor view `Default.cshtml` and add it to _Views / Shared / Components 
             <smart-label asp-for="NumberOfExportedRows" />
         </div>
         <div class="adminData">
-            <setting-editor asp-for="NumberOfExportedRows"></setting-editor>
+            <input asp-for="NumberOfExportedRows" />
             <span asp-validation-for="NumberOfExportedRows"></span>
         </div>
     </div>
@@ -107,7 +108,7 @@ This class implements the `ExportProviderBase` interface, which requires you to 
 
 #### Add Attributes
 
-Smartstore uses the following attributes to integrate the providers correctly: `SystemName`, `FriendlyName` and `ExportFeatures`.
+Smartstore uses the following attributes to integrate the providers correctly: `SystemName`, `FriendlyName` and `ExportFeatures` (optional).
 
 Add these attributes to your class definition.
 
@@ -118,6 +119,10 @@ Add these attributes to your class definition.
     ExportFeatures.CreatesInitialPublicDeployment |
     ExportFeatures.OffersBrandFallback)]
 ```
+
+{% hint style="info" %}
+`SystemName` is the system name of the provider, not the system name of the module.
+{% endhint %}
 
 | Export feature                  | Description                                                                                                                                                                              |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -135,11 +140,9 @@ Add these attributes to your class definition.
 | UsesAttributeCombinationParent  | <p>Export attribute combinations as products including parent product.</p><p>This is only effective in combination with the <em>CanProjectAttributeCombinations</em> export feature.</p> |
 | UsesRelatedDataUnits            | Provide extra data units for related data.                                                                                                                                               |
 
-For later use in `Module.cs` you need to add the `SystemName` property, which mirrors the `SystemName` attribute. To tell the provider that you want to export a CSV file, the `FileExtension` property has to be overriden. The `Localizer` is used for localized error messages. `CsvConfiguration` tells the provider what CSV format to use.
+To tell the provider that you want to export a CSV file, the `FileExtension` property has to be overriden. The `Localizer` is used for localizing messages. `CsvConfiguration` specifies details of the CSV format.
 
 ```csharp
-public static string SystemName => "MyOrg.HelloWorld.ProductCsv";
-
 public override string FileExtension => "CSV";
 
 public Localizer T { get; set; } = NullLocalizer.Instance;
@@ -181,33 +184,23 @@ Now you can start exporting your data. Start off by fetching the profile configu
 var config = (context.ConfigurationData as ProfileConfigurationModel) ?? new ProfileConfigurationModel();
 ```
 
-Next add the columns you want.
+Get a `CsvWriter` and write the first row with column names.
 
 ```csharp
-var columns = new string[]
+using var writer = new CsvWriter(new StreamWriter(context.DataStream, Encoding.UTF8, 1024, true));
+
+writer.WriteFields(new string[]
 {
     "ProductName",
     "SKU",
     "Price",
     "Savings",
     "Description"
-};
-```
-
-Then get the writer for CSV files.
-
-```csharp
-using var writer = new CsvWriter(new StreamWriter(context.DataStream, Encoding.UTF8, 1024, true));
-```
-
-Write the columns we specified.
-
-```csharp
-writer.WriteFields(columns);
+});
 writer.NextRow();
 ```
 
-Now iterate over the product catalog.
+Now iterate over the data segments.
 
 ```csharp
 while (context.Abort == DataExchangeAbortion.None && await context.DataSegmenter.ReadNextSegmentAsync())
@@ -288,7 +281,7 @@ if (context.RecordsSucceeded >= config.NumberOfExportedRows)
 }
 ```
 
-Your code should look something like this:
+Your code may look something like this:
 
 {% code title="HelloWorldCsvExportProvider.cs" %}
 ```csharp
@@ -301,8 +294,6 @@ namespace MyOrg.HelloWorld.Providers
         ExportFeatures.OffersBrandFallback)]
     public class HelloWorldCsvExportProvider : ExportProviderBase
     {
-        public static string SystemName => "MyOrg.HelloWorld.ProductCsv";
-
         public override string FileExtension => "CSV";
         
         public Localizer T { get; set; } = NullLocalizer.Instance;
@@ -333,18 +324,16 @@ namespace MyOrg.HelloWorld.Providers
         {
             var config = (context.ConfigurationData as ProfileConfigurationModel) ?? new ProfileConfigurationModel();
 
-            var columns = new string[]
+            using var writer = new CsvWriter(new StreamWriter(context.DataStream, Encoding.UTF8, 1024, true));
+
+            writer.WriteFields(new string[]
             {
                 "ProductName",
                 "SKU",
                 "Price",
                 "Savings",
                 "Description"
-            };
-
-            using var writer = new CsvWriter(new StreamWriter(context.DataStream, Encoding.UTF8, 1024, true));
-
-            writer.WriteFields(columns);
+            });
             writer.NextRow();
             
             while (context.Abort == DataExchangeAbortion.None && await context.DataSegmenter.ReadNextSegmentAsync())
@@ -401,11 +390,9 @@ namespace MyOrg.HelloWorld.Providers
 
 ### The XML export provider
 
-XML export is very similar to CSV. First you need to change the _file extension_ and _system name_ to include `XML`.
+XML export is very similar to CSV. First you need to change the _file extension_ to `XML`.
 
 ```csharp
-public static string SystemName => "MyOrg.HelloWorld.ProductXml";
-
 public override string FileExtension => "XML";
 ```
 
@@ -425,7 +412,7 @@ writer.WriteStartDocument();
 writer.WriteStartElement("products");
 ```
 
-Same as with CSV provider, you fetch the next data segment, iterate through the products and fetch it's entity.
+Same as with CSV provider, you fetch the next data segment, iterate through the products.
 
 ```csharp
 while (context.Abort == DataExchangeAbortion.None && await context.DataSegmenter.ReadNextSegmentAsync())
@@ -444,7 +431,7 @@ while (context.Abort == DataExchangeAbortion.None && await context.DataSegmenter
 }
 ```
 
-When you've got the entity, start a new element and insert it's values.
+Write a new product XML node including the values to be exported.
 
 ```csharp
 writer.WriteStartElement("product");
@@ -506,7 +493,7 @@ Then add the following lines to the beginning of your `UninstallAsync` method.
 var profiles = await _db.ExportProfiles
     .Include(x => x.Deployments)
     .Include(x => x.Task)
-    .Where(x => x.ProviderSystemName == HelloWorldCsvExportProvider.SystemName)
+    .Where(x => x.ProviderSystemName == "MyOrg.HelloWorld.ProductCsv" || x.ProviderSystemName == "MyOrg.HelloWorld.ProductXml")
     .ToListAsync();
 
 // Now delete the entities and any related file
