@@ -200,12 +200,13 @@ var searchResult = await _catalogSearchService.SearchAsync(searchQuery);
 
 There are several types of filters, which all inherit from `ISearchFilter`:
 
-| Filter                                        | Description                                                                                                                                       |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ICombinedSearchFilter`                       | Filter multiple category IDs (combined using logic OR)                                                                                            |
-| `IRangeSearchFilter`                          | Filter a price range                                                                                                                              |
-| A LINQ search like `LinqCatalogSearchService` | Translates the filters in `CatalogSearchQuery` into an `IQueryable<Product>` that can be used to load product entities directly from the database |
-| MegaSearch’s `ISearchEngine` implementation   | Translates product entities into a Lucene.Net compatible query filter                                                                             |
+| Filter                   | Description                                                           |
+| ------------------------ | --------------------------------------------------------------------- |
+| `IAttributeSearchFilter` | Base type to filter a field by a value.                               |
+| `ICombinedSearchFilter`  | Filter by a list of IDs, e.g. category IDs (combined using logic OR). |
+| `IRangeSearchFilter`     | Filter by lower and\or upper value, e.g. a price range.               |
+
+A LINQ search like `LinqCatalogSearchService` translates the filters in `CatalogSearchQuery` into an `IQueryable<Product>` that can be used to load product entities directly from the database. The `ISearchEngine` implementation of _MegaSearch_ translates them into a query filter that is compatible with Lucene.Net.
 
 ## Facets
 
