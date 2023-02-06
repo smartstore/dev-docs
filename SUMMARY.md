@@ -6,7 +6,7 @@
   * [Dependency injection](getting-started/dependency-injection.md)
   * [🥚 Data access](getting-started/data-access.md)
   * [✔ Domain](getting-started/domain.md)
-  * [🐣 Deployment & Build](getting-started/deployment-and-build.md)
+  * [✔ Deployment & Build](getting-started/deployment-and-build.md)
   * [✔ How to contribute](getting-started/how-to-contribute.md)
 
 ## Framework
@@ -18,9 +18,9 @@
   * [Database Migrations](framework/platform/database-migrations.md)
   * [✔ Events](framework/platform/events.md)
   * [🥚 Export](framework/platform/export.md)
-  * [🥚 Hooks](framework/platform/hooks.md)
+  * [✔ Hooks](framework/platform/hooks.md)
   * [Identity](framework/platform/identity.md)
-  * [🐣 IO abstraction](framework/platform/io-abstraction.md)
+  * [✔ IO abstraction](framework/platform/io-abstraction.md)
   * [✔ Import](framework/platform/import.md)
   * [Logging](framework/platform/logging.md)
   * [Data modelling](framework/platform/data-modelling/README.md)
