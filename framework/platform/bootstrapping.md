@@ -23,7 +23,7 @@ In a traditional ASP.NET Core application, these actions are performed in `Progr
 The application core only contains a very slim bootstrapper (similar to a kernel). After all module assemblies are loaded into the application domain, the type scanner looks for concrete subclasses of the [IStarter](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Builders/IStarter.cs) interface in all assemblies. The starters are sorted and executed one after the other.
 
 {% hint style="info" %}
-If you decide to use starter classes in your project, use as many as needed. There are no restrictions at all.
+Each project can have any number of starter classes or none. There are no restrictions at all.
 {% endhint %}
 
 ### IStarter interface
