@@ -1,4 +1,4 @@
-# 🐣 IO abstraction
+# ✔ IO abstraction
 
 ## Overview
 

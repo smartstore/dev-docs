@@ -2,7 +2,7 @@
 description: Special pub/sub system for database save operations
 ---
 
-# 🥚 Hooks
+# ✔ Hooks
 
 ## Overview
 

@@ -2,7 +2,7 @@
 description: Instructions how to build Smartstore
 ---
 
-# 🐣 Deployment & Build
+# ✔ Deployment & Build
 
 There are two options to build Smartstore and several ways to build Docker images and containers.
 
