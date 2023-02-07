@@ -1,13 +1,13 @@
-# 🥚 Export
+# ✔ Export
 
 ## Overview
 
-Exporting data is essential to Smartstore because it allows users to share their products with others. Whether it’s adding them to the Google search or a price comparison site to reach a wider audiences.
+Exports allow to exchange data between Smartstore and other organizations. Products can be displayed, compared and specifically advertised on the Internet to reach a wider audiences using a product export feed like Google Merchant Center.
 
-To make this possible, Smartstore uses Export profiles, that in turn use export providers, which employ the use of the data exporter.
+Smartstore uses a data exporter, export profiles and export providers for this purpose.
 
-* The [data exporter](export.md#data-exporter) provides the data in segments that are written in a specific format into a stream by an export provider.
-* The [export provider](export.md#export-provider) transforms the stream data into a convenient usable format.
+* The [data exporter](export.md#data-exporter) collects the data and provides it in segments to an export provider.
+* The [export provider](export.md#export-provider) converts the data provided by the data exporter into a specific format and writes it to a stream.
 * [Export profiles](export.md#export-profile) are entities that bind the export to an export provider and offer settings and configuration.
 * [Export deployments](export.md#deployment) are entities that can optionally be assigned to an export profile to specify how to proceed with the export files, for example to send them to an e-mail address.
 
@@ -29,16 +29,10 @@ The provider implements [IExportProvider](https://github.com/smartstore/Smartsto
 This documentation refers to a provider that inherits from `ExportProviderBase`.
 {% endhint %}
 
-It can declare the following:
-
-* `SystemName`
-* `FriendlyName`
-* `Order`
-* Data format (e.g. CSV or XML)
-* Whether it is a _file based_ or _on-the-fly in-memory_ export.
+The provider declares `SystemName`, `FriendlyName` and `Order` using attributes. It also specifies the file data format (e.g. CSV or XML).
 
 {% hint style="info" %}
-Set `FileExtension` to `null` if you do not want to export to files.&#x20;
+Set the property `FileExtension` to `null` if you do not want to export to files (_on-the-fly in-memory_ export).&#x20;
 {% endhint %}
 
 It is recommended to give your provider a friendly localized name and description using string resources and the localization XML files of your module:
@@ -52,7 +46,7 @@ It is recommended to give your provider a friendly localized name and descriptio
 The description is displayed when adding a new export profile and selecting your provider.
 {% endhint %}
 
-`ExportAsync` is the main method to export data. Depending on the configuration it is called several times by the data exporter during an export. Typically, this happens once for each exported file, depending on the partition settings of the profile. Though it never encounters files at any time because file related aspects are all handled internally using the data exporter. The provider simply writes the data into a stream.
+`ExportAsync` is the main method to export data. Depending on the configuration it is called several times by the data exporter during an export. Typically, this happens once for each exported file, depending on the partition settings of the profile. Though it never encounters files at any time because file related aspects are all handled internally by the data exporter. The provider simply writes the data into a stream.
 
 Use `ExportExecuteContext.CustomProperties` for any custom data required across the entire export. If additional files are required independently of the actual export files, they can be requested via `ExportExecuteContext.ExtraDataUnits`. The data exporter calls `OnExecutedAsync` for each extra data unit added by a provider.
 
@@ -164,8 +158,8 @@ Related data files are automatically imported together with the main data file(s
 
 Export profiles combine all aspects of an export, making them configurable by the user:
 
-* Providers
-* Tasks
+* Provider
+* Task
 * Partition
 * Filters
 * Projections
@@ -344,13 +338,13 @@ Your partial view with the toolbar menu may look like this:
 
 #### Customers
 
-| Property name               | Type           | Description                                                                                                                                          |
-| --------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| \_FullName                  | string         | Full customer name.                                                                                                                                  |
-| \_AvatarPictureUrl          | string         | Absolute URL of the avatar, if it exists.                                                                                                            |
-| \_RewardPointsBalance       | int            | Current reward point balance.                                                                                                                        |
-| \_HasNewsletterSubscription | bool           | A value  indicating whether the customer is subscribed to the newsletter.                                                                            |
-| \_GenericAttributes         | List\<dynamic> | List of associated generic attributes. Only VatNumber and ImpersonatedCustomerId are exported. The dynamic items are of the type `GenericAttribute`. |
+| Property name               | Type           | Description                                                                                                                                              |
+| --------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| \_FullName                  | string         | Full customer name.                                                                                                                                      |
+| \_AvatarPictureUrl          | string         | Absolute URL of the avatar, if it exists.                                                                                                                |
+| \_RewardPointsBalance       | int            | Current reward point balance.                                                                                                                            |
+| \_HasNewsletterSubscription | bool           | A value indicating whether the customer is subscribed to the newsletter.                                                                                 |
+| \_GenericAttributes         | List\<dynamic> | List of associated generic attributes. Only _VatNumber_ and _ImpersonatedCustomerId_ are exported. The dynamic items are of the type `GenericAttribute`. |
 
 #### MediaFile
 

@@ -17,7 +17,7 @@
   * [✔ Configuration](framework/platform/configuration.md)
   * [Database Migrations](framework/platform/database-migrations.md)
   * [✔ Events](framework/platform/events.md)
-  * [🥚 Export](framework/platform/export.md)
+  * [✔ Export](framework/platform/export.md)
   * [✔ Hooks](framework/platform/hooks.md)
   * [Identity](framework/platform/identity.md)
   * [✔ IO abstraction](framework/platform/io-abstraction.md)
