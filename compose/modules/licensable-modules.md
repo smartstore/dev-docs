@@ -1,4 +1,4 @@
-# 🐣 Licensable modules
+# ✔ Licensable modules
 
 ## Overview
 
@@ -88,7 +88,7 @@ You can decorate a whole controller class or just a single action method with th
 
 Alternatively, you could just display a notification for which you can use the properties `NotifyOnly`, `NotificationMessage` and `NotificationMessageType`. AJAX requests will be recognized automatically, and a suitable response will be generated according to the negotiated content type (either JSON or HTML).
 
-If you want to block certain methods or even your entire module when it is in demo mode, you need to set the property `BlockDemo` to _True. O_therwise everything will be accessible in demo mode, as the value of `BlockDemo` is _False_ by default. All properties of `LicenseRequiredAttribute`:
+If you want to block certain methods or even your entire module when it is in demo mode, you need to set the property `BlockDemo` to _True_. Otherwise everything will be accessible in demo mode, as the value of `BlockDemo` is _False_ by default. All properties of `LicenseRequiredAttribute`:
 
 | Property                    | Description                                                                                                                                                                                                                                                                                 |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -103,7 +103,7 @@ If you want to block certain methods or even your entire module when it is in de
 
 ## Usage scenario <a href="#howtomakeapluginlicensable-usagescenario" id="howtomakeapluginlicensable-usagescenario"></a>
 
-Imagine you have developed a module to communicate with an ERP system. Furthermore, your module transmits data to a web service whenever an order is placed in your shop and consumes another web service to keep your product data up-to-date. If you decide to allow the product data to be updated completely in the demo mode of your plugin, it may be sufficient for the plugin user to import the product data only once. Therefore, you should interrupt the routine that's responsible for updating product data after a certain number of products have been updated. To do so, you would use the `CheckStateAsync()` method, which checks whether the state is _Demo_ and stops the routine accordingly (see code example 1). This way, the user can see a demonstration of the actual function without getting the full version.
+Imagine you have developed a module to communicate with an ERP system. Furthermore, your module transmits data to a web service whenever an order is placed in your shop and consumes another web service to keep your product data up-to-date. If you decide to allow the product data to be updated completely in the demo mode of your plugin, it may be sufficient for the plugin user to import the product data only once. Therefore, you should interrupt the routine that's responsible for updating product data after a certain number of products have been updated. To do so, you would use the `CheckStateAsync()` method, which checks whether the state is _Demo_ and stops the routine accordingly (see code example 1). This way, the user can see a demonstration of the actual function without losing the motivation to purchase the full version.
 
 Order events should, of course, be processed and transmitted to the ERP system completely for demonstration purposes, as it's way too difficult to keep track of the number of processed orders. However, when the demonstration period is over, no more orders should be processed. Therefore, you would use the `CheckStateAsync()` method to check whether the state is _Unlicensed_ and to stop the event accordingly (see code example 2).
 
