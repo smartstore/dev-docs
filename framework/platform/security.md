@@ -16,7 +16,7 @@ Further security tools available are:
 
 ## Permissions tree
 
-Permissions are organized hierarchically in the form of a tree. A permission is granted when it has either granted itself or one of its parent permissions. The same applies to a permission that is explicitly not permitted. In this way, entire groups of permissions can be activated via a parent permission, where child permissions inherit from any parent. Therefore, a permission can have four statuses:
+Permissions are organized hierarchically in the form of a tree. A permission is granted when it has either granted itself or one of its parent permissions. The same applies to a permission that is explicitly not permitted. In this way, entire groups of permissions can be activated via a parent permission, where child permissions inherit from any ancestor. Therefore, a permission can have four statuses:
 
 | Status             |                                                                                                                              Representation                                                                                                                             |
 | ------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
