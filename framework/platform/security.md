@@ -1,8 +1,8 @@
-# 🐣 Security
+# ✔ Security
 
 ## Overview
 
-Web security is a very important topic for anyone who wants to keep their data safe. Smartstore offers ways to prevent attacks and data leaks:
+Web security is a very important topic for anyone who wants to keep their data safe. Smartstore offers ways to restrict access to data:
 
 * An extensible, hierarchically organized permissions system, where permissions are assigned to customer roles, which are then assigned to customers.
 * Customer roles (including assigned permissions) can automatically be assigned to customers by rule sets.
