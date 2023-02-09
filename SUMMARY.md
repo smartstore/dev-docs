@@ -98,7 +98,7 @@
     * [🥚 Adding tabs](compose/modules/examples/adding-tabs.md)
     * [✔ Creating a Widget provider](compose/modules/examples/creating-a-widget-provider.md)
     * [✔ Adding menu items](compose/modules/examples/adding-menu-items.md)
-    * [🐣 Creating a Block](compose/modules/examples/creating-a-block.md)
+    * [🐥 Creating a Block](compose/modules/examples/creating-a-block.md)
     * [✔ Creating an Export provider](compose/modules/examples/creating-a-export-provider.md)
     * [🥚 Creating a Domain entity](compose/modules/examples/creating-a-domain-entity.md)
     * [Creating a Payment provider](compose/modules/examples/creating-a-payment-provider.md)
