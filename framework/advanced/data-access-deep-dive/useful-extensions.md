@@ -134,7 +134,7 @@ Resolves the `DbContext` instance from which a given `DbSet` was obtained.
 
 <summary>FindById(Async)</summary>
 
-Finds an entity with a given id. If an entity with the given id is being tracked by the context, then it is returned immediately without making a request to the database. Otherwise, a query is made to the database for an entity with the given id and this entity, if found, is returned. If no entity is found, then `null` is returned. If the `tracked` parameter is set to `true`, then the entity is also attached to the context, so that subsequent calls can return the tracked entity without a database roundtrip.
+Finds an entity with a given id. If an entity with the given id is being tracked by the context, it is returned immediately without making a request to the database. Otherwise, a query is made to the database for an entity with the given id and this entity, if found, is returned. If no entity is found, then `null` is returned. If the `tracked` parameter is set to `true`, the entity is also attached to the context, so that subsequent calls can return the tracked entity without a database roundtrip.
 
 </details>
 
