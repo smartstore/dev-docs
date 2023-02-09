@@ -355,6 +355,38 @@ Some entity types should not be hooked at all, like the [Log](https://github.com
 
 ## Some Tipps
 
-Most hooks just invalidate cache entries. Separating cache invalidation from cache access makes the code a bit confusing. Therefore, we recommend combining them into a single class:
+Most hooks just invalidate cache entries. Separating cache invalidation from cache access makes the code a bit confusing. Therefore, we recommend combining them into a single service class:
 
-* _SAMPLE_ (pattern see: [DiscountService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Discounts/Services/DiscountService.cs), [ProductTagService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Products/Services/ProductTagService.cs), [CurrencyService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Common/Services/CurrencyService.cs), [DeliveryTimeService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Common/Services/DeliveryTimeService.cs) etc.)
+```csharp
+public class MyService : AsyncDbSaveHook<Product>, IMyService
+{
+    #region Hook
+    
+    protected override Task<HookResult> OnInsertedAsync(
+        Product entity, 
+        IHookedEntity entry,
+        CancellationToken cancelToken)
+    {
+        // Do something, e.g. invalidate cache entries
+        // [...]
+        return Task.FromResult(HookResult.Ok);
+    }
+    
+    #endregion
+    
+    public void MyServiceMethod()
+    {
+        // Do something
+        // [...]
+    }
+}
+```
+
+{% hint style="info" %}
+For Smartstore types that follow this pattern, check out, among others:
+
+* [DiscountService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Discounts/Services/DiscountService.cs)
+* [ProductTagService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Products/Services/ProductTagService.cs)
+* [CurrencyService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Common/Services/CurrencyService.cs)
+* [DeliveryTimeService](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Common/Services/DeliveryTimeService.cs)
+{% endhint %}
