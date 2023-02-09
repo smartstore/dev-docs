@@ -6,7 +6,7 @@ description: Getting started to access the application database
 
 ## Overview
 
-Every store is represented by a single database, even when using the multi-store option. Each table is represented by a special entity type derived from the `BaseEntity` type. Smartstore currently supports **Microsoft SQL Server** and **MySQL** database systems and uses the [Entity Framework Core (EF)](https://learn.microsoft.com/en-us/ef/core/) Object-relational-Mapper (O/R-Mapper) to access the store database.
+Every store is represented by a single database, even when using the multi-store option. Each table is represented by a special entity type derived from the `BaseEntity` type. Smartstore currently supports **Microsoft SQL Server**, **MySQL**, **PostgreSQL** and **SQLite** database systems and uses the [Entity Framework Core (EF)](https://learn.microsoft.com/en-us/ef/core/) Object-relational-Mapper (O/R-Mapper) to access the store database.
 
 * It enables .NET developers to work with a database using .NET objects.
 * Most of the data access code that would normally be written can be omitted.
@@ -88,7 +88,22 @@ public class MySingletonService : IMySingletonService
 
 ## Second-Level cache
 
-* Lorem ipsum
+* Where queried entities are cached in memory
+* So that subsequent queries to the same entities serve the result from cache without accessing the database
+  * Which makes queries faster because: no database workload, no record to class materialization... the already materialized entities are put to cache.
+* A cache entry always contains the result of a query, so it either contains a single entity or a list of entities
+  * The key of the entry is the unique hash of the query. Even the slightest query variation leads to a different hash, therefore to a new cache entry.
+* Whenever an entity that came from cache is updated or deleted, all cache entries that contain the entity are invalidated automatically
+  * Next query execution accesses the database then
+* But: not all entity types are cacheable... only those that are annotated with the `CacheableEntity` attribute. This attribute also defines the caching policy, like how long to cache the entry (default is 3 hours) and a max rows limit (query results with more items than the given number will not be cached)
+* Only those entity types that do not change frequently are marked as cacheable, and those that potentially do not produce large database tables. Like: `Country`, `StateProvince`, `Currency`, `Language`, `Store`, `TaxCategory`, `DeliveryTime`, `QuantityUnit`, `EmailAccount` etc.
+* To activate caching on a per query basis:
+  * If the queried entity type is annotated with `CacheableEntity` attribute: call `AsNoTracking()` for the query. Because only untracked entities will be cached.
+    * _SAMPLE_
+  * If the queried entity type is **not** annotated with `CacheableEntity` attribute: call `AsNoTracking()` and `AsCaching()` for the query.
+    * _SAMPLE_
+* To explicitly deactivate caching on a per query basis:
+  * Call `AsNoCaching()` for the query
 
 ## DataProvider
 
