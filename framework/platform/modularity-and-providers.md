@@ -1,4 +1,4 @@
-# 🥚 Modularity & Providers
+# 🐥 Modularity & Providers
 
 ## Providers
 
@@ -8,23 +8,25 @@ Each of these provider interfaces is derived from the marker interface [IProvide
 
 ### Metadata
 
-| Name                 | Implement                 | Description                                                                                                                                                                         |
-| -------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **FriendlyName**     | FriendlyNameAttribute     | The English name of the provider. Localizable by using resource key _Plugins.FriendlyName.\<ProviderSystemName>_                                                                    |
-| **Description**      | FriendlyNameAttribute     | The English description of the provider. Localizable by using resource key _Plugins.Description.\<ProviderSystemName>_                                                              |
-| **DisplayOrder**     | OrderAttribute            | The display order in the providers list.                                                                                                                                            |
-| **DependentWidgets** | DependentWidgetsAttribute | Widgets which are automatically (de)activated when the provider gets (de)activated. Useful in scenarios where separate widgets are responsible for the displaying of provider data. |
-| **ExportFeatures**   | ExportFeaturesAttribute   | Data processing types supported by an export provider.                                                                                                                              |
-| **IsConfigurable**   | IConfigurable             | A value indicating wether the provider is [configurable](modularity-and-providers.md#configuration).                                                                                |
-| **IsEditable**       | IUserEditable             | A value indicating wether the metadata is editable by the user.                                                                                                                     |
-| **IsHidden**         | IsHiddenAttribute         | A value indicating wether the provider is hidden. A hidden provider can only be used programmatically but not by the user through the user interface.                               |
-| **SystemName \***    | SystemNameAttribute       | Unique SystemName of the provider, e.g. _Payments.AmazonPay._                                                                                                                       |
+| Name                 | Implement                 | Description                                                                                                                                                                  |
+| -------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **FriendlyName**     | FriendlyNameAttribute     | The English name of the provider. Localizable by using resource key _Plugins.FriendlyName.\<ProviderSystemName>_                                                             |
+| **Description**      | FriendlyNameAttribute     | The English description of the provider. Localizable by using resource key _Plugins.Description.\<ProviderSystemName>_                                                       |
+| **DisplayOrder**     | OrderAttribute            | The display order in the providers list.                                                                                                                                     |
+| **DependentWidgets** | DependentWidgetsAttribute | Widgets which are automatically (de)activated when the provider gets (de)activated. Useful in scenarios where separate widgets are responsible for displaying provider data. |
+| **ExportFeatures**   | ExportFeaturesAttribute   | Data processing types supported by an export provider.                                                                                                                       |
+| **IsConfigurable**   | IConfigurable             | A value indicating whether the provider is [configurable](modularity-and-providers.md#configuration).                                                                        |
+| **IsEditable**       | IUserEditable             | A value indicating whether the metadata is editable by the user.                                                                                                             |
+| **IsHidden**         | IsHiddenAttribute         | A value indicating whether the provider is hidden. A hidden provider can only be used programmatically but not by the user through the user interface.                       |
+| **SystemName \***    | SystemNameAttribute       | Unique SystemName of the provider, e.g. _Payments.AmazonPay._                                                                                                                |
 
-HINT: a provider can be activated or deactivated via the provider list. A deactivated payment provider, for example, does not appear in the checkout payment method list.
+{% hint style="info" %}
+A provider can be activated or deactivated using the provider list. For example, a deactivated payment provider does not appear in the checkout payment method list.
+{% endhint %}
 
 ### Configuration
 
-Providers are configurable via `IConfigurable`. It specifies a `RouteInfo` to the action method for configuration.
+Providers are configurable via `IConfigurable`. It specifies a `RouteInfo` that points to an action method used for configuration.
 
 ```csharp
 public RouteInfo GetConfigurationRoute()
@@ -65,7 +67,7 @@ public IActionResult Configure(MyConfigurationModel model,
 }
 ```
 
-`SaveSettingAttribute` automatically saves the updated settings to database. The configuration view may look like this:
+The `SaveSettingAttribute` automatically saves the updated settings to database. The configuration view may look like this:
 
 ```cshtml
 @model MyConfigurationModel
