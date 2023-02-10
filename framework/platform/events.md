@@ -48,7 +48,7 @@ public async Task HandleEventAsync(SomeEvent message,
 }
 ```
 
-Order of parameters does not matter. The invoker automatically resolves the appropriate instances and passes them to the method. Any unregistered dependency or a primitive type throws an exception, except for `CancellationToken`. It always resolves to the application shutdown token.&#x20;
+Order of parameters does not matter. The invoker automatically resolves the appropriate instances and passes them to the method. Any unregistered dependency or a primitive type throws an exception, except for `CancellationToken`, which always resolves to the application shutdown token.&#x20;
 
 All types that implement the `IConsumer` interface are automatically detected on application startup and there is no need to register them in the service container. The class itself is registered as a _scoped dependency_, so it can also take dependencies in the constructor.
 
