@@ -4,9 +4,13 @@
 
 Migrations are a structured way to alter a database schema and required when changes need to be made to the Smartstore's database tables or new tables need to be added. Migrations can be in the Smartstore core or in a module, depending on who created the related entity.
 
-Smartstore uses [Fluent Migrator](https://fluentmigrator.github.io/) as a framework for database migrations. Fluent Migrator supports numerous database systems such as MySQL or PostgreSQL where migrations are described in C# classes that can be checked into the Fluent Migrator version control system.
+Smartstore uses [Fluent Migrator](https://fluentmigrator.github.io/) as a framework for database migrations. Fluent Migrator supports numerous database systems such as SQL Server, MySQL or PostgreSQL where migrations are described in C# classes that can be checked into the Fluent Migrator version control system.
 
 Fluent Migrator can also write data into the database or update existing data, but this is more comfortable with the help of [IDataSeeder](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Migrations/IDataSeeder.cs) or its abstract implementation [DataSeeder](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Data/Migrations/DataSeeder%60T.cs).
+
+{% hint style="info" %}
+Smartstore prefers Fluent Migrator over EF Core Migrations, because EF Migrations does not support database provider agnostic tooling and schema definition.
+{% endhint %}
 
 ## Database Migrator
 
@@ -44,13 +48,15 @@ The migration class must be decorated with the [MigrationVersionAttribute](https
 * yyyy/MM/dd HH:mm:ss
 * yyyy.MM.dd HH:mm:ss
 
-To make the short description more uniform, we recommend the format `<modul name>:< migration name>`, e.g. _Core: ProductComparePriceLabel_. The very first migration is usually named _Initial_, e.g. _MegaSearch: Initial_. A good example of a typical migration is [ProductComparePriceLabel](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Migrations/20221103091500\_ProductComparePriceLabel.cs).
+To make the short description more uniform, we recommend the format `<module name>:< migration name>`, e.g. _Core: ProductComparePriceLabel_. The very first migration is usually named _Initial_, e.g. _MegaSearch: Initial_. A good example of a typical migration is [ProductComparePriceLabel](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Migrations/20221103091500\_ProductComparePriceLabel.cs).
 
 {% code title="20221103091500_ProductComparePriceLabel.cs" %}
 ```csharp
 [MigrationVersion("2022-11-03 09:15:00", "Core: ProductComparePriceLabel")]
 internal class ProductComparePriceLabel : Migration, ILocaleResourcesProvider, IDataSeeder<SmartDbContext>
 {
+    // Implementing 'ILocaleResourcesProvider' or 'IDataSeeder<T>' is optional here
+    
     public bool RollbackOnFailure => false;
     
     public override void Up()
@@ -76,13 +82,13 @@ internal class ProductComparePriceLabel : Migration, ILocaleResourcesProvider, I
 ```
 {% endcode %}
 
-| Method or property                              | Description                                                                                                               |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| IMigration:Up                                   | Collects the _up_ migration expressions.                                                                                  |
-| IMigration:Down                                 | Collects the _down_ migration expressions.                                                                                |
-| IDataSeeder:RollbackOnFailure                   | Gets a value indicating whether migration should be completely rolled back when an error occurs during migration seeding. |
-| IDataSeeder:SeedAsync                           | Seeds any data into the database.                                                                                         |
-| ILocaleResourcesProvider:MigrateLocaleResources | Seeds new or updated locale resources after a migration has run.                                                          |
+| Method or property                                                                   | Description                                                                                                               |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `IMigration.Up`                                                                      | Collects the _up_ migration expressions.                                                                                  |
+| `IMigration.Down`                                                                    | Collects the _down_ migration expressions.                                                                                |
+| `IDataSeeder.RollbackOnFailure`                                                      | Gets a value indicating whether migration should be completely rolled back when an error occurs during migration seeding. |
+| `IDataSeeder.SeedAsync`                                                              | Seeds any data into the database.                                                                                         |
+| <p><code>ILocaleResourcesProvider.</code><br><code>MigrateLocaleResources</code></p> | Seeds new or updated locale resources after a migration has run.                                                          |
 
 More examples can be found in the [DevTools](https://github.com/smartstore/Smartstore/tree/main/src/Smartstore.Modules/Smartstore.DevTools/Migrations) module. They are for illustration purposes and are therefore commented out so that they are not executed.
 
@@ -92,7 +98,7 @@ In most cases, modules create migrations to extend the [domain model](../../comp
 
 ## Migrations history
 
-Fluent Migrator keeps a version history of successfully executed migrations in the `__MigrationVersionInfo` database table. The content of this table could look like this
+Fluent Migrator keeps a version history of successfully executed migrations in the _\_\_MigrationVersionInfo_ database table. The content of this table could look like this
 
 <figure><img src="../../.gitbook/assets/migration-history.png" alt=""><figcaption><p>Content of __MigrationVersionInfo table.</p></figcaption></figure>
 
