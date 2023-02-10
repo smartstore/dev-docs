@@ -203,7 +203,7 @@ To explicitly deactivate caching on a per query basis, call `AsNoCaching()` for 
 
 A [DataProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Providers/DataProvider.cs) abstracts and unifies the internals of a database system supported by Smartstore. It acts as an adapter for low-level database operations and provides a unified interface to the different database systems.
 
-The current DataProvider instance can be accessed by calling the `DataProvider` property of the `SmartDbContext` instance. Amongst others, it offers the following members:
+The current DataProvider instance can be accessed by calling the `DataProvider` property of the `SmartDbContext` instance. It provides the following members, among others:
 
 | Member                   | Description                                                                                                                                                                                                          |
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -224,7 +224,6 @@ The current DataProvider instance can be accessed by calling the `DataProvider` 
 | `ShrinkDatabase()`       | Shrinks / compresses / vacuums the database.                                                                                                                                                                         |
 | `Sql()`                  | Normalizes a given SQL command text by replacing quoted identifiers in MSSQL dialect to provider-specific quotes. E.g.: `SELECT [Id] FROM [Customers]` --> `SELECT` \``Id`\` `FROM` \``Customers`\` (MySQL dialect). |
 | `TruncateTable<T>()`     | Truncates/clears a table. ALL rows will be deleted irreversibly!                                                                                                                                                     |
-|                          |                                                                                                                                                                                                                      |
 
 ## Conventions & best practices
 
