@@ -1,4 +1,4 @@
-# 🐣 Pooled DbContext factory
+# 🐥 Pooled DbContext factory
 
 In general, `DbContext` is a lightweight object: creating and disposing it doesn't involve a database operation, and most applications can do this without noticeable performance impact. However, each context instance sets up various internal services and objects necessary to perform its tasks, and the overhead of continuously doing so may be significant in high-performance scenarios. For these cases, EF Core can _pool_ your context instances:
 
@@ -12,7 +12,7 @@ Context pooling allows you to pay context setup costs only once at program start
 
 By default, the maximum number of instances retained by the pool (pool size) is set to **1024** and can be altered via `appsettings.json` using the `DbContextPoolSize` setting. Once the pool size is exceeded, new context instances aren’t cached and EF reverts to non-pooling behavior, creating instances as needed.
 
-Smartstore registers a scoped service factory for the `SmartDbContext` service type, which internally resolves an instance of `SmartDbContext` from the pool. This instance is then returned to the pool when the request completes. So in general you don’t need to call the `CreateDbContext` method of `IDbContextFactory<SmartDbContext>`.
+Smartstore registers a scoped service factory for the `SmartDbContext` service type, which internally resolves an instance from the pool. This instance is then returned to the pool when the request completes. So in general you don’t need to call the `CreateDbContext` method of `IDbContextFactory<SmartDbContext>`.
 
 However, there may be situations where working with `IDbContextFactory` is beneficial:
 
@@ -40,21 +40,10 @@ public Task OnEmptyBatchAsync()
 private static SmartDbContext CreateDbContext()
 {
     var engine = EngineContext.Current;
-
-    if (engine == null || !engine.IsStarted)
-    {
-        // App not initialized yet
-        return null;
-    }
-
-    if (!DataSettings.DatabaseIsInstalled())
-    {
-        // Cannot log to non-existent database
-        return null;
-    }
-
-    return engine.Application.Services
-        .Resolve<IDbContextFactory<SmartDbContext>>().CreateDbContext();
+    var factory = engine.Application.Services
+        .Resolve<IDbContextFactory<SmartDbContext>>();
+        
+    return factory.CreateDbContext();
 }
 ```
 
@@ -68,8 +57,7 @@ private readonly IDbContextFactory<SmartDbContext> _dbContextFactory;
 private IDisposable GetOrCreateDbContext(out SmartDbContext db)
 {
     db = _scope?.ResolveOptional<SmartDbContext>() ??
-         _httpContextAccessor.HttpContext?
-         .RequestServices?.GetService<SmartDbContext>();
+         _httpContextAccessor.HttpContext?.RequestServices?.GetService<SmartDbContext>();
 
     if (db != null)
     {
