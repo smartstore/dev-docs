@@ -163,52 +163,76 @@ while ((await pager.ReadNextPageAsync<Product>()).Out(out var products))
 
 ## Second-Level cache
 
-* Where queried entities are cached in memory
-* So that subsequent queries to the same entities serve the result from cache without accessing the database
-  * Which makes queries faster because: no database workload, no record to class materialization... the already materialized entities are put to cache.
-* A cache entry always contains the result of a query, so it either contains a single entity or a list of entities
-  * The key of the entry is the unique hash of the query. Even the slightest query variation leads to a different hash, therefore to a new cache entry.
-* Whenever an entity that came from cache is updated or deleted, all cache entries that contain the entity are invalidated automatically
-  * Next query execution accesses the database then
-* But: not all entity types are cacheable... only those that are annotated with the `CacheableEntity` attribute. This attribute also defines the caching policy, like how long to cache the entry (default is 3 hours) and a max rows limit (query results with more items than the given number will not be cached)
-* Only those entity types that do not change frequently are marked as cacheable, and those that potentially do not produce large database tables. Like: `Country`, `StateProvince`, `Currency`, `Language`, `Store`, `TaxCategory`, `DeliveryTime`, `QuantityUnit`, `EmailAccount` etc.
-* To activate caching on a per query basis:
-  * If the queried entity type is annotated with `CacheableEntity` attribute: call `AsNoTracking()` for the query. Because only untracked entities will be cached.
-    * _SAMPLE_
-  * If the queried entity type is **not** annotated with `CacheableEntity` attribute: call `AsNoTracking()` and `AsCaching()` for the query.
-    * _SAMPLE_
-* To explicitly deactivate caching on a per query basis:
-  * Call `AsNoCaching()` for the query
-* HINT: even when `AsCaching()` was called, tracked entities will never be put to cache.
+The _Second-Level cache_ is where queried entities are cached in memory. This way, subsequent queries to the same entities serve the result from cache without accessing the database. This makes queries much faster because there is no database workload and no record to class materialization. The materialized entities are already cached.
+
+A cache entry always contains the result of a query, so it contains either a single entity or a list of entities. The key of the entry is the unique hash of its query. Even the slightest variation in the query leads to a different hash and consequently to a new cache entry.
+
+Whenever an entity that came from cache is updated or deleted, all cache entries that contain the entity are invalidated automatically. That means that the next query execution needs to access the database again.
+
+However not all entity types are cacheable. Only types annotated with the `CacheableEntity` attribute get cached. In addition, this attribute defines the caching policy, which includes:
+
+* How long to cache the entry. The default being 3 hours.
+* A maximum row limit that causes query results with more items than the specified number not to be cached.
+
+There are two types of entities that are marked as cacheable. Those that don’t change often and those that don’t usually generate large database tables: `Country`, `StateProvince`, `Currency`, `Language`, `Store`, `TaxCategory`, `DeliveryTime`, `QuantityUnit`, `EmailAccount`, etc.
+
+To activate caching on a per query basis, two approaches are used. They depend on whether the queried entity type is annotated with the `CacheableEntity` attribute. If it is annotated with the `CacheableEntity` attribute, call `AsNoTracking()` for the query, because only untracked entities are cached.
+
+{% code title="CategoryTemplate.cs" %}
+```csharp
+[CacheableEntity]
+public partial class CategoryTemplate : EntityWithAttributes, IDisplayOrder
+{
+    // The template...
+}
+```
+{% endcode %}
+
+{% code title="CategoryImporter.cs" %}
+```csharp
+var categoryTemplates = await _db.CategoryTemplates
+    .AsNoTracking()
+    .OrderBy(x => x.DisplayOrder)
+    .ToListAsync(context.CancelToken);
+```
+{% endcode %}
+
+If the queried entity type is **not** annotated with the `CacheableEntity` attribute, call `AsNoTracking()` and `AsCaching()` for the query.
+
+* _SAMPLE_
+
+To explicitly deactivate caching on a per query basis, call `AsNoCaching()` for the query.
+
+{% hint style="info" %}
+**Tracked entities never get cached**, not even when `AsCaching()` is called!
+{% endhint %}
 
 ## DataProvider
 
-* A [DataProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Providers/DataProvider.cs) abstracts and unifies the internals of a database system supported by Smartstore
-  * It is a kind of an adapter for low-level database stuff
-  * And provides a unified interface to the different database systems
-* You can access the current DataProvider instance by calling the `DataProvider` property of the `SmartDbContext` instance.
-* The returned `DataProvider` type provides the following members (incomplete list):
+A [DataProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Providers/DataProvider.cs) abstracts and unifies the internals of a database system supported by Smartstore. It acts as an adapter for low-level database operations and provides a unified interface to the different database systems.
 
-| Member                   | Description                                                                                                                                                                                                        |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `BackupDatabase()`       | Creates a database backup. Currently only supported by _SQLServer_ and _SQLite_.                                                                                                                                   |
-| `Can*`                   | Checks whether the database supports a specific feature. e.g.: `CanStreamBlob` returns `true` if the database can efficiently stream BLOB fields.                                                                  |
-| `CreateParameter()`      | Returns a `DbParameter` instance that is compatible with the database.                                                                                                                                             |
-| `EncloseIdentifier()`    | Encloses the given identifier in provider specific quotes, e.g. _\[Name]_ for MSSQL, \`_Name_\` for MySQL.                                                                                                         |
-| `ExecuteSqlScript()`     | Executes a (multiline) SQL script in an atomic transaction.                                                                                                                                                        |
-| `GetDatabaseSize()`      | Gets the total size of the database in bytes.                                                                                                                                                                      |
-| `GetTableIdent<T>()`     | Gets the current ident value of the given table.                                                                                                                                                                   |
-| `HasTable()`             | Checks whether the database contains the given table.                                                                                                                                                              |
-| `InsertInto()`           | Executes the given INSERT INTO SQL command and returns the ident of the inserted row.                                                                                                                              |
-| `IsTransientException()` | Checks whether the given exception represents a transient failure that can be compensated by a retry.                                                                                                              |
-| `OpenBlobStream()`       | Opens a BLOB stream for the given property accessor.                                                                                                                                                               |
-| `ReIndexTables()`        | Re-indexes all tables in the database.                                                                                                                                                                             |
-| `RestoreDatabase()`      | Restores a previously created backup. Currently only supported by _SQLServer_ and only if database and web server are located on the same machine.                                                                 |
-| `SetTableIdent<T>()`     | Sets the table ident value.                                                                                                                                                                                        |
-| `ShrinkDatabase()`       | Shrinks / compacts / vacuums the database.                                                                                                                                                                         |
-| `Sql()`                  | Normalizes given SQL command text by replacing quoted identifiers in MSSQL dialect to provider-specific quotes. E.g.: `SELECT [Id] FROM [Customers]` --> `SELECT` \``Id`\` `FROM` \``Customers`\` (MySQL dialect). |
-| `TruncateTable<T>()`     | Truncates/clears a table. ALL rows will be irreversibly deleted!                                                                                                                                                   |
-|                          |                                                                                                                                                                                                                    |
+The current DataProvider instance can be accessed by calling the `DataProvider` property of the `SmartDbContext` instance. Amongst others, it offers the following members:
+
+| Member                   | Description                                                                                                                                                                                                          |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BackupDatabase()`       | Creates a database backup. Currently only supported by _SQLServer_ and _SQLite_.                                                                                                                                     |
+| `Can*`                   | Checks whether the database supports a specific feature. e.g.: `CanStreamBlob` returns `true` if the database can efficiently stream BLOB fields.                                                                    |
+| `CreateParameter()`      | Returns a `DbParameter` instance that is compatible with the database.                                                                                                                                               |
+| `EncloseIdentifier()`    | Encloses the given identifier in provider specific quotes, e.g. _\[Name]_ for MSSQL, \`_Name_\` for MySQL.                                                                                                           |
+| `ExecuteSqlScript()`     | Executes a (multiline) SQL script in an atomic transaction.                                                                                                                                                          |
+| `GetDatabaseSize()`      | Gets the total size of the database in bytes.                                                                                                                                                                        |
+| `GetTableIdent<T>()`     | Gets the current ident value of the given table.                                                                                                                                                                     |
+| `HasTable()`             | Checks whether the database contains the given table.                                                                                                                                                                |
+| `InsertInto()`           | Executes the given INSERT INTO SQL command and returns the ident of the inserted row.                                                                                                                                |
+| `IsTransientException()` | Checks whether the given exception represents a transient failure that can be compensated by a retry.                                                                                                                |
+| `OpenBlobStream()`       | Opens a BLOB stream for the given property accessor.                                                                                                                                                                 |
+| `ReIndexTables()`        | Re-indexes all tables in the database.                                                                                                                                                                               |
+| `RestoreDatabase()`      | Restores a previously created backup. Currently only supported by _SQLServer_ and only if the database and web server are located on the same machine.                                                               |
+| `SetTableIdent<T>()`     | Sets the table ident value.                                                                                                                                                                                          |
+| `ShrinkDatabase()`       | Shrinks / compresses / vacuums the database.                                                                                                                                                                         |
+| `Sql()`                  | Normalizes a given SQL command text by replacing quoted identifiers in MSSQL dialect to provider-specific quotes. E.g.: `SELECT [Id] FROM [Customers]` --> `SELECT` \``Id`\` `FROM` \``Customers`\` (MySQL dialect). |
+| `TruncateTable<T>()`     | Truncates/clears a table. ALL rows will be deleted irreversibly!                                                                                                                                                     |
+|                          |                                                                                                                                                                                                                      |
 
 ## Conventions & best practices
 

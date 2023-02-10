@@ -1,4 +1,4 @@
-# 🐥 Pooled DbContext factory
+# 🐣 Pooled DbContext factory
 
 In general, `DbContext` is a lightweight object: creating and disposing it doesn't involve a database operation, and most applications can do this without noticeable performance impact. However, each context instance sets up various internal services and objects necessary to perform its tasks, and the overhead of continuously doing so may be significant in high-performance scenarios. For these cases, EF Core can _pool_ your context instances:
 
