@@ -1,4 +1,4 @@
-# 🐣 Building a simple "Hello World" module
+# 🐥 Building a simple "Hello World" module
 
 Before we start, please look at the introduction to [creating modules](../getting-started-with-modules.md). The basic files needed to create a module are already described there.
 
