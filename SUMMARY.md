@@ -46,7 +46,7 @@
 * [Commerce](framework/commerce/README.md)
   * [Cart](framework/commerce/cart.md)
   * [Catalog](framework/commerce/catalog.md)
-  * [🐥 Payment](framework/commerce/creating-a-payment-provider.md)
+  * [✔ Payment](framework/commerce/creating-a-payment-provider.md)
   * [Pricing](framework/commerce/pricing.md)
   * [Rules Engine](framework/commerce/rules-engine.md)
   * [Shipment](framework/commerce/shipment.md)

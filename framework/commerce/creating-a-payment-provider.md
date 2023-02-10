@@ -1,10 +1,10 @@
-# 🐥 Payment
+# ✔ Payment
 
 ## Overview
 
 A payment provider represents a payment method with which an order can be paid in the frontend. Furthermore, it contains other optional methods, e.g. capturing the payment amount later, when the goods are shipped or to perform a refund. It is recommended to learn about the general functioning of a [provider](../platform/modularity-and-providers.md#providers) before going on.
 
-If no SDK is provided for a payment gateway or you do not want to use it for whatever reason, it is recommended to write your own HTTP client tp communicate with the gateway. See the [PayPal HTTP client](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Modules/Smartstore.PayPal/Client/PayPalHttpClient.cs) as an example.
+If no SDK is provided for a payment gateway or you do not want to use it for whatever reason, it is recommended to write your own HTTP client to communicate with the gateway. See the [PayPal HTTP client](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Modules/Smartstore.PayPal/Client/PayPalHttpClient.cs) as an example.
 
 ## Payment provider
 
@@ -68,7 +68,7 @@ For details about `SystemName` etc. see [providers](../platform/modularity-and-p
 | **SupportPartiallyRefund** | A value indicating whether a partial refund is supported.  If `true`, you must overwrite the `RefundAsync` method.                                                                                                                                                                                             |
 | **SupportRefund**          | A value indicating whether a full refund is supported. If `true`, you must overwrite the `RefundAsync` method.                                                                                                                                                                                                 |
 | **SupportVoid**            | A value indicating whether cancellation of the payment (transaction) is supported. If `true`, you must overwrite the `VoidAsync` method.                                                                                                                                                                       |
-| **RecurringPaymentType**   | <p>The type of recurring payment. Available values are:</p><ul><li><em>NotSupported</em>: Recurring payment is not supported.</li><li><em>Manual</em>: Recurring payment is completed manually by the admin.</li><li>A<em>utomatic</em>: Recurring payment is processed on the payment gateway site.</li></ul> |
+| **RecurringPaymentType**   | <p>The type of recurring payment. Available values are:</p><ul><li><em>NotSupported</em>: Recurring payment is not supported.</li><li><em>Manual</em>: Recurring payment is completed manually by the admin.</li><li><em>Automatic</em>: Recurring payment is processed on the payment gateway site.</li></ul> |
 
 ### Methods of PaymentMethodBase
 
