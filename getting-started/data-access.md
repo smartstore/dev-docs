@@ -87,17 +87,12 @@ public class MySingletonService : IMySingletonService
 
 The traditional approach to apply paging to a LINQ query would be by calling the `Skip()` and `Take()` methods. Smartstore provides a more convenient way with `PagedList`. It allows you to take an `IQueryable` (or even an `IEnumerable`), slice it up into _pages_, and grab a particular _page_ by an _index_.
 
-You can simply call `ToPagedList` (instead of `ToList`) from your `IQueryable` / `IEnumerable`, passing the page size and the page index you want to load. This results in an `IList<T>` that only contains a _subset_ of the total data, compared to `ToList`. The `ToPagedList` call returns an instance of [IPagedList\<T>](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Collections/IPagedList%60T.cs), which also implements the `IList<T>` and [IPageable\<T>](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Collections/IPageable%60T.cs) interfaces.
+You can simply call `ToPagedList` (instead of `ToList`) from your `IQueryable` / `IEnumerable`, passing the page _size_ and the page _index_ you want to load. The result is still an `IList<T>`, but contains only a subset of the total data. The `ToPagedList` call returns an instance of [IPagedList\<T>](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Collections/IPagedList%60T.cs), which also implements the `IList<T>` and [IPageable\<T>](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Collections/IPageable%60T.cs) interfaces.
 
-If the source IQueryable is a DbSet, paging is performed on the database side, otherwise in memory.
+If the source `IQueryable<T>` is a `DbSet<T>`, paging is performed on the database side, otherwise in memory.
 
 {% hint style="info" %}
-INFO: A PagedList loads data in a deferred manner:
-
-* when iteration begins
-* on first list access
-
-To load the data explicitly beforehand, you must call Load or LoadAsync.
+A `PagedList` loads data in a deferred manner when the iteration starts or when the list gets accessed for the first time. To load the data explicitly beforehand, you must call `Load` or `LoadAsync`.
 {% endhint %}
 
 #### Example
@@ -132,7 +127,7 @@ while (true)
 
 ### FastPager
 
-The `FastPager` is a not as convenient as a `PagedList`, but very efficient. It provides stable and consistent paging performance over **very large** datasets.
+The `FastPager` is not as convenient as a `PagedList`, but very efficient. It provides stable and consistent paging performance over **very large** datasets.
 
 Unlike LINQ’s `Skip(x).Take(y)` approach, the entity set is sorted by descending id and a specified number of records are returned. The `FastPager` remembers the last (lowest) id returned and uses it for the WHERE clause of next batch. This way you can completely avoid `Skip()`, which is known to perform poorly on large tables when the skip count is very high.
 
@@ -163,20 +158,17 @@ while ((await pager.ReadNextPageAsync<Product>()).Out(out var products))
 
 ## Second-Level cache
 
-The _Second-Level cache_ is where queried entities are cached in memory. This way, subsequent queries to the same entities serve the result from cache without accessing the database. This makes queries much faster because there is no database workload and no record to class materialization. The materialized entities are already cached.
+The s_econd-level cache_ is where queried entities are cached in memory. This allows subsequent queries on the same entities to serve the result from the cache without accessing the database. This makes query execution much faster because there is no database workload and no record to class materialization involved; because the materialized entities are already in the cache.
 
-A cache entry always contains the result of a query, so it contains either a single entity or a list of entities. The key of the entry is the unique hash of its query. Even the slightest variation in the query leads to a different hash and consequently to a new cache entry.
+A cache entry always contains the result of a query, so it contains either a single entity or a list of entities. The key of the entry is the unique hash of its query. Even the slightest variation in the query results in a different hash and thus a new cache entry.
 
-Whenever an entity that came from cache is updated or deleted, all cache entries that contain the entity are invalidated automatically. That means that the next query execution needs to access the database again.
+Whenever an entity that came from the cache is updated or deleted, all cache entries that contain that entity will be automatically invalidated. This means that the next time the query is executed, the database will be accessed again.
 
-However not all entity types are cacheable. Only types annotated with the `CacheableEntity` attribute get cached. In addition, this attribute defines the caching policy, which includes:
+However, not all entity types are cacheable. Only types annotated with the `CacheableEntity` attribute are cached. This attribute also defines the caching policy, such as how long to cache the entry (default is 3 hours) and a max rows limit (causes query results with more items than the specified number not to be cached).
 
-* How long to cache the entry. The default being 3 hours.
-* A maximum row limit that causes query results with more items than the specified number not to be cached.
+Only those entity types that do not change frequently, and those that are not likely to produce large database tables, are marked as cacheable. For example: `Country`, `StateProvince`, `Currency`, `Language`, `Store`, `TaxCategory`, `DeliveryTime`, `QuantityUnit`, `EmailAccount`, etc.
 
-There are two types of entities that are marked as cacheable. Those that don’t change often and those that don’t usually generate large database tables: `Country`, `StateProvince`, `Currency`, `Language`, `Store`, `TaxCategory`, `DeliveryTime`, `QuantityUnit`, `EmailAccount`, etc.
-
-To activate caching on a per query basis, two approaches are used. They depend on whether the queried entity type is annotated with the `CacheableEntity` attribute. If it is annotated with the `CacheableEntity` attribute, call `AsNoTracking()` for the query, because only untracked entities are cached.
+To activate caching on a per query basis, two approaches are used. They depend on whether the queried entity type is annotated with the `CacheableEntity` attribute. If it is annotated with the `CacheableEntity` attribute, call `AsNoTracking()` on the query, because only untracked entities are cached.
 
 {% code title="CategoryTemplate.cs" %}
 ```csharp
@@ -203,7 +195,7 @@ If the queried entity type is **not** annotated with the `CacheableEntity` attri
 
 To explicitly deactivate caching on a per query basis, call `AsNoCaching()` for the query.
 
-{% hint style="info" %}
+{% hint style="warning" %}
 **Tracked entities never get cached**, not even when `AsCaching()` is called!
 {% endhint %}
 
