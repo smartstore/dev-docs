@@ -104,10 +104,36 @@ public class MySingletonService : IMySingletonService
     * _SAMPLE_
 * To explicitly deactivate caching on a per query basis:
   * Call `AsNoCaching()` for the query
+* HINT: even when `AsCaching()` was called, tracked entities will never be put to cache.
 
 ## DataProvider
 
-* Lorem ipsum
+* A [DataProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Providers/DataProvider.cs) abstracts and unifies the internals of a database system supported by Smartstore
+  * It is a kind of an adapter for low-level database stuff
+  * And provides a unified interface to the different database systems
+* You can access the current DataProvider instance by calling the `DataProvider` property of the `SmartDbContext` instance.
+* The returned `DataProvider` type provides the following members (incomplete list):
+
+| Member                   | Description                                                                                                                                                                                                        |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `BackupDatabase()`       | Creates a database backup. Currently only supported by _SQLServer_ and _SQLite_.                                                                                                                                   |
+| `Can*`                   | Checks whether the database supports a specific feature. e.g.: `CanStreamBlob` returns `true` if the database can efficiently stream BLOB fields.                                                                  |
+| `CreateParameter()`      | Returns a `DbParameter` instance that is compatible with the database.                                                                                                                                             |
+| `EncloseIdentifier()`    | Encloses the given identifier in provider specific quotes, e.g. _\[Name]_ for MSSQL, \`_Name_\` for MySQL.                                                                                                         |
+| `ExecuteSqlScript()`     | Executes a (multiline) SQL script in an atomic transaction.                                                                                                                                                        |
+| `GetDatabaseSize()`      | Gets the total size of the database in bytes.                                                                                                                                                                      |
+| `GetTableIdent<T>()`     | Gets the current ident value of the given table.                                                                                                                                                                   |
+| `HasTable()`             | Checks whether the database contains the given table.                                                                                                                                                              |
+| `InsertInto()`           | Executes the given INSERT INTO SQL command and returns the ident of the inserted row.                                                                                                                              |
+| `IsTransientException()` | Checks whether the given exception represents a transient failure that can be compensated by a retry.                                                                                                              |
+| `OpenBlobStream()`       | Opens a BLOB stream for the given property accessor.                                                                                                                                                               |
+| `ReIndexTables()`        | Re-indexes all tables in the database.                                                                                                                                                                             |
+| `RestoreDatabase()`      | Restores a previously created backup. Currently only supported by _SQLServer_ and only if database and web server are located on the same machine.                                                                 |
+| `SetTableIdent<T>()`     | Sets the table ident value.                                                                                                                                                                                        |
+| `ShrinkDatabase()`       | Shrinks / compacts / vacuums the database.                                                                                                                                                                         |
+| `Sql()`                  | Normalizes given SQL command text by replacing quoted identifiers in MSSQL dialect to provider-specific quotes. E.g.: `SELECT [Id] FROM [Customers]` --> `SELECT` \``Id`\` `FROM` \``Customers`\` (MySQL dialect). |
+| `TruncateTable<T>()`     | Truncates/clears a table. ALL rows will be irreversibly deleted!                                                                                                                                                   |
+|                          |                                                                                                                                                                                                                    |
 
 ## Conventions & best practices
 
