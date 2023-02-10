@@ -2,7 +2,7 @@
 description: Getting started to access the application database
 ---
 
-# 🥚 Data access
+# 🐣 Data access
 
 ## Overview
 
@@ -83,8 +83,78 @@ public class MySingletonService : IMySingletonService
 
 ## Paging
 
-* PagedList
-* FastPager
+### PagedList
+
+* To apply paging to a LINQ query you usually call the `Skip()` and `Take()` methods.
+* Smartstore offers a more convenient way with `PagedList`
+* It allows you to take an `IQueryable` (or even an `IEnumerable`), slice it up into _pages_, and grab a particular _page_ by an _index_.
+* Just call `ToPagedList` (instead of `ToList`) from your `IQueryable`/`IEnumerable` passing the page size and the page index you want to load.
+* The result is still an `IList<T>`, but only contains a subset of the total data.
+* If the source `IQueryable<T>` is a `DbSet<T>`, then paging will be performed on the database side, otherwise in memory.
+* The `ToPagedList` call returns an instance of [IPagedList\<T>](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Collections/IPagedList%60T.cs) (which also implements `IList<T>` and [IPageable\<T>](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Collections/IPageable%60T.cs))
+* INFO: a `PagedList` loads data in a deferred manner when iteration begins or on first list access. To load the data explicitly beforehand, you must call `Load` or `LoadAsync`.
+
+#### Example
+
+```csharp
+// _db is SmartDbContext
+var db = _db;
+
+// Simple paging: load page 3 with 100 items
+var productSlice = await db.Products.ToPagedList(3, 100).LoadAsync();
+
+// More complex paging
+var pageIndex = -1;
+
+while (true)
+{
+    var products = db.Products.ToPagedList(++pageIndex, 500);
+    
+    // Iterate through all items in the page
+    await foreach (var product in products.AsAsyncEnumerable())
+    {
+        // Do something...
+    }
+
+    if (!products.HasNextPage)
+    {
+        // Exit loop if there are no more pages
+        break;
+    }
+}
+```
+
+### FastPager
+
+* The `FastPager` is a not so convenient, but very efficient pager that ensures stable and consistent paging performance over **very large** datasets
+* Other than LINQs `Skip(x).Take(y)` approach the entity set is sorted descending by id and a specified amount of records are returned.
+* The `FastPager` remembers the last (lowest) returned id and uses it for the next batches' WHERE clause.
+* This way `Skip()` can be avoided which is known for performing bad on large tables when the skip count is very high.
+
+#### Example
+
+```csharp
+// _db is SmartDbContext
+var db = _db;
+
+// Build the query beforehand
+var query = db.Products.Where(x => x.Price > 100);
+
+// Create a FastPager instance with given query and page size of 500
+var pager = new FastPager<Product>(query, 500);
+
+// Page synchronously
+while (pager.ReadNextPage<Product>(out var products))
+{
+    // Do something meaningful...
+}
+
+// ...or page asynchronously
+while ((await pager.ReadNextPageAsync<Product>()).Out(out var products))
+{
+    // Do something meaningful...
+}
+```
 
 ## Second-Level cache
 
