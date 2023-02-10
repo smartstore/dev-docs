@@ -85,14 +85,20 @@ public class MySingletonService : IMySingletonService
 
 ### PagedList
 
-* To apply paging to a LINQ query you usually call the `Skip()` and `Take()` methods.
-* Smartstore offers a more convenient way with `PagedList`
-* It allows you to take an `IQueryable` (or even an `IEnumerable`), slice it up into _pages_, and grab a particular _page_ by an _index_.
-* Just call `ToPagedList` (instead of `ToList`) from your `IQueryable`/`IEnumerable` passing the page size and the page index you want to load.
-* The result is still an `IList<T>`, but only contains a subset of the total data.
-* If the source `IQueryable<T>` is a `DbSet<T>`, then paging will be performed on the database side, otherwise in memory.
-* The `ToPagedList` call returns an instance of [IPagedList\<T>](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Collections/IPagedList%60T.cs) (which also implements `IList<T>` and [IPageable\<T>](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Collections/IPageable%60T.cs))
-* INFO: a `PagedList` loads data in a deferred manner when iteration begins or on first list access. To load the data explicitly beforehand, you must call `Load` or `LoadAsync`.
+The traditional approach to apply paging to a LINQ query would be by calling the `Skip()` and `Take()` methods. Smartstore provides a more convenient way with `PagedList`. It allows you to take an `IQueryable` (or even an `IEnumerable`), slice it up into _pages_, and grab a particular _page_ by an _index_.
+
+You can simply call `ToPagedList` (instead of `ToList`) from your `IQueryable` / `IEnumerable`, passing the page size and the page index you want to load. This results in an `IList<T>` that only contains a _subset_ of the total data, compared to `ToList`. The `ToPagedList` call returns an instance of [IPagedList\<T>](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Collections/IPagedList%60T.cs), which also implements the `IList<T>` and [IPageable\<T>](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Collections/IPageable%60T.cs) interfaces.
+
+If the source IQueryable is a DbSet, paging is performed on the database side, otherwise in memory.
+
+{% hint style="info" %}
+INFO: A PagedList loads data in a deferred manner:
+
+* when iteration begins
+* on first list access
+
+To load the data explicitly beforehand, you must call Load or LoadAsync.
+{% endhint %}
 
 #### Example
 
@@ -126,10 +132,9 @@ while (true)
 
 ### FastPager
 
-* The `FastPager` is a not so convenient, but very efficient pager that ensures stable and consistent paging performance over **very large** datasets
-* Other than LINQs `Skip(x).Take(y)` approach the entity set is sorted descending by id and a specified amount of records are returned.
-* The `FastPager` remembers the last (lowest) returned id and uses it for the next batches' WHERE clause.
-* This way `Skip()` can be avoided which is known for performing bad on large tables when the skip count is very high.
+The `FastPager` is a not as convenient as a `PagedList`, but very efficient. It provides stable and consistent paging performance over **very large** datasets.
+
+Unlike LINQ’s `Skip(x).Take(y)` approach, the entity set is sorted by descending id and a specified number of records are returned. The `FastPager` remembers the last (lowest) id returned and uses it for the WHERE clause of next batch. This way you can completely avoid `Skip()`, which is known to perform poorly on large tables when the skip count is very high.
 
 #### Example
 
