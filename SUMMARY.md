@@ -15,7 +15,7 @@
   * [✔ Bootstrapping](framework/platform/bootstrapping.md)
   * [✔ Caching](framework/platform/caching.md)
   * [✔ Configuration](framework/platform/configuration.md)
-  * [Database Migrations](framework/platform/database-migrations.md)
+  * [🥚 Database Migrations](framework/platform/database-migrations.md)
   * [✔ Events](framework/platform/events.md)
   * [✔ Export](framework/platform/export.md)
   * [✔ Hooks](framework/platform/hooks.md)
