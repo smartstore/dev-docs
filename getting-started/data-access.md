@@ -227,7 +227,28 @@ The current DataProvider instance can be accessed by calling the `DataProvider` 
 
 ## Conventions & best practices
 
-* Lorem ipsum
+### Eager load related data
+
+Eager loading is a feature in EF Core that allows you to load related data along with the main entity data in a single query. This can improve performance compared to lazy loading, where related data is loaded on demand, because you avoid making multiple round-trips to the database for each related entity.
+
+Here's an example of how you can use eager loading in EF Core 7:
+
+_SAMPLE (_`.Include(x => ...)`_)_
+
+### Encapsulate queries and predicates
+
+Encapsulating LINQ queries and `Where` predicates in extension methods provides several advantages:
+
+1. Reusability: You can reuse the same code in multiple parts of your application, making it easier to maintain and reducing the likelihood of errors.
+2. Improved readability: You can make your code more readable and easier to understand. This is especially true if you give descriptive names to the extension methods that encapsulate the predicates.
+3. Increased maintainability: You can make changes to the predicates in one place, rather than having to change the code in multiple places throughout your application. This can make it easier to maintain your code and reduce the likelihood of bugs being introduced.
+4. Better separation of concerns: Helps to separate the query logic from the rest of your code, making it easier to understand and maintain.
+
+Here are some of the most commonly used built-in query extension methods in Smartstore:
+
+* _TBD_
+
+_SAMPLE how to create a custom query extension class_
 
 ## Deep Dive
 
