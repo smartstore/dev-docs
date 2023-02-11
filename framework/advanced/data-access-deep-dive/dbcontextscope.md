@@ -1,4 +1,4 @@
-# 🐣 DbContextScope
+# ✔ DbContextScope
 
 An instance of `SmartDbContext` has a short lifetime. It is retrieved from the pool when an HTTP request begins and is returned to the pool at the end of the request. To change the configuration of the request scoped context you can...:
 
