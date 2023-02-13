@@ -1,4 +1,4 @@
-# 🥚 Creating a Domain entity
+# 🐣 Creating a Domain entity
 
 Domain entities offer a way to add your own tables to Smartstore's database. In this tutorial you will write a simple notification system for your shop.
 
@@ -13,12 +13,12 @@ A simple notification will need the following properties:
 * A timestamp (`Published`, type: date-time)
 * A message (`Message`, type: string)
 
-Here is what that table could look like:
+Here is what that the table could look like:
 
 | Id | Author | Published                   | Messaage                           |
 | -- | ------ | --------------------------- | ---------------------------------- |
-| 0  | 543    | 2022-12-12 11:48:08.9937258 | Hello World!                       |
-| 1  | 481    | 2022-12-13 19:02:55.7695421 | What a wonderful day it is :smile: |
+| 1  | 543    | 2022-12-12 11:48:08.9937258 | Hello World!                       |
+| 2  | 481    | 2022-12-13 19:02:55.7695421 | What a wonderful day it is :smile: |
 
 ### Create the Domain entity
 
@@ -71,7 +71,7 @@ Create the folder _Migrations_ and add the migration class, which name includes 
 [MigrationVersion("2022-12-14 10:34:22", "HelloWorld: Initial")]
 ```
 
-The class needs to implement the `Migration` interface, to have access to SQL Database methods like `Create`, `Remove` or `Update`. With these you are now able to check if the table already exists, and if not, create it.
+The class needs to inherit from the `Migration` base class to have access to the SQL database methods like `Create`, `Remove` or `Update`. With these you are now able to check if the table already exists, and if not, create it.
 
 ```csharp
 if (!Schema.Table("HelloWorld_Notifications").Exists())
@@ -80,14 +80,13 @@ if (!Schema.Table("HelloWorld_Notifications").Exists())
 }
 ```
 
-To add columns, specify indexes and primary keys, you can simply daisy chain the following `FluentMigrator` methods:
+To add columns, specify indexes and primary keys, you can simply daisy chain the following _FluentMigrator_ methods:
 
-| Method            | Description                                         |
-| ----------------- | --------------------------------------------------- |
-| `InSchema`        | Defines the tables schema.                          |
-| `WithColumn`      | Defines a new column.                               |
-| `WithIdColumn`    | Defines an id column, that acts as the primary key. |
-| `WithDescription` | Adds the table's description.                       |
+| Method         | Description                                         |
+| -------------- | --------------------------------------------------- |
+| `InSchema`     | Defines the tables schema.                          |
+| `WithColumn`   | Defines a new column.                               |
+| `WithIdColumn` | Defines an id column, that acts as the primary key. |
 
 Columns can furthermore be:
 
@@ -110,7 +109,7 @@ Create.Table("HelloWorld_Notifications")
 It's best to use the `DateTime2` type instead of `DateTime`. It has an extended range and higher precision.
 {% endhint %}
 
-The class should look like the following:
+The class should look like this:
 
 {% code title="20221214103422_Initial.cs" %}
 ```csharp
@@ -142,28 +141,33 @@ public class _20221214103422_Initial : Migration
 
 ## Providing table access
 
-Now that you have the table set up, you need to give your module access to it. To access the table from the usual `_db` Context you need to add the following two files:
+Now that you have the table set up, you need to give your module access to it. To access the table from a `SmartDbContext` instance you need to add the following two files:
 
 * _Startup.cs_ in the root of your folder.
-* _SmartDbContextExtensions.cs_ in the _Extensions_ folder (needs to be created)
+* _SmartDbContextExtensions.cs_ in the _Extensions_ directory (needs to be created)
 
-Create the `static` SmartDbContextExtension class and add the following method:
+Create the static `SmartDbContextExtension` class and add the following method:
 
 ```csharp
 public static DbSet<HelloWorldNotification> HelloWorldNotifications(this SmartDbContext db)
     => db.Set<HelloWorldNotification>();
 ```
 
-The Startup class implements the `StarterBase` interface and includes the following lines:
+The Startup class inherits from the `StarterBase` class and includes the following lines:
 
 {% code title="Startup.cs" %}
 ```csharp
-public override void ConfigureServices(IServiceCollection services, IApplicationContext appContext){
+public override void ConfigureServices(IServiceCollection services, IApplicationContext appContext)
+{
     services.AddTransient<IDbContextConfigurationSource<SmartDbContext>, SmartDbContextConfigurer>();
 }
-private class SmartDbContextConfigurer : IDbContextConfigurationSource<SmartDbContext>{
-    public void Configure(IServiceProvider services, DbContextOptionsBuilder builder){
-        builder.UseDbFactory(b => {
+
+private class SmartDbContextConfigurer : IDbContextConfigurationSource<SmartDbContext>
+{
+    public void Configure(IServiceProvider s, DbContextOptionsBuilder builder)
+    {
+        builder.UseDbFactory(b => 
+        {
             b.AddModelAssembly(GetType().Assembly);
         });
     }

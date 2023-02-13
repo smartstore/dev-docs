@@ -158,7 +158,7 @@ while ((await pager.ReadNextPageAsync<Product>()).Out(out var products))
 
 ## Second-Level cache
 
-The _second-level cache_ is where queried entities are cached in memory. This allows subsequent queries on the same entities to retrieve the result directly from the cache, bypassing the database altogether. Not having to access the database means that queries are executed much faster. This is further increased because there is no record to class materialization involved, as the materialized entities are already cached.
+The _second-level cache_ is where queried entities are cached in memory. This allows subsequent queries on the same entities to retrieve the result directly from the cache, bypassing the database altogether. Not having to work with the database means that queries are executed much faster. This is further increased because there is no record of class materialisation involved, as the materialised entities are already cached.
 
 A cache entry always contains the result of a query, so it contains either a single entity or a list of entities. The key of the entry is the unique hash of its query. Even the slightest variation in the query results in a different hash and thus a new cache entry.
 
@@ -166,7 +166,7 @@ Whenever an entity that came from the cache is updated or deleted, all cache ent
 
 However, not all entity types are cacheable. Only types annotated with the `CacheableEntity` attribute are cached. This attribute also defines the caching policy, such as how long to cache the entry (default is 3 hours) and a max rows limit (causes query results with more items than the specified number not to be cached).
 
-Only those entity types that do not change frequently, and those that are not likely to produce large database tables, are marked as cacheable. For example: `Country`, `StateProvince`, `Currency`, `Language`, `Store`, `TaxCategory`, `DeliveryTime`, `QuantityUnit`, `EmailAccount`, etc.
+Entity types marked as cacheable can be divided into two groups: Those that do not change frequently and those that are unlikely to generate large database tables. For example: `Country`, `StateProvince`, `Currency`, `Language`, `Store`, `TaxCategory`, `DeliveryTime`, `QuantityUnit`, `EmailAccount`, etc.
 
 To activate caching on a per query basis, two approaches are used. They depend on whether the queried entity type is annotated with the `CacheableEntity` attribute. If it is annotated with the `CacheableEntity` attribute, call `AsNoTracking()` on the query, because only untracked entities are cached.
 
@@ -264,30 +264,29 @@ Here are some of the most commonly used built-in query extension methods in Smar
 _SAMPLE how to create a custom query extension class_
 
 ```csharp
-public static class MyEntityQueryExtensions
+public static class MyQueryExtensions
 {
     /* Sample method call:
-	await _db.MyEntities()
-	    .AsNoTracking()
-	    .ApplyCustomerFilter(model.CustomerId, true)
-	    .AnyAsync();
+
+	await _db.ADomainObject()
+	.AsNoTracking()
+	.ApplyMyFilter(model.Id, model.CategoryIndex, model.HasChanged)
+	.AnyAsync();
     */
-    public static IQueryable<MyEntity> ApplyCustomerFilter(
-    	this IQueryable<MyEntity> query,
-        int? customerId = null, 
-        bool? approved = null)
+    internal static IQueryable<ADomainObject> ApplyMyFilter(
+    	this IQueryable<ADomainObject> query,
+        int objectId,
+	int category
+	bool? hasChanged = null)
     {
-        if (customerId.HasValue)
-        {
-            query = query.Where(x => x.CustomerId == customerId.Value);
-        }
+        query = query.Where(x => x.Id == objectId || x.category == categoryName);
 
-        if (approved.HasValue)
-        {
-            query = query.Where(x => x.IsApproved == approved.Value);
-        }
+	    if (hasChanged != null)
+	    {
+	        query = query.Where(x => x.HasChanged == hasChanged.Value);
+	    }
 
-        return query;
+	return query;
     }
 }
 ```
