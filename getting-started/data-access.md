@@ -191,7 +191,13 @@ var categoryTemplates = await _db.CategoryTemplates
 
 If the queried entity type is **not** annotated with the `CacheableEntity` attribute, call `AsNoTracking()` and `AsCaching()` for the query.
 
-* _SAMPLE_
+```csharp
+// Retrieve all customers with email addresses that end in ".com".
+var customerQuery = _db.Customers
+    .AsNoTracking()
+    .AsCaching()
+    .Where(x => x.Email.EndsWith(".com"))
+```
 
 To explicitly deactivate caching on a per query basis, call `AsNoCaching()` for the query.
 
@@ -233,7 +239,14 @@ Eager loading is a feature in EF Core that allows you to load related data along
 
 Here's an example of how you can use eager loading in EF Core 7:
 
-_SAMPLE (_`.Include(x => ...)`_)_
+```csharp
+// Retrieve all customers whose orders have earned them
+// points in the last month.
+var orderQuery = _db.Orders
+    .ApplyAuditDateFilter(DateTime.UtcNow.AddMonths(-1))
+    .Include(x => x.Customer)
+    .Where(x => x.RewardPointsWereAdded)
+```
 
 ### Encapsulate queries and predicates
 
@@ -249,6 +262,34 @@ Here are some of the most commonly used built-in query extension methods in Smar
 * _TBD_
 
 _SAMPLE how to create a custom query extension class_
+
+```csharp
+public static class MyQueryExtensions
+{
+    /* Sample method call:
+
+	await _db.ADomainObject()
+	.AsNoTracking()
+	.ApplyMyFilter(model.Id, model.CategoryIndex, model.HasChanged)
+	.AnyAsync();
+    */
+    internal static IQueryable<ADomainObject> ApplyMyFilter(
+    	this IQueryable<ADomainObject> query,
+        int objectId,
+	int category
+	bool? hasChanged = null)
+    {
+        query = query.Where(x => x.Id == objectId || x.category == categoryName);
+
+	    if (hasChanged != null)
+	    {
+	        query = query.Where(x => x.HasChanged == hasChanged.Value);
+	    }
+
+	return query;
+    }
+}
+```
 
 ## Deep Dive
 
