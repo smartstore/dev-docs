@@ -58,6 +58,10 @@ Add module.json next. For more information, refer to [the manifest](../getting-s
 ```
 {% endcode %}
 
+{% hint style="danger" %}
+**Version numbers must be kept up to date** with the current version of Smartstore. Otherwise the module will not be loaded!
+{% endhint %}
+
 ## Creating the module
 
 Change the name of `Class1.cs` to `Module.cs` and add the following code:
@@ -316,7 +320,7 @@ After building the module, you can click on the **Configure** button to store a 
 
 If you take a look at the `ConfigurationModel`, you'll see that the properties are decorated with the `LocalizedDisplay` attribute. This is a way to add localized display values to describe the property. On property level, the attribute can either contain the full resource key `[LocalizedDisplay("Plugins.MyOrg.HelloWorld.Name")]` or inherit a part of the declaring class also decorated with the attribute.
 
-The resource values are added using `resource.*.xml` XML files, where \* represents to culture code for the target language:
+The resource values are added using `resource.*.xml` XML files, where \* represents the culture code of the target language:
 
 1. Right click on the project in the Solution Explorer.
 2. Add a new folder. The folder must be called _Localization_.
