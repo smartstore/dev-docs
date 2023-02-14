@@ -62,3 +62,99 @@ The API can fulfill the following properties:
 {% hint style="warning" %}
 `SmApiFulfill` sets the relationship only if none exists yet. An existing relationship cannot be modified with this option.
 {% endhint %}
+
+## Web API and modules
+
+If a module extends the domain model with its own entities, these can also be integrated into the Web API using [ODataModelProviderBase](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Web.Common/Api/ODataModelProviderBase.cs) or [IODataModelProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Web.Common/Api/IODataModelProvider.cs). This allows the module developer to make their entities accessible from the outside without having to create their own Web API.
+
+The _Smartstore.Blog_ module registers two entities `BlogComment` and `BlogPost` through the `ODataModelBuilder` by following `BlogODataModelProvider`.
+
+```csharp
+internal class BlogODataModelProvider : ODataModelProviderBase
+{
+    public override void Build(ODataModelBuilder builder, int version)
+    {
+        builder.EntitySet<BlogComment>("BlogComments");
+        builder.EntitySet<BlogPost>("BlogPosts");
+    }
+
+    public override Stream GetXmlCommentsStream(IApplicationContext appContext)
+        => GetModuleXmlCommentsStream(appContext, "Smartstore.Blog");
+}
+```
+
+{% hint style="info" %}
+Use plural for the name of the entity set. For example, _BlogComments_, not _BlogComment_.
+{% endhint %}
+
+Next, an API controller must be added for each entity. It is recommended to create a subfolder named _Api_ in the controller folder of the module for this. Inherit your controller from [WebApiController](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Web.Common/Api/WebApiController.cs) as shown in the example.
+
+```csharp
+/// <summary>
+/// The endpoint for operations on BlogComment entity.
+/// </summary>
+public class BlogCommentsController : WebApiController<BlogComment>
+{
+    [HttpGet("BlogComments"), ApiQueryable]
+    [Permission(BlogPermissions.Read)]
+    public IQueryable<BlogComment> Get()
+    {
+        var query = Db.CustomerContent
+            .AsNoTracking()
+            .OrderByDescending(x => x.CreatedOnUtc)
+            .OfType<BlogComment>();
+
+        return query;
+    }
+
+    [HttpGet("BlogComments({key})"), ApiQueryable]
+    [Permission(BlogPermissions.Read)]
+    public SingleResult<BlogComment> Get(int key)
+    {
+        return GetById(key);
+    }
+
+    [HttpGet("BlogComments({key})/BlogPost"), ApiQueryable]
+    [Permission(BlogPermissions.Read)]
+    public SingleResult<BlogPost> GetBlogPost(int key)
+    {
+        return GetRelatedEntity(key, x => x.BlogPost);
+    }
+
+    [HttpPost]
+    [Permission(BlogPermissions.Create)]
+    public async Task<IActionResult> Post([FromBody] BlogComment entity)
+    {
+        return await PostAsync(entity);
+    }
+
+    [HttpPut]
+    [Permission(BlogPermissions.Update)]
+    public async Task<IActionResult> Put(int key, Delta<BlogComment> model)
+    {
+        return await PutAsync(key, model);
+    }
+
+    [HttpPatch]
+    [Permission(BlogPermissions.Update)]
+    public async Task<IActionResult> Patch(int key, Delta<BlogComment> model)
+    {
+        return await PatchAsync(key, model);
+    }
+
+    [HttpDelete]
+    [Permission(BlogPermissions.Delete)]
+    public async Task<IActionResult> Delete(int key)
+    {
+        return await DeleteAsync(key);
+    }
+}
+```
+
+{% hint style="info" %}
+Use the namespace `Smartstore.Web.Api.Controllers` for all Web API controllers!
+{% endhint %}
+
+`BlogCommentsController` defines OData Web API entdpoints to get, create, update, partially update and to delete blog comments. It also defines an endpoint to get the related blog post via the navigation property `BlogPost`. See the [controllers](https://github.com/smartstore/Smartstore/tree/main/src/Smartstore.Modules/Smartstore.WebApi/Controllers) of the Web API module for more endpoint definitions.
+
+Override `ODataModelProviderBase.GetXmlCommentsStream` to get your code comments automatically included in the Swagger documentation of the Web API. Therefore the **Documentation File** option must also be activated in the settings of the module project. **XML documentation file path** should be left empty. This exports your code comments to an XML file with the name of the module at compile time (_Smartstore.Blog.xml_ in the above example), which the Web API then takes into account.
