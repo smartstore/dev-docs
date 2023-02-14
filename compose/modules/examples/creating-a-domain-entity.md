@@ -1,4 +1,4 @@
-# 🐣 Creating a Domain entity
+# 🥚 Creating a Domain entity
 
 Domain entities offer a way to add your own tables to Smartstore's database. In this tutorial you will write a simple notification system for your shop.
 
@@ -22,10 +22,10 @@ Here is what that the table could look like:
 
 ### Create the Domain entity
 
-The `Domain` is the model equivalent of your database table. You must specify the table name and the indexes you need as attributes.
+The `Domain` is the model equivalent of your database table. You can specify the table name and the indexes you need as attributes.
 
 ```csharp
-// Define your table name
+// Define your table name. By convention, the entity name is used.
 [Table("TableNameInDatabase")]
 
 // Define a property as an index
@@ -44,7 +44,7 @@ Add the file _HelloWorldNotification.cs_ to the new folder _Domain_.
 
 {% code title="HelloWorldNotification.cs" %}
 ```csharp
-[Table("HelloWorld_Notifications")]
+[Table("HelloWorldNotification")]
 [Index(nameof(AuthorId), Name = "IX_HelloWorldNotification_AuthorId")]
 [Index(nameof(Published), Name = "IX_HelloWorldNotification_Published")]
 public class HelloWorldNotification : BaseEntity
@@ -58,11 +58,15 @@ public class HelloWorldNotification : BaseEntity
 ```
 {% endcode %}
 
-This creates the table `HelloWorld_Notifications` with the three columns: `AuthorId`, `Published` and `Message`. Because a lot of times you are going to be looking up notifications based on either `AuthorId` or `Published`, they are defined as indexes.
+This creates the table `HelloWorldNotification` with the three columns: `AuthorId`, `Published` and `Message`. Because a lot of times you are going to be looking up notifications based on either `AuthorId` or `Published`, they are defined as indexes.
 
 ### Create the Migration
 
-In order to add the `HelloWorld_Notifications` table to Smartstore's database, you need to create a migration. This will also be used when migrating from one version to the next. The methods needed for this are `Up()` and `Down()` for migrating to the next version or the previous version of your table. In this tutorial we are only going to use the `Up` method.
+In order to add the `HelloWorldNotification` table to Smartstore's database, you need to create a migration. This will also be used when migrating from one version to the next. The methods needed for this are `Up()` and `Down()` for migrating to the next version or the previous version of your table. In this tutorial we are only going to use the `Up` method.
+
+{% hint style="info" %}
+To learn more, please refer to [Migrations](../../../framework/platform/database-migrations.md).
+{% endhint %}
 
 Create the folder _Migrations_ and add the migration class, which name includes the current date, _YYYYMMDDHHMMSS\_Initial.cs_. With the following attribute added to the class respectively:
 
@@ -74,9 +78,9 @@ Create the folder _Migrations_ and add the migration class, which name includes 
 The class needs to inherit from the `Migration` base class to have access to the SQL database methods like `Create`, `Remove` or `Update`. With these you are now able to check if the table already exists, and if not, create it.
 
 ```csharp
-if (!Schema.Table("HelloWorld_Notifications").Exists())
+if (!Schema.Table("HelloWorldNotification").Exists())
 {
-    Create.Table("HelloWorld_Notifications");
+    Create.Table("HelloWorldNotification");
 }
 ```
 
@@ -84,25 +88,25 @@ To add columns, specify indexes and primary keys, you can simply daisy chain the
 
 | Method         | Description                                         |
 | -------------- | --------------------------------------------------- |
-| `InSchema`     | Defines the tables schema.                          |
 | `WithColumn`   | Defines a new column.                               |
 | `WithIdColumn` | Defines an id column, that acts as the primary key. |
 
-Columns can furthermore be:
-
-* given a type: Boolean, Integer (16, 32, 64), Binary, String, Date, Currency, ...
-* specified as: (not) Nullable, Unique, a primary key, indexed, ...
-
-With this information you can build the `HelloWorld_Notifications` table.
+Columns can also have a type (Boolean, Integer, String, Date, Currency, ...) and be specified as (not) nullable, unique, a primary key, indexed, etc. With this information you can build the `HelloWorldNotification` table.
 
 ```csharp
-Create.Table("HelloWorld_Notifications")
+Create.Table("HelloWorldNotification")
     .WithIdColumn()
-    .WithColumn(nameof(HelloWorldNotification.AuthorId)).AsInt32().NotNullable()
+    .WithColumn(nameof(HelloWorldNotification.AuthorId))
+        .AsInt32()
+        .NotNullable()
         .Indexed("IX_HelloWorldNotification_AuthorId")
-    .WithColumn(nameof(HelloWorldNotification.Published)).AsDateTime2().NotNullable()
+    .WithColumn(nameof(HelloWorldNotification.Published))
+        .AsDateTime2()
+        .NotNullable()
         .Indexed("IX_HelloWorldNotification_Published")
-    .WithColumn(nameof(HelloWorldNotification.Message)).AsString().NotNullable();
+    .WithColumn(nameof(HelloWorldNotification.Message))
+        .AsString()
+        .NotNullable();
 ```
 
 {% hint style="info" %}
@@ -119,21 +123,29 @@ public class _20221214103422_Initial : Migration
     public override void Up()
     {
         // Tablename is taken from Domain->Attribute->Table
-        if (!Schema.Table("HelloWorld_Notifications").Exists())
+        var tableName = "HelloWorldNotification";
+        
+        if (!Schema.Table(tableName).Exists())
         {
-            Create.Table("HelloWorld_Notifications")
+            Create.Table(tableName)
                 .WithIdColumn() // Adds the Id column, which defaults to primary key.
-                .WithColumn(nameof(HelloWorldNotification.AuthorId)).AsInt32().NotNullable()
+                .WithColumn(nameof(HelloWorldNotification.AuthorId))
+                    .AsInt32()
+                    .NotNullable()
                     .Indexed("IX_HelloWorldNotification_AuthorId")
-                .WithColumn(nameof(HelloWorldNotification.Published)).AsDateTime2().NotNullable()
+                .WithColumn(nameof(HelloWorldNotification.Published))
+                    .AsDateTime2()
+                    .NotNullable()
                     .Indexed("IX_HelloWorldNotification_Published")
-                .WithColumn(nameof(HelloWorldNotification.Message)).AsString().NotNullable();
+                .WithColumn(nameof(HelloWorldNotification.Message))
+                    .AsString()
+                    .NotNullable();
         }
     }
 
     public override void Down()
     {
-        // Ignore this.
+        // Ignore this for now.
     }
 }
 ```
@@ -183,6 +195,10 @@ var messages = await _db.HelloWorldNotifications()
     .FirstOrDefaultAsync();
 ```
 
+{% hint style="info" %}
+Adding the `SmartDbContext` extension is not required for using the migration.
+{% endhint %}
+
 ## Adding a View
 
 ## Advanced topics
@@ -204,8 +220,9 @@ public int DaysToKeepNotification { get; set; } = 10;
 Add a folder named _Tasks_ to your root and create the _DeleteOldNotificationsTask_ class, that implements the `ITask` interface.
 
 ```csharp
-public async Task Run(TaskExecutionContext ctx, CancellationToken cancelToken = default){
-    var date = DateTime.UtcNow.AddDays(_settings.DaysToKeepNotification);
+public async Task Run(TaskExecutionContext ctx, CancellationToken cancelToken = default)
+{
+    var date = DateTime.UtcNow.AddDays(-_settings.DaysToKeepNotification);
 
     var notifications = await _db.HelloWorldNotifications()
         .Where(x => x.Published < date)
@@ -225,9 +242,9 @@ Add to _Module.cs_:
 // In the Install method:
 await _taskStore.GetOrAddTaskAsync<DeleteOldNotificationsTask>(x =>
 {
-	x.Name = T("Plugins.MyOrg.HelloWorld.DeleteOldNotificationsTask");
-	x.CronExpression = "0 12 * * ?";
-	x.Enabled = true;
+    x.Name = T("Plugins.MyOrg.HelloWorld.DeleteOldNotificationsTask");
+    x.CronExpression = "0 12 * * ?";
+    x.Enabled = true;
 });
 
 // In the Uninstall method:
