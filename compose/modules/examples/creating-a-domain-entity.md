@@ -234,6 +234,7 @@ There are many more things you could do with this module:
 
 * Add a _Moderator_ `CustomerRole` and separate view so certain users can create notifications.
 * Add categories to the notification. Show certain notifications on different pages.
+* Make your entities accessible via the [Web API](../../../framework/web-api/web-api-in-detail.md#web-api-and-modules).
 
 ## Conclusion
 
