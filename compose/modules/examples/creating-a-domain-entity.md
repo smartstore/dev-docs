@@ -219,27 +219,27 @@ var messages = await _db.Notifications()
 Adding the `SmartDbContext` extension is not required for using the migration.
 {% endhint %}
 
-## Adding a View
+## Next steps
 
-* Add configuration view
-  * show for number of days after publishing - DaysToShowNotification
-  * Add 'new notification' button
-    * AuthorID: CurrentCustomer.Id
-      * Message: user input
-      * Published: now()
-* Add widget to display notifications.
+You will find the following steps included in the module code:
 
-## Further ideas
+1. Add a [configuration view](../tutorials/building-a-simple-hello-world-module.md#adding-configuration). Configure the number of days a notification is shown.
+2. Add a 'New notification' button. Let the current admin create a message.
+3. Display the notification [using a widget](creating-a-widget-provider.md). This way you can position it freely around the shop.
+4. Schedule a Task for cleaning up the table. This will increase database speed, by removing old unneccessary notifications from your table.
 
-You will find the following ideas included in the module code:
+### Further ideas
 
-Schedule a Task for cleaning up the table. This will increase database speed, by removing old unneccessary notifications from your table.
+There are many more things you could do with this module:
+
+* Add a _Moderator_ `CustomerRole` and separate view so certain users can create notifications.
+* Add categories to the notification. Show certain notifications on different pages.
 
 ## Conclusion
 
 In this tutorial you learned how to:
 
-* Add a table to SmartStore's database
+* Add a table to Smartstore's database
 * Create a migration for it
 * Extend SmartDbContext to include your tables
 
