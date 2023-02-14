@@ -17,7 +17,7 @@ Now alter `MyOrg.HelloWorld.csproj` to look like this:
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
-        <Product>A Hello World module for Smartstore</Product>
+        <Product>Smartstore Hello World</Product>
         <OutputPath>..\..\Smartstore.Web\Modules\MyOrg.HelloWorld</OutputPath>
         <OutDir>$(OutputPath)</OutDir>
     </PropertyGroup>
@@ -199,7 +199,7 @@ namespace MyOrg.HelloWorld.Controllers
 The configuration model is still missing, so there will be 3 errors right now. Notice the `Area` attribute the controller is decorated with. This means that all its actions are reachable only within this area. If you want to add actions to the module within another area don't forget to decorate these actions with the desired area or add another controller.
 
 {% hint style="info" %}
-Using the AdminController automatically adds the _admin_ `Area` attribute.
+By inheriting from AdminController the _admin_ `Area` attribute is added automatically.
 {% endhint %}
 
 According to the MVC pattern, there are two actions in this controller to handle the configure view. The first action is for the `GET` request and the second handles the `POST` request.
@@ -210,7 +210,7 @@ According to the MVC pattern, there are two actions in this controller to handle
 | `LoadSetting`    | Loads the setting values of the settings class passed as the action parameter automatically from the database                                                                                         |
 | `SaveSetting`    | Saves the setting values of the settings class passed as the action parameter automatically to the database after the action was executed. So you can store your model values in the settings object. |
 
-Use the `SaveSetting` attribute in combination with the `MiniMapper`, which maps properties with the same name to each other. Calling `MiniMapper.Map(model, settings)` maps the _Name_ property of the setting class to the `Name` property of the model class.
+Use the `SaveSetting` attribute in combination with the `MiniMapper`, which maps simple properties with the same name to each other. Calling `MiniMapper.Map(model, settings)` maps the _Name_ property of the setting class to the `Name` property of the model class.
 
 {% hint style="info" %}
 Refer to [MiniMapper](../../../framework/platform/data-modelling/model-mapping.md#minimapper) for more information.
@@ -220,7 +220,7 @@ If the `ModelState` isn’t valid, do a post back by returning `Configure(settin
 
 ### Model
 
-As mentioned, the model is a simple copy of the settings class.
+As mentioned, the configuration model for the module settings is a simple copy of the settings class in this simple use case.
 
 1. Right click on the project in the Solution Explorer.
 2. Add a new folder. According to our guidelines we call it _Models_.
@@ -316,7 +316,7 @@ After building the module, you can click on the **Configure** button to store a 
 
 If you take a look at the `ConfigurationModel`, you'll see that the properties are decorated with the `LocalizedDisplay` attribute. This is a way to add localized display values to describe the property. On property level, the attribute can either contain the full resource key `[LocalizedDisplay("Plugins.MyOrg.HelloWorld.Name")]` or inherit a part of the declaring class also decorated with the attribute.
 
-The resource values are added using `resource.*.ml` XML files:
+The resource values are added using `resource.*.xml` XML files, where \* represents to culture code for the target language:
 
 1. Right click on the project in the Solution Explorer.
 2. Add a new folder. The folder must be called _Localization_.
