@@ -1,13 +1,15 @@
 # 🐥 Creating a Block
 
-A `Block` is used to create content quickly within the Page Builder. Various forms have already been implemented by Smartstore like HTML output, images, iframes, product listings and many more. The possibilities for new Blocks are endless.
+A `Block` is used to create content quickly within the Page Builder. Various blocks have already been implemented by Smartstore like HTML output, images, iframes, product lists and many more. The possibilities for new Blocks are endless.
 
 {% hint style="info" %}
 If you want to take a deep dive into the topic, see [Blocks](../../../framework/content/page-builder-and-blocks.md).
 {% endhint %}
 
 {% hint style="info" %}
-You can find the source code of a sample Block at _Smartstore.DevTools/Blocks/SampleBlock.cs_
+You can find well commented source code of a sample Block at
+
+_Smartstore.DevTools/Blocks/SampleBlock.cs_
 {% endhint %}
 
 ## Write a simple Block
@@ -62,20 +64,22 @@ public class HelloWorldBlockHandler : BlockHandlerBase<HelloWorldBlock>
 Place the following attribute above your `BlockHandler` definition.
 
 ```csharp
-[Block("helloworld", Icon = "fa fa-eye", FriendlyName = "Hello World")]
+[Block("helloworld", FriendlyName = "Hello World", Icon = "fa fa-eye")]
 ```
 
-This does three things:
+The input for this attribute represents the metadata of your block. Three things are accomplished here:
 
 * `helloworld`: Defines the [location of the views](creating-a-block.md#add-some-views) for your `Block`. A lowercase value is recommended by our guidelines.
-* `fa fa-eye`: Defines the _Font Awesome_ icon shown next to your label in the Page Builder.
-* `Hello World`: Defines the label text shown in the Page Builder.
+* `Hello World`: Defines the label text of your  block shown in the Page Builder.
+* `fa fa-eye`: Defines the _Font Awesome_ icon shown next to the label in the Page Builder.
+
+
 
 You don't need to add any code to your `BlockHandler`. It will have standard behaviour, which is desired at this point. See [Advanced topics](creating-a-block.md#advanced-topics) for other use.
 
 ### Add a validator
 
-To make sure all user inputs are correct, add a validator to your file and add the `AbstractValidator<T>` interface.
+To ensure that all user input is correct, add a validator to your file and add the `AbstractValidator<T>` interface.
 
 ```csharp
 public partial class HelloWorldBlockValidator : AbstractValidator<HelloWorldBlock>
@@ -86,7 +90,7 @@ public partial class HelloWorldBlockValidator : AbstractValidator<HelloWorldBloc
 }
 ```
 
-Here you can define your rules using `FluentValidation`. Add the following to make sure `Name` is never empty.
+Here you can define your rules using `FluentValidation`. Add the following to ensure `Name` is never empty.
 
 ```csharp
 RuleFor(x => x.Name).NotEmpty();
@@ -147,7 +151,7 @@ Add the reference `@using MyOrg.HelloWorld.Blocks` to \_ViewImports. That way yo
 
 #### Edit.cshtml
 
-This is your configuration view. It functions the same way your _Configure.cshtml_ file works.
+This is your configuration view. It is displayed when configuring the block. It functions the same way as configuration views of modules work.
 
 ```cshtml
 @model HelloWorldBlock
@@ -167,7 +171,7 @@ This is your configuration view. It functions the same way your _Configure.cshtm
 
 #### Public.cshtml
 
-This is what your customers will see. You can also see this clicking on **Preview** in the Page Builder.
+The HTML structure defined in this view will be rendered publicly. You can also see this clicking on **Preview** in the Page Builder.
 
 ```cshtml
 @model HelloWorldBlock
@@ -176,7 +180,7 @@ This is what your customers will see. You can also see this clicking on **Previe
 ```
 
 {% hint style="info" %}
-Create _Preview.cshtml_ to access the grid placement view. It will be shown whilst moving around blocks in the Page Builder.
+Create a _Preview.cshtml_ file to define an alternate display for the grid edit view. This might be needed if the content has external resources. We've used it for example in our iFrame block to prevent the external resource to be loaded when arranging Blocks on the grid.
 {% endhint %}
 
 Now you can use your `Block` in the Page Builder.
@@ -206,7 +210,7 @@ Add the `LoadAsync` function to `HelloWorldBlockHandler`.
 public override async Task<HelloWorldBlock> LoadAsync(IBlockEntity entity, StoryViewMode viewMode)
 ```
 
-To access the current block, use the following line.
+To access the model of the current block, use the following line.
 
 ```csharp
 var block = base.Load(entity, viewMode);
@@ -256,7 +260,7 @@ If you want to display a widget instead of a view, you can do this using the fol
 protected override Task RenderCoreAsync(IBlockContainer element, IEnumerable<string> templates, IHtmlHelper htmlHelper, TextWriter textWriter)
 ```
 
-`RenderCoreAsync` gives you the possibility to reroute the public action adress. That means you can display your HelloWorld widget instead of using your views.
+`RenderCoreAsync` gives you the possibility to reroute the public action address. That means you can display the HelloWorld widget instead of using your views.
 
 Add these lines to the `RenderCodeAsync` function in `HelloWorldBlockHandler`.
 
@@ -277,20 +281,22 @@ This enables `GetWidget` to be called, so that you can display your widget.
 protected override Widget GetWidget(IBlockContainer element, IHtmlHelper htmlHelper, string template)
 ```
 
-`GetWidget` acts in a similar way to `GetDisplayWidget` in _Module.cs_. To call it, add these lines to the `GetWidget` function in `HelloWorldBlockHandler`:
+`GetWidget` acts in a similar way to `GetDisplayWidget` in _Module.cs_. To call it, add these lines to the `GetWidget` method in `HelloWorldBlockHandler`:
 
 ```csharp
 return new ComponentWidget(typeof(HelloWorldViewComponent), new
 {
     widgetZone = "productdetails_pictures_top",
-    model = new ProductDetailsModel { Id=1 }
+    model = new ProductDetailsModel { Id = 1 }
 });
 ```
 
-This will display your widget using the content of the product with the Id `1`.
+This will display your widget rendering the content for the product with the Id `1`.
 
 {% hint style="info" %}
-If you want to pass data of the block to your widget, use `var block = (HelloWorldBlock)element.Block;` in `GetWidget`.
+If you want to pass data of the block to your widget, use the following code in the `GetWidget`method to obtain the block model.
+
+`var block = (HelloWorldBlock)element.Block;`
 {% endhint %}
 
 ### Final code
@@ -328,6 +334,7 @@ namespace MyOrg.HelloWorld.Blocks
 
             return block;
         }
+        
         protected override Task RenderCoreAsync(IBlockContainer element, IEnumerable<string> templates, IHtmlHelper htmlHelper, TextWriter textWriter)
         {
             if (templates.First() == "Edit")
@@ -351,12 +358,14 @@ namespace MyOrg.HelloWorld.Blocks
             });
         }
     }
+    
     public class HelloWorldBlock : IBlock
     {
         [LocalizedDisplay("Plugins.MyOrg.HelloWorld.Name")]
         public string Name { get; set; }
         public string MyLocalVar { get; set; } = "Initialised in Block";
     }
+    
     public partial class HelloWorldBlockValidator : AbstractValidator<HelloWorldBlock>
     {
         public HelloWorldBlockValidator()
@@ -370,7 +379,7 @@ namespace MyOrg.HelloWorld.Blocks
 
 ## Conclusion
 
-In this tutorial you built your own `Block`. You learned how to access the different view modes and how to add a widget.
+In this tutorial you built your own `Block`. You learned how to access the different view modes and how to use a widget as output for a block.
 
 The code for this module can be downloaded here:
 
