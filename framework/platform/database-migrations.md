@@ -1,4 +1,4 @@
-# 🥚 Database Migrations
+# 🐣 Database Migrations
 
 ## Overview
 
@@ -96,6 +96,10 @@ TIP: In the `ProductComparePriceLabel` migration, each statement is preceded by 
 
 In most cases, modules create migrations to extend the [domain model](../../compose/modules/examples/creating-a-domain-entity.md), i.e. to add their own entities. For example, the [Google Merchant Center](https://github.com/smartstore/Smartstore/tree/main/src/Smartstore.Modules/Smartstore.Google.MerchantCenter) module adds the `GoogleProduct` entity to the domain model and allows editing it via a data grid and a tab on the product editing page.
 
+A migration can also inherit from `AutoReversingMigration`. In this case no `Down` method is necessary, because FluentMigrator generates the necessary expressions automatically from the expressions of the `Up` method. This only works for some expressions like `CREATE TABLE`, but not for `DROP TABLE`.
+
+WARN: Deleting a table added by `Up` method should be well planned. The user may have stored a lot of data in it, which should not be deleted without asking. If in doubt, simply leave a table in the database when uninstalling the module. Often the `Down` method of the initial migration is left empty for this reason.
+
 ## Migrations history
 
 Fluent Migrator keeps a version history of successfully executed migrations in the _\_\_MigrationVersionInfo_ database table. The content of this table could look like this
@@ -178,9 +182,116 @@ internal class Module : ModuleBase
 }
 ```
 
-TODO: ModuleInstallationContext, SeedingDbMigrationEvent, SeededDbMigrationEvent
+### ModuleInstallationContext
+
+The data seeder obtains `ModuleInstallationContext` via its constructor. It contains context information about the installation process of the application or the module and has the following properties:
+
+| Property             | Description                                                                                                                                                                                                                                                                    |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ApplicationContext` | The application context.                                                                                                                                                                                                                                                       |
+| `Scope`              | The request scoped container to resolve services from.                                                                                                                                                                                                                         |
+| `ModuleDescriptor`   | The descriptor of module currently being installed.                                                                                                                                                                                                                            |
+| `SeedSampleData`     | A value indicating whether sample data should be seeded. During app installation, reflects the choice the user made in the install wizard. During module installation value is always `null`; in this case the module author should decide whether to seed sample data or not. |
+| `Culture`            | ISO code of the primary installation language. Usually only data representing this language is seeded.                                                                                                                                                                         |
+| `Stage`              | <p>Installation stage. Possible values are</p><ul><li><em>AppInstallation</em>: application is in installation stage.</li><li><em>ModuleInstallation</em>: application is installed and bootstrapped. The module should be installed by user request.</li></ul>                |
+| `Logger`             | Logger to use.                                                                                                                                                                                                                                                                 |
+
+The [database migrator](database-migrations.md#database-migrator) publishes a `SeedingDbMigrationEvent` before any `IDataSeeder.SeedAsync` call and `SeededDbMigrationEvent` after it.
 
 ### Seeding tools
 
-LocaleResourcesBuilder, SettingsBuilder --> MigrationBuilderDbContextExtensions\
-SmartDbContextDataSeeder
+There are some tools available for frequently recurring migration tasks. Use `SmartDbContext.MigrateLocaleResourcesAsync` in your `SeedAsync` method to add, update or delete locale string resources. The action delegate provides a `LocaleResourcesBuilder` with following methods:
+
+| Method        | Description                                                     |
+| ------------- | --------------------------------------------------------------- |
+| `AddOrUpdate` | Adds or updates a locale resource.                              |
+| `Update`      | Updates an existing locale resource.                            |
+| `Delete`      | Deletes one or many locale resources in any language.           |
+| `DeleteFor`   | Deletes one or many locale resources in the specified language. |
+
+Use `SmartDbContext.MigrateSettingsAsync` to add or delete settings. The action delegate provides a `SettingsBuilder` with following methods:
+
+| Method        | Description                                                                                            |
+| ------------- | ------------------------------------------------------------------------------------------------------ |
+| `Add`         | Adds a setting if it doesn't exist yet.                                                                |
+| `Delete`      | Deletes one or many setting records.                                                                   |
+| `DeleteGroup` | Deletes all settings records prefixed with the specified group name (usually the settings class name). |
+
+Tip: use the `TypeHelper` to build the name of a setting:
+
+```csharp
+public async Task SeedAsync(SmartDbContext context, CancellationToken cancelToken = default)
+{
+    await context.MigrateSettingsAsync(builder =>
+    {
+        builder.Add(TypeHelper.NameOf<PerformanceSettings>(x => x.UseResponseCompression, true), "False");
+    });
+}
+```
+
+### SmartDbContextDataSeeder
+
+`SmartDbContextDataSeeder` is a special data seeder that Smartstore uses to collect seeding instructions until the next version is released. In most cases for adding or updating locale string resources. Immediately before a new version is released, these are moved to a new migration that finalizes the version. This is done to avoid having to create new migrations for small changes and to limit the number of migrations.
+
+## Appendix
+
+### Migration examples
+
+Add a column with index and foreign key if it does not exist yet:
+
+```csharp
+if (!Schema.Table(nameof(Product)).Column(nameof(Product.ComparePriceLabelId)).Exists())
+{
+    Create.Column(nameof(Product.ComparePriceLabelId)).OnTable(nameof(Product)).AsInt32().Nullable()
+        .Indexed("IX_Product_ComparePriceLabelId")
+        .ForeignKey("FK_Product_PriceLabel_ComparePriceLabelId", nameof(PriceLabel), nameof(BaseEntity.Id))
+        .OnDelete(Rule.SetNull);
+}
+```
+
+Reverse above migration:
+
+```csharp
+if (products.Index("IX_Product_ComparePriceLabelId").Exists())
+{
+    Delete.Index("IX_Product_ComparePriceLabelId").OnTable(nameof(Product));
+}
+
+if (products.Constraint("FK_Product_PriceLabel_ComparePriceLabelId").Exists())
+{
+    Delete.ForeignKey("FK_Product_PriceLabel_ComparePriceLabelId").OnTable(nameof(Product));
+}
+
+if (products.Column(nameof(Product.ComparePriceLabelId)).Exists())
+{
+    Delete.Column(nameof(Product.ComparePriceLabelId)).FromTable(nameof(Product));
+}
+```
+
+Add a column for date and time with a UTC default value:
+
+```csharp
+if (!Schema.Table(nameof(LocalizedProperty)).Column(nameof(LocalizedProperty.CreatedOnUtc)).Exists())
+{
+    Create.Column(nameof(LocalizedProperty.CreatedOnUtc)).OnTable(nameof(LocalizedProperty)).AsDateTime2().NotNullable().WithDefaultValue(SystemMethods.CurrentUTCDateTime);
+}
+```
+
+Create a compound index:
+
+```csharp
+Create.Index("IX_ForumId_Published")
+    .OnTable("Forums_Topic")
+    .OnColumn("ForumId").Ascending()
+    .OnColumn("Published").Ascending()
+    .WithOptions()
+    .NonClustered();
+```
+
+Create a foreign key:
+
+```csharp
+Create.ForeignKey()
+    .FromTable("ForumPostVote").ForeignColumn(nameof(BaseEntity.Id))
+    .ToTable(nameof(CustomerContent)).PrimaryColumn(nameof(BaseEntity.Id));
+```
