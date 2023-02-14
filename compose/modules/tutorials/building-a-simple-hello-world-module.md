@@ -435,5 +435,5 @@ The code for this tutorial can be downloaded here:
 {% file src="../../../.gitbook/assets/MyOrg.HelloWorld.zip" %}
 
 {% hint style="danger" %}
-**Version numbers must be kept up to date** with the current version of Smartstore. Otherwise the module will not be loaded!
+**Version numbers in module.json must match** the current version of Smartstore. Otherwise the module will not be loaded!
 {% endhint %}
