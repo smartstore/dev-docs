@@ -1,4 +1,4 @@
-# 🐥 Building a simple "Hello World" module
+# ✔ Building a simple "Hello World" module
 
 Before we start, please look at the introduction to [creating modules](../getting-started-with-modules.md). The basic files needed to create a module are already described there.
 
@@ -433,3 +433,7 @@ Now you have built a simple module that stores a setting and renders its value i
 The code for this tutorial can be downloaded here:
 
 {% file src="../../../.gitbook/assets/MyOrg.HelloWorld.zip" %}
+
+{% hint style="danger" %}
+**Version numbers must be kept up to date** with the current version of Smartstore. Otherwise the module will not be loaded!
+{% endhint %}
