@@ -3,14 +3,14 @@
 Domain entities offer a way to add your own tables to Smartstore's database. In this tutorial you will add a simple notification system to your [Hello World](../tutorials/building-a-simple-hello-world-module.md) module.
 
 {% hint style="info" %}
-Here we are working in modules, but Domain entities can also be added to the core.
+This tutorial describes working in _modules_, but Domain entities can also be added to the _core_.
 {% endhint %}
 
 ## Preparing the table
 
 ### Table schema
 
-A simple notification will need the following properties:
+A simple notification could have the following properties:
 
 * A unique identifier (`Id`, type: number)
 * An author, represented by the customer id (`AuthorId`, type: number)
@@ -26,25 +26,41 @@ Here is what that the table could look like:
 
 ### Create the Domain entity
 
-The `Domain` is the model equivalent of your database table. You can specify the table name and the indexes you need as attributes.
+#### Overview
+
+The `Domain` object is an abstract data structure that has all the properties of the entity it describes. The _Entity Framework_ (ORM Mapper) automates the projection between `Domain` objects and database tables.
+
+Specify the table name and the indexes using `DataAnnotations` and add the properties that represent your database columns.
 
 ```csharp
-// Define your table name. By convention, the entity name is used.
+// Outside the class.
+// Specify your table name. By convention, the entity name is used.
 [Table("TableNameInDatabase")]
 
-// Define a property as an index
+// Declare a property to be used as an index.
 [Index(nameof(PropertyName), Name = "IX_ClassName_PropertyName")]
-```
 
-After that you simply add your columns as you would properties to a model.
-
-```csharp
+// Inside the class.
+// Define some columns.
 public int ColumnA { get; set; }
 
 public bool ColumnB { get; set; } = true;
 ```
 
-Add the file _Notification.cs_ to the new folder _Domain_.
+#### Implementation
+
+Add the file _Notification.cs_ to the new _Domain_ directory and do the following steps:
+
+* Specify the table name `Notification`.
+* Declare `AuthorId` and `Published` as indexes.
+* Implement the abstract `BaseEntity` class.
+* Add the properties for `AuthorId`, `Published` and `Message`.
+
+{% hint style="info" %}
+There is no need to declare an Identifier, because implementing the abstract `BaseEntity` class adds an `Id` entry automatically.
+{% endhint %}
+
+Your `Notification` class should look something like this:
 
 {% code title="Notification.cs" %}
 ```csharp
@@ -66,7 +82,7 @@ This represents the `Notification` table with the three columns: `AuthorId`, `Pu
 
 ### Create the Migration
 
-In order to add the `Notification` table to Smartstore's database, you need to create a migration. In this tutorial you are only going to be overriding the `Up` method from the abstract `MigrationBase` class.
+In order to add the `Notification` table to Smartstore's database, you need to create a migration. The migration framework creates the table on application start-up. In this tutorial you are only going to be overriding the `Up` method from the abstract `MigrationBase` class.
 
 {% hint style="info" %}
 To learn more, please refer to [Migrations](../../../framework/platform/database-migrations.md).
@@ -155,11 +171,11 @@ public class _20221214103422_Initial : Migration
 ```
 {% endcode %}
 
-## Providing table access
+## Providing table access in modules
 
 Now that you have the table set up, you need to give your module access to it. To access the table from a `SmartDbContext` instance you need to add the following two files:
 
-* _Startup.cs_ in the root of your folder.
+* _Startup.cs_ in the root of your directory
 * _SmartDbContextExtensions.cs_ in the _Extensions_ directory (needs to be created)
 
 Create the static `SmartDbContextExtension` class and add the following method:
@@ -191,7 +207,7 @@ private class SmartDbContextConfigurer : IDbContextConfigurationSource<SmartDbCo
 ```
 {% endcode %}
 
-Now you can access your table from the `SmartDbContext`.
+Now you can access the entities stored in your table using the `SmartDbContext`.
 
 ```csharp
 var messages = await _db.Notifications()
@@ -205,15 +221,13 @@ Adding the `SmartDbContext` extension is not required for using the migration.
 
 ## Adding a View
 
-Add configuration view
-
-* show for number of days after publishing - DaysToShowNotification
-* Add 'new notification' button
-  * AuthorID: CurrentCustomer.Id
-  * Message: user input
-  * Published: now()
-
-Add widget to display notifications.
+* Add configuration view
+  * show for number of days after publishing - DaysToShowNotification
+  * Add 'new notification' button
+    * AuthorID: CurrentCustomer.Id
+      * Message: user input
+      * Published: now()
+* Add widget to display notifications.
 
 ## Further ideas
 
