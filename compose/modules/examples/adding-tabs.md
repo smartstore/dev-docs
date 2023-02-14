@@ -2,7 +2,7 @@
 
 _Smartstore_ uses tabs in different places in the backend and frontend. The `TabTagHelper` is used for this exact purpose.
 
-Place the following markup to add tabs in a _Razor_ view.
+The following markup can be used to add tabs in a _Razor_ view.
 
 ```html
 <tabstrip id="my-tab-config" sm-nav-style="Material" sm-nav-position="Top">
@@ -95,7 +95,7 @@ The value with which the model is filled is taken from the `GenericAttributes` p
 To learn more about generic attributes, please refer to [generic-attributes.md](../../../framework/advanced/generic-attributes.md "mention")
 {% endhint %}
 
-To get the instance of the just edited product, use the `SmartDbContext`. Make it known to the controller via _dependency injection_ and add the following code at the very top:
+To get the instance of the just edited product, use the `SmartDbContext`. Make it known to the controller via _dependency injection_ by adding the following code at the very top:
 
 ```csharp
 private readonly SmartDbContext _db;
@@ -106,7 +106,7 @@ public HelloWorldAdminController(SmartDbContext db)
 }
 ```
 
-Since the used model in the action only has two simple properties, add and return a view. The `AdminEditTabModel.cs` class belongs in the _Models_ folder.
+Since the action we've just added uses a model that has two simple properties and returns a view we must create these next. The `AdminEditTabModel.cs` class belongs in the _Models_ folder.
 
 ```csharp
 using Smartstore.Web.Modelling;
@@ -176,7 +176,7 @@ public async Task HandleEventAsync(ModelBoundEvent message, SmartDbContext db)
 }
 ```
 
-The value is stored in the `GenericAttributes` of the product. A `GenericAttribute` is a separate entity that stores any simple value for each entity. For more complex data structures you should provide your own domain object in your module.
+The value is stored in the `GenericAttributes` of the product. A `GenericAttribute` is a separate entity that stores any simple value for each entity. For more complex data structures you should provide your own domain objects in your module.
 
 {% hint style="info" %}
 To learn more about events, please refer to [events.md](../../../framework/platform/events.md "mention")
