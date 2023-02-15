@@ -2,9 +2,9 @@
 
 ## Overview
 
-A Smartstore-Theme is a collection of sass files, razor views, images and scripts. In short, everything you need to create websites. Themes can be selected and customized by the store owners using the Theme Configurator (Admin > Configuration > Themes). Operators can modify them by configuring theme variables in the Theme Configurator. It is possible to set differing colors, font sizes, margins and much more.
+A Smartstore theme is a collection of Sass files, Razor views, images and scripts. In short, everything you need to create websites. Themes can be selected and customized by the store owner using the Theme Configurator (**Admin / Configuration / Themes**). Operators can modify them by configuring theme variables in the Theme Configurator. It is possible to set differing colors, font sizes, margins and much more.
 
-We put a lot of effort into making the Theming Engine easy, flexible and convenient to use. By using techniques such as multi-level theme inheritance, an integrated Sass compiler (which automatically translates all changes made to Sass files into CSS at runtime in an intelligent and highly performant way), we have managed to make creating themes in Smartstore very easy.
+We put a lot of effort into making the theming engine easy, flexible and convenient to use. By using techniques such as multi-level theme inheritance, an integrated Sass compiler (which automatically translates all changes made to Sass files into CSS at runtime in an intelligent and highly performant way), we have managed to make creating themes in Smartstore very easy.
 
 Thanks to **multi-level theme inheritance**, it is possible to inherit from a base theme or from a theme that has inherited from another theme. This way, there is no need to start from scratch when developing a theme. Just use the existing components and change only what needs to be changed as you build the theme.
 
