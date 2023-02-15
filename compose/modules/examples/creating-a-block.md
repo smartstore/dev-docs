@@ -1,4 +1,4 @@
-# 🐥 Creating a Block
+# 🐣 Creating a Block
 
 A `Block` is used to create content quickly within the Page Builder. Various blocks have already been implemented by Smartstore like HTML output, images, iframes, product lists and many more. The possibilities for new Blocks are endless.
 
@@ -70,16 +70,14 @@ Place the following attribute above your `BlockHandler` definition.
 The input for this attribute represents the metadata of your block. Three things are accomplished here:
 
 * `helloworld`: Defines the [location of the views](creating-a-block.md#add-some-views) for your `Block`. A lowercase value is recommended by our guidelines.
-* `Hello World`: Defines the label text of your  block shown in the Page Builder.
+* `Hello World`: Defines the label text of your block shown in the Page Builder.
 * `fa fa-eye`: Defines the _Font Awesome_ icon shown next to the label in the Page Builder.
 
-
-
-You don't need to add any code to your `BlockHandler`. It will have standard behaviour, which is desired at this point. See [Advanced topics](creating-a-block.md#advanced-topics) for other use.
+You don't have to add any code to your `BlockHandler`. It will have the default behavior, which is desired at this point. See [Advanced topics](creating-a-block.md#advanced-topics) for other uses.
 
 ### Add a validator
 
-To ensure that all user input is correct, add a validator to your file and add the `AbstractValidator<T>` interface.
+To ensure that all user input is correct, add a validator to your file and inherit from the `AbstractValidator<T>` base class.
 
 ```csharp
 public partial class HelloWorldBlockValidator : AbstractValidator<HelloWorldBlock>
@@ -119,11 +117,13 @@ namespace MyOrg.HelloWorld.Blocks
     {
         // Doing nothing means standard behaviour.
     }
+    
     public class HelloWorldBlock : IBlock
     {
         [LocalizedDisplay("Plugins.MyOrg.HelloWorld.Name")]
         public string Name { get; set; }
     }
+    
     public partial class HelloWorldBlockValidator : AbstractValidator<HelloWorldBlock>
     {
         public HelloWorldBlockValidator()
@@ -137,7 +137,7 @@ namespace MyOrg.HelloWorld.Blocks
 
 ### Add Views
 
-Create the folders _BlockTemplates/helloworld/_ in the _Views/Shared/_ folder of your module.
+Create the directory _BlockTemplates/helloworld/_ in the _Views/Shared/_ folder of your module.
 
 {% hint style="warning" %}
 The folder name _helloworld_ corresponds to the attribute you set in your [BlockHandler](creating-a-block.md#add-a-blockhandler)!
@@ -151,7 +151,7 @@ Add the reference `@using MyOrg.HelloWorld.Blocks` to \_ViewImports. That way yo
 
 #### Edit.cshtml
 
-This is your configuration view. It is displayed when configuring the block. It functions the same way as configuration views of modules work.
+This is your configuration view. It is displayed when you configure the block. It works the same way as the configuration views of modules.
 
 ```cshtml
 @model HelloWorldBlock
@@ -180,7 +180,7 @@ The HTML structure defined in this view will be rendered publicly. You can also 
 ```
 
 {% hint style="info" %}
-Create a _Preview.cshtml_ file to define an alternate display for the grid edit view. This might be needed if the content has external resources. We've used it for example in our iFrame block to prevent the external resource to be loaded when arranging Blocks on the grid.
+Create a _Preview.cshtml_ file to define an alternate display for the grid edit view. This might be needed if the content has external resources. We've used it for example in our _IFrame_ block to prevent the external resource to be loaded when arranging blocks on the grid.
 {% endhint %}
 
 Now you can use your `Block` in the Page Builder.
@@ -207,7 +207,9 @@ public string MyLocalVar { get; set; } = "Initialised in Block";
 Add the `LoadAsync` function to `HelloWorldBlockHandler`.
 
 ```csharp
-public override async Task<HelloWorldBlock> LoadAsync(IBlockEntity entity, StoryViewMode viewMode)
+public override Task<HelloWorldBlock> LoadAsync(
+    IBlockEntity entity, 
+    StoryViewMode viewMode)
 ```
 
 To access the model of the current block, use the following line.
@@ -223,46 +225,53 @@ if (viewMode == StoryViewMode.Edit)
 {
     // This only gets called in Edit-Mode
     block.MyLocalVar += " - Running in Edit-Mode";
-}else if (viewMode == StoryViewMode.Preview)
+}
+else if (viewMode == StoryViewMode.Preview)
 {
     // This only gets called in Preview-Mode
     block.MyLocalVar += " - Running in Preview-Mode";
-}else if (viewMode == StoryViewMode.GridEdit)
+}
+else if (viewMode == StoryViewMode.GridEdit)
 {
     // This only gets called in Grid-Edit-Mode
     block.MyLocalVar += " - Running in Grid-Edit-Mode";
-}else if (viewMode == StoryViewMode.Public)
+}
+else if (viewMode == StoryViewMode.Public)
 {
     // This only gets called in Public-Mode
     block.MyLocalVar += " - Running in Public-Mode";
 }
 
-return block;
+return Task.FromResult(block);
 ```
 
-Insert the following in Edit.cshtml, Preview.cshtml and Public.cshtml.
+Insert the following in _Edit.cshtml_, _Preview.cshtml_ and _Public.cshtml_.
 
 ```cshtml
 <div>My local variable: @Model.MyLocalVar</div>
 ```
 
 {% hint style="info" %}
-Use Preview.cshtml, to be able to access Grid-Edit-Mode.
+Use _Preview.cshtml_ to be able to access Grid-Edit-Mode.
 {% endhint %}
 
 Run your code and see how `MyLocalVar` reacts to each view mode.
 
 ### Using a widget as a view
 
-If you want to display a widget instead of a view, you can do this using the following methods.
+If you want to display a widget instead of a view, you can do so using the following methods.
 
 ```csharp
-protected override Task RenderCoreAsync(IBlockContainer element, IEnumerable<string> templates, IHtmlHelper htmlHelper, TextWriter textWriter)
+protected override Task RenderCoreAsync(
+    IBlockContainer element, 
+    IEnumerable<string> templates, 
+    IHtmlHelper htmlHelper, 
+    TextWriter textWriter)
 ```
 
-`RenderCoreAsync` gives you the possibility to reroute the public action address. That means you can display the HelloWorld widget instead of using your views.
+`RenderCoreAsync` gives you the possibility to change the rendering behavior. That means you can display the HelloWorld widget instead of using your views.
 
-Add these lines to the `RenderCodeAsync` function in `HelloWorldBlockHandler`.
+Add these lines to the `RenderCoreAsync` function in `HelloWorldBlockHandler`.
 
 ```csharp
 if (templates.First() == "Edit")
@@ -275,13 +284,16 @@ else
 }
 ```
 
-This enables `GetWidget` to be called, so that you can display your widget.
+This will allow the `GetWidget` method to be called so that you can render your widget.
 
 ```csharp
-protected override Widget GetWidget(IBlockContainer element, IHtmlHelper htmlHelper, string template)
+protected override Widget GetWidget(
+    IBlockContainer element, 
+    IHtmlHelper htmlHelper, 
+    string template)
 ```
 
-`GetWidget` acts in a similar way to `GetDisplayWidget` in _Module.cs_. To call it, add these lines to the `GetWidget` method in `HelloWorldBlockHandler`:
+`GetWidget` works similar to `GetDisplayWidget` in _Module.cs_. To call it, add these lines to the `GetWidget` method in `HelloWorldBlockHandler`:
 
 ```csharp
 return new ComponentWidget(typeof(HelloWorldViewComponent), new
@@ -291,10 +303,10 @@ return new ComponentWidget(typeof(HelloWorldViewComponent), new
 });
 ```
 
-This will display your widget rendering the content for the product with the Id `1`.
+This will display your widget, rendering the content for the product with the Id `1`.
 
 {% hint style="info" %}
-If you want to pass data of the block to your widget, use the following code in the `GetWidget`method to obtain the block model.
+If you want to pass data from the block to your widget, use the following code in the `GetWidget` method to obtain the block model.
 
 `var block = (HelloWorldBlock)element.Block;`
 {% endhint %}
@@ -310,7 +322,9 @@ namespace MyOrg.HelloWorld.Blocks
     [Block("helloworld", Icon = "fa fa-eye", FriendlyName = "Hello World")]
     public class HelloWorldBlockHandler : BlockHandlerBase<HelloWorldBlock>
     {
-        public override async Task<HelloWorldBlock> LoadAsync(IBlockEntity entity, StoryViewMode viewMode)
+        public override Task<HelloWorldBlock> LoadAsync(
+            IBlockEntity entity, 
+            StoryViewMode viewMode)
         {
             var block = base.Load(entity, viewMode);
 
@@ -318,24 +332,31 @@ namespace MyOrg.HelloWorld.Blocks
             {
                 // This only gets called in Edit-Mode
                 block.MyLocalVar += " - Running in Edit-Mode";
-            }else if (viewMode == StoryViewMode.Preview)
+            }
+            else if (viewMode == StoryViewMode.Preview)
             {
                 // This only gets called in Preview-Mode
                 block.MyLocalVar += " - Running in Preview-Mode";
-            }else if (viewMode == StoryViewMode.GridEdit)
+            }
+            else if (viewMode == StoryViewMode.GridEdit)
             {
                 // This only gets called in Grid-Edit-Mode
                 block.MyLocalVar += " - Running in Grid-Edit-Mode";
-            }else if (viewMode == StoryViewMode.Public)
+            }
+            else if (viewMode == StoryViewMode.Public)
             {
                 // This only gets called in Public-Mode
                 block.MyLocalVar += " - Running in Public-Mode";
             }
 
-            return block;
+            return Task.FromResult(block);
         }
         
-        protected override Task RenderCoreAsync(IBlockContainer element, IEnumerable<string> templates, IHtmlHelper htmlHelper, TextWriter textWriter)
+        protected override Task RenderCoreAsync(
+            IBlockContainer element, 
+            IEnumerable<string> templates, 
+            IHtmlHelper htmlHelper, 
+            TextWriter textWriter)
         {
             if (templates.First() == "Edit")
             {
@@ -347,14 +368,17 @@ namespace MyOrg.HelloWorld.Blocks
             }
         }
 
-        protected override Widget GetWidget(IBlockContainer element, IHtmlHelper htmlHelper, string template)
+        protected override Widget GetWidget(
+            IBlockContainer element, 
+            IHtmlHelper htmlHelper, 
+            string template)
         {
             var block = (HelloWorldBlock)element.Block;
             
             return new ComponentWidget(typeof(HelloWorldViewComponent), new
             {
                 widgetZone = "productdetails_pictures_top",
-                model = new ProductDetailsModel { Id=1 }
+                model = new ProductDetailsModel { Id = 1 }
             });
         }
     }
