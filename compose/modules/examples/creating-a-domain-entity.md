@@ -1,34 +1,34 @@
 # 🥚 Creating a Domain entity
 
-Domain entities offer a way to add your own tables to Smartstore's database. In this tutorial you will add a simple notification system to your [Hello World](../tutorials/building-a-simple-hello-world-module.md) module.
+Domain entities provide a way to add your own tables to the Smartstore database. In this tutorial, you will add a simple notification system to your [Hello World](../tutorials/building-a-simple-hello-world-module.md) module.
 
 {% hint style="info" %}
-This tutorial describes working in _modules_, but Domain entities can also be added to the _core_.
+This tutorial describes working in _modules_, but domain entities can also be added to the _core_.
 {% endhint %}
 
 ## Preparing the table
 
 ### Table schema
 
-A simple notification could have the following properties:
+A simple notification might have the following properties:
 
 * A unique identifier (`Id`, type: number)
-* An author, represented by the customer id (`AuthorId`, type: number)
+* An author, represented by the customer ID (`AuthorId`, type: number)
 * A timestamp (`Published`, type: date-time)
 * A message (`Message`, type: string)
 
-Here is what that the table could look like:
+Here is what the table might look like:
 
 | Id | Author | Published                   | Messaage                           |
 | -- | ------ | --------------------------- | ---------------------------------- |
 | 1  | 543    | 2022-12-12 11:48:08.9937258 | Hello World!                       |
-| 2  | 481    | 2022-12-13 19:02:55.7695421 | What a wonderful day it is :smile: |
+| 2  | 481    | 2022-12-13 19:02:55.7695421 | What a beautiful day it is :smile: |
 
 ### Create the Domain entity
 
 #### Overview
 
-The _domain_ object is an abstract data structure that has all the properties of the entity it describes. _Entity Framework_ automates the mapping between domain __ objects and database tables.
+The _domain_ object is an abstract data structure that has all the properties of the entity it describes. The _Entity Framework_ automates the mapping between domain __ objects and database tables.
 
 Specify the table name and the indexes using [Code First Data Annotations](https://learn.microsoft.com/en-us/ef/ef6/modeling/code-first/data-annotations) and add the properties that represent your database columns.
 
@@ -49,15 +49,15 @@ public bool ColumnB { get; set; } = true;
 
 #### Implementation
 
-Add the file _Notification.cs_ to the new _Domain_ directory and do the following steps:
+Add the _Notification.cs_ file to the new _Domain_ directory and do the following
 
 * Specify the table name `Notification`.
 * Declare `AuthorId` and `Published` as indexes.
 * Implement the abstract `BaseEntity` class.
-* Add the properties for `AuthorId`, `Published` and `Message`.
+* Add the `AuthorId`, `Published` and `Message` properties.
 
 {% hint style="info" %}
-There is no need to declare an identifier property, because implementing the abstract `BaseEntity` class adds an `Id` property automatically.
+There is no need to declare an Identifier property, because implementing the abstract `BaseEntity` class automatically adds an `Id` property.
 {% endhint %}
 
 Your `Notification` class should look something like this:
@@ -78,24 +78,24 @@ public class Notification : BaseEntity
 ```
 {% endcode %}
 
-This represents the `Notification` table with the three columns: `AuthorId`, `Published` and `Message`. Because a lot of times you are going to be looking up notifications based on either `AuthorId` or `Published`, they are defined as indexes.
+This is the `Notification` table with three columns: `AuthorId`, `Published`, and `Message`. Because you will often search for notifications based on either the `AuthorId` or the `Published`, these are defined as indexes.
 
 ### Create the Migration
 
-In order to add the `Notification` table to Smartstore's database, you need to create a migration. The migration framework creates the table on application start-up. In this tutorial you will only override the `Up` method from the abstract `MigrationBase` class.
+To add the `Notification` table to the Smartstore database, you must create a migration. The migration framework creates the table at application startup. In this tutorial, you will only override the `Up` method of the abstract `MigrationBase` class.
 
 {% hint style="info" %}
-To learn more, please refer to [Migrations](../../../framework/platform/database-migrations.md).
+To learn more, see [Migrations](../../../framework/platform/database-migrations.md).
 {% endhint %}
 
-Create the folder _Migrations_ and add the migration class, which name includes the current date, _YYYYMMDDHHMMSS\_Initial.cs_. With the following attribute added to the class respectively:
+Create the _Migrations_ directory and add the migration class whose name includes the current date, _YYYYMMDDHHMMSS\_Initial.cs_. Add the following attribute to each class
 
 ```csharp
-// Use the current date & time [YYYY-MM-DD HH:MM:SS]
+// Use the current date and time [YYYY-MM-DD HH:MM:SS]
 [MigrationVersion("2022-12-14 10:34:22", "HelloWorld: Initial")]
 ```
 
-The class needs to inherit from the `Migration` base class to have access to the SQL database schema helper methods like `Create`, `Remove` or `Update`. With these you are now able to check if the table already exists, and if not, create it.
+The class must inherit from the `Migration` base class to have access to the SQL database schema helper methods such as `Create`, `Remove`, or `Update`. You can now use these methods to check if the table already exists, and if it does not, to create it.
 
 ```csharp
 if (!Schema.Table("Notification").Exists())
@@ -104,14 +104,14 @@ if (!Schema.Table("Notification").Exists())
 }
 ```
 
-To add columns, specify indexes and primary keys, you can simply daisy chain the following _FluentMigrator_ methods:
+To add columns, set indexes, and specify primary keys, you can simply chain the following _FluentMigrator_ methods:
 
 | Method         | Description                                            |
 | -------------- | ------------------------------------------------------ |
 | `WithColumn`   | Defines a new column.                                  |
 | `WithIdColumn` | Defines an id column that will act as the primary key. |
 
-Columns can also have a type (Boolean, Integer, String, Date, Currency etc.) and be specified as (not) nullable, unique, a primary key, indexed, etc. With this information you can build the `Notification` table.
+You can define a column type (Boolean, Integer, String, Date, Currency, etc.) and declare it as (not) nullable, unique, a primary key, indexed, etc.
 
 ```csharp
 Create.Table("Notification")
@@ -142,13 +142,13 @@ public class _20221214103422_Initial : Migration
 {
     public override void Up()
     {
-        // Tablename is taken from Domain->Attribute->Table
+        // The table name is taken from Domain->Attribute->Table
         var tableName = "Notification";
         
         if (!Schema.Table(tableName).Exists())
         {
             Create.Table(tableName)
-                .WithIdColumn() // Adds the Id property as primary key.
+                .WithIdColumn() // Adds the Id property as the primary key.
                 .WithColumn(nameof(Notification.AuthorId))
                     .AsInt32()
                     .NotNullable()
@@ -176,7 +176,7 @@ public class _20221214103422_Initial : Migration
 Now that you have the table set up, you need to give your module access to it. To access the table from a `SmartDbContext` instance you need to add the following two files:
 
 * _Startup.cs_ in the root of your directory
-* _SmartDbContextExtensions.cs_ in the _Extensions_ directory (needs to be created)
+* _SmartDbContextExtensions.cs_ in the _Extensions_ directory (must be created)
 
 Create the static `SmartDbContextExtension` class and add the following method:
 
@@ -185,7 +185,7 @@ public static DbSet<Notification> Notifications(this SmartDbContext db)
     => db.Set<Notification>();
 ```
 
-The Startup class inherits from the `StarterBase` class and includes the following lines:
+The Startup class inherits from the `StarterBase` class and contains the following lines:
 
 {% code title="Startup.cs" %}
 ```csharp
@@ -216,33 +216,33 @@ var messages = await _db.Notifications()
 ```
 
 {% hint style="info" %}
-Adding the `SmartDbContext` extension is not required for using the migration.
+It is not necessary to add the `SmartDbContext` extension. You can just as easily access the entity using `SmartDbContext`'s `.Set()` method.
 {% endhint %}
 
 ## Next steps
 
-You will find the following steps included in the module code:
+The following steps are included in the module code:
 
-1. Add a [configuration view](../tutorials/building-a-simple-hello-world-module.md#adding-configuration). Configure the number of days a notification is shown.
-2. Add a **New notification** button. Let the current admin create a message.
-3. Display the notification [using a widget](creating-a-widget-provider.md). This way, you can place it anywhere you want in the store.
-4. Schedule a task for cleaning up the table. This will increase database speed by removing old, unnecessary notifications from your table.
+1. Add a [configuration view](../tutorials/building-a-simple-hello-world-module.md#adding-configuration). Configure the number of days to display a notification.
+2. Add a **new notification** button. Let the current admin create a message.
+3. Display the notification as [a widget](creating-a-widget-provider.md). This way, you can place it anywhere you want in the store.
+4. Schedule a task to purge the table. This will increase database speed by removing old, unnecessary messages from your table.
 
 ### Further ideas
 
-There are many more things you could do with this module:
+There are many other things you can do with this module:
 
-* Add a _Moderator_ `CustomerRole` and separate view so certain users can create notifications.
-* Add categories to the notification. Show certain notifications on different pages.
-* Make your entities accessible via the [Web API](../../../framework/web-api/web-api-in-detail.md#web-api-and-modules).
+* Add a _Moderator_ `CustomerRole` and a separate view to allow certain users to create notifications.
+* Add categories to your notifications. Display specific notifications on different pages.
+* Make your entities accessible through the [Web API](../../../framework/web-api/web-api-in-detail.md#web-api-and-modules).
 
 ## Conclusion
 
-In this tutorial you learned how to:
+In this tutorial, you learned how to:
 
-* Add a table to Smartstore's database
+* Adding a Table to the Smartstore Database
 * Create a migration for it
-* Extend `SmartDbContext` to include your tables
+* Extend `SmartDbContext` with your tables
 
 The code for this module can be downloaded here:
 
