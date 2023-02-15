@@ -106,7 +106,7 @@ public HelloWorldAdminController(SmartDbContext db)
 }
 ```
 
-Since the action we just added uses a model that has two simple properties and returns a view, we'll need to create it next. The `AdminEditTabModel.cs` class belongs in the _Models_ folder.
+Since the action we just added uses a model that has two simple properties and returns a view, we'll need to create the model and the view next. The `AdminEditTabModel.cs` class belongs in the _Models_ folder.
 
 ```csharp
 using Smartstore.Web.Modelling;
