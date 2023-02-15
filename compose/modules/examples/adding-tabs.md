@@ -89,7 +89,7 @@ public async Task<IActionResult> AdminEditTab(int entityId)
 }
 ```
 
-The value to populate the model is filled is taken from the `GenericAttributes` property of the product. Since this has not yet been saved, it is empty at first, but more on that later.
+The value to populate the model is taken from the `GenericAttributes` property of the product. Since this has not yet been saved, it is empty at first, but more on that later.
 
 {% hint style="info" %}
 To learn more about generic attributes, please refer to [generic-attributes.md](../../../framework/advanced/generic-attributes.md "mention")
