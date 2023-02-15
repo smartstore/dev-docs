@@ -15,7 +15,7 @@ The following markup can be used to add tabs in a _Razor_ view.
 </tabstrip>
 ```
 
-You can use this _Tag Helper_ in any view, when making them known in the view. Do this by either adding the following line to the view or use the `ViewImports.cshtml` file in the root of the views folder.
+You can use this _TagHelper_ in any view. To do this, you must make the tag helper known in the view. Do this by either adding the following line to the view or use the `ViewImports.cshtml` file in the root of the views folder.
 
 ```html
 @addTagHelper Smartstore.Web.TagHelpers.Shared.*, Smartstore.Web.Common
