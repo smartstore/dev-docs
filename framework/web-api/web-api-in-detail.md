@@ -155,6 +155,6 @@ public class BlogCommentsController : WebApiController<BlogComment>
 Use the namespace `Smartstore.Web.Api.Controllers` for all Web API controllers!
 {% endhint %}
 
-`BlogCommentsController` defines OData Web API entdpoints to get, create, update, patch (partially update) and to delete blog comments. It also defines an endpoint to get the related blog post via the navigation property `BlogPost`. See the [controllers](https://github.com/smartstore/Smartstore/tree/main/src/Smartstore.Modules/Smartstore.WebApi/Controllers) of the Web API module for more endpoint definitions.
+`BlogCommentsController` defines OData Web API entdpoints to get, create, update, partially update and to delete blog comments. It also defines an endpoint to get the related blog post via the navigation property `BlogPost`. See the [controllers](https://github.com/smartstore/Smartstore/tree/main/src/Smartstore.Modules/Smartstore.WebApi/Controllers) of the Web API module for more endpoint definitions.
 
 Override `ODataModelProviderBase.GetXmlCommentsStream` to get your code comments automatically included in the Swagger documentation of the Web API. Therefore the **Documentation File** option must also be activated in the settings of the module project. **XML documentation file path** should be left empty. This exports your code comments to an XML file with the name of the module at compile time (_Smartstore.Blog.xml_ in the above example), which the Web API then takes into account.
