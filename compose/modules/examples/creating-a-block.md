@@ -18,7 +18,7 @@ First you create a directory called _Blocks_ and add a new file called `HelloWor
 
 ### Implement IBlock
 
-Then you add the `IBlock` interface.
+Then you create a class that implements the `IBlock` interface.
 
 ```csharp
 namespace MyOrg.HelloWorld.Blocks
@@ -52,7 +52,7 @@ public MediaFileInfo mediaFile { get; set; }
 
 ### Add a BlockHandler
 
-Next add the new `HelloWorldBlockHandler` class to your file and add the `BlockHandlerBase<T>` interface to it.
+Next, add the new `HelloWorldBlockHandler` class to your file and inherit from the `BlockHandlerBase<T>` base class.
 
 ```csharp
 public class HelloWorldBlockHandler : BlockHandlerBase<HelloWorldBlock>
