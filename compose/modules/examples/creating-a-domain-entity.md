@@ -28,16 +28,16 @@ Here is what that the table could look like:
 
 #### Overview
 
-The `Domain` object is an abstract data structure that has all the properties of the entity it describes. The _Entity Framework_ (ORM Mapper) automates the projection between `Domain` objects and database tables.
+The _domain_ object is an abstract data structure that has all the properties of the entity it describes. _Entity Framework_ automates the mapping between domain __ objects and database tables.
 
-Specify the table name and the indexes using `DataAnnotations` and add the properties that represent your database columns.
+Specify the table name and the indexes using [Code First Data Annotations](https://learn.microsoft.com/en-us/ef/ef6/modeling/code-first/data-annotations) and add the properties that represent your database columns.
 
 ```csharp
 // Outside the class.
 // Specify your table name. By convention, the entity name is used.
 [Table("TableNameInDatabase")]
 
-// Declare a property to be used as an index.
+// Declare an index.
 [Index(nameof(PropertyName), Name = "IX_ClassName_PropertyName")]
 
 // Inside the class.
@@ -57,7 +57,7 @@ Add the file _Notification.cs_ to the new _Domain_ directory and do the followin
 * Add the properties for `AuthorId`, `Published` and `Message`.
 
 {% hint style="info" %}
-There is no need to declare an Identifier, because implementing the abstract `BaseEntity` class adds an `Id` entry automatically.
+There is no need to declare an identifier property, because implementing the abstract `BaseEntity` class adds an `Id` property automatically.
 {% endhint %}
 
 Your `Notification` class should look something like this:
@@ -82,7 +82,7 @@ This represents the `Notification` table with the three columns: `AuthorId`, `Pu
 
 ### Create the Migration
 
-In order to add the `Notification` table to Smartstore's database, you need to create a migration. The migration framework creates the table on application start-up. In this tutorial you are only going to be overriding the `Up` method from the abstract `MigrationBase` class.
+In order to add the `Notification` table to Smartstore's database, you need to create a migration. The migration framework creates the table on application start-up. In this tutorial you will only override the `Up` method from the abstract `MigrationBase` class.
 
 {% hint style="info" %}
 To learn more, please refer to [Migrations](../../../framework/platform/database-migrations.md).
@@ -95,7 +95,7 @@ Create the folder _Migrations_ and add the migration class, which name includes 
 [MigrationVersion("2022-12-14 10:34:22", "HelloWorld: Initial")]
 ```
 
-The class needs to inherit from the `Migration` base class to have access to the SQL database methods like `Create`, `Remove` or `Update`. With these you are now able to check if the table already exists, and if not, create it.
+The class needs to inherit from the `Migration` base class to have access to the SQL database schema helper methods like `Create`, `Remove` or `Update`. With these you are now able to check if the table already exists, and if not, create it.
 
 ```csharp
 if (!Schema.Table("Notification").Exists())
@@ -106,12 +106,12 @@ if (!Schema.Table("Notification").Exists())
 
 To add columns, specify indexes and primary keys, you can simply daisy chain the following _FluentMigrator_ methods:
 
-| Method         | Description                                         |
-| -------------- | --------------------------------------------------- |
-| `WithColumn`   | Defines a new column.                               |
-| `WithIdColumn` | Defines an id column, that acts as the primary key. |
+| Method         | Description                                            |
+| -------------- | ------------------------------------------------------ |
+| `WithColumn`   | Defines a new column.                                  |
+| `WithIdColumn` | Defines an id column that will act as the primary key. |
 
-Columns can also have a type (Boolean, Integer, String, Date, Currency, ...) and be specified as (not) nullable, unique, a primary key, indexed, etc. With this information you can build the `Notification` table.
+Columns can also have a type (Boolean, Integer, String, Date, Currency etc.) and be specified as (not) nullable, unique, a primary key, indexed, etc. With this information you can build the `Notification` table.
 
 ```csharp
 Create.Table("Notification")
@@ -148,7 +148,7 @@ public class _20221214103422_Initial : Migration
         if (!Schema.Table(tableName).Exists())
         {
             Create.Table(tableName)
-                .WithIdColumn() // Adds the Id column, which defaults to primary key.
+                .WithIdColumn() // Adds the Id property as primary key.
                 .WithColumn(nameof(Notification.AuthorId))
                     .AsInt32()
                     .NotNullable()
@@ -224,9 +224,9 @@ Adding the `SmartDbContext` extension is not required for using the migration.
 You will find the following steps included in the module code:
 
 1. Add a [configuration view](../tutorials/building-a-simple-hello-world-module.md#adding-configuration). Configure the number of days a notification is shown.
-2. Add a 'New notification' button. Let the current admin create a message.
-3. Display the notification [using a widget](creating-a-widget-provider.md). This way you can position it freely around the shop.
-4. Schedule a Task for cleaning up the table. This will increase database speed, by removing old unneccessary notifications from your table.
+2. Add a **New notification** button. Let the current admin create a message.
+3. Display the notification [using a widget](creating-a-widget-provider.md). This way, you can place it anywhere you want in the store.
+4. Schedule a task for cleaning up the table. This will increase database speed by removing old, unnecessary notifications from your table.
 
 ### Further ideas
 
@@ -242,7 +242,7 @@ In this tutorial you learned how to:
 
 * Add a table to Smartstore's database
 * Create a migration for it
-* Extend SmartDbContext to include your tables
+* Extend `SmartDbContext` to include your tables
 
 The code for this module can be downloaded here:
 
