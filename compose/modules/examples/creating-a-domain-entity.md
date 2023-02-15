@@ -28,7 +28,7 @@ Here is what the table might look like:
 
 #### Overview
 
-The _domain_ object is an abstract data structure that has all the properties of the entity it describes. The _Entity Framework_ automates the mapping between domain __ objects and database tables.
+The _domain_ object is an abstract data structure that has all the properties of the entity it describes. _Entity Framework_ automates the mapping between domain __ objects and database tables.
 
 Specify the table name and the indexes using [Code First Data Annotations](https://learn.microsoft.com/en-us/ef/ef6/modeling/code-first/data-annotations) and add the properties that represent your database columns.
 
@@ -57,7 +57,7 @@ Add the _Notification.cs_ file to the new _Domain_ directory and do the followin
 * Add the `AuthorId`, `Published` and `Message` properties.
 
 {% hint style="info" %}
-There is no need to declare an Identifier property, because implementing the abstract `BaseEntity` class automatically adds an `Id` property.
+There is no need to declare an identifier property, because implementing the abstract `BaseEntity` class automatically adds an `Id` property.
 {% endhint %}
 
 Your `Notification` class should look something like this:
@@ -78,7 +78,7 @@ public class Notification : BaseEntity
 ```
 {% endcode %}
 
-This is the `Notification` table with three columns: `AuthorId`, `Published`, and `Message`. Because you will often search for notifications based on either the `AuthorId` or the `Published`, these are defined as indexes.
+This is the `Notification` table with three columns: `AuthorId`, `Published`, and `Message`. Because you will often search for notifications based on either `AuthorId` or `Published`, these are defined as indexes.
 
 ### Create the Migration
 
@@ -216,7 +216,7 @@ var messages = await _db.Notifications()
 ```
 
 {% hint style="info" %}
-It is not necessary to add the `SmartDbContext` extension. You can just as easily access the entity using `SmartDbContext`'s `.Set()` method.
+It is not necessary to add the `SmartDbContext` extension. You can just as easily access the entity set using `SmartDbContext.Set<TEntity>()` method.
 {% endhint %}
 
 ## Next steps
