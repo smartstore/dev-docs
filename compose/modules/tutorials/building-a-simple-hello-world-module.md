@@ -224,7 +224,7 @@ If the `ModelState` isn’t valid, do a post back by returning `Configure(settin
 
 ### Model
 
-As mentioned, the configuration model for the module settings is a simple copy of the settings class in this simple use case.
+As mentioned above, in this simple use case, the configuration model for the module settings is a simple copy of the settings class.
 
 1. Right click on the project in the Solution Explorer.
 2. Add a new folder. According to our guidelines we call it _Models_.

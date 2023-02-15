@@ -23,9 +23,9 @@ You can use this _Tag Helper_ in any view, when making them known in the view. D
 
 ### Add individual tabs to existing tabstrips
 
-If you as a developer are faced with the task to extend an existing entity e.g.: _Products_, _Categories_ or _Manufacturers_, you should not do this in the core code itself but attach it to the tab of a module. In the course of this tutorial, you will extend the _HelloWorld_ module, created in the [last tutorial](../tutorials/building-a-simple-hello-world-module.md), adding an `Events.cs` class to the root of the module.
+If you as a developer are faced with the task to extend an existing entity e.g.: `Product`, `Category` or `Manufacturer`, you should not do this in the core code itself but attach it to the tab of a module. In the course of this tutorial, you will extend the _HelloWorld_ module, created in the [last tutorial](../tutorials/building-a-simple-hello-world-module.md), adding an `Events.cs` class to the root of the module.
 
-When a tab strip is created, the Tag Helper publishes the `TabStripCreated` event. Its event message contains everything to be able to add a custom tab to the tab strip. The code to add a custom tab in the product detail configuration in the admin area looks like this:
+When a tab strip is created, the Tag Helper publishes the `TabStripCreated` event. Its event message contains everything you need to add a custom tab to the tab strip. The code to add a custom tab in the product detail configuration in the admin area looks like this:
 
 ```csharp
 using System.Threading.Tasks;
@@ -58,7 +58,7 @@ namespace MyOrg.HelloWorld
 }
 ```
 
-The event message stores the tab id in `TabStripName`. The tab of interest has the id `product-edit`. The event message contains the model of the containing view as well. That’s how you have access to the id of the entity for which the detail view was requested.
+The event message stores the tab id in `TabStripName`. The tab of interest has the id `product-edit`. The event message contains the model of the containing view as well. This will give you access to the ID of the entity for which the detail view was requested.
 
 Using the event message’s `TabFactory`, you can inject a new tab.
 
@@ -89,13 +89,13 @@ public async Task<IActionResult> AdminEditTab(int entityId)
 }
 ```
 
-The value with which the model is filled is taken from the `GenericAttributes` property of the product. Since this has not yet been saved, it is empty at first, but more on this later.
+The value to populate the model is filled is taken from the `GenericAttributes` property of the product. Since this has not yet been saved, it is empty at first, but more on that later.
 
 {% hint style="info" %}
 To learn more about generic attributes, please refer to [generic-attributes.md](../../../framework/advanced/generic-attributes.md "mention")
 {% endhint %}
 
-To get the instance of the just edited product, use the `SmartDbContext`. Make it known to the controller via _dependency injection_ by adding the following code at the very top:
+To get the instance of the product you just edited, use an instance of `SmartDbContext`. Make it known to the controller via _dependency injection_ by adding the following code at the very top:
 
 ```csharp
 private readonly SmartDbContext _db;
@@ -106,7 +106,7 @@ public HelloWorldAdminController(SmartDbContext db)
 }
 ```
 
-Since the action we've just added uses a model that has two simple properties and returns a view we must create these next. The `AdminEditTabModel.cs` class belongs in the _Models_ folder.
+Since the action we just added uses a model that has two simple properties and returns a view, we'll need to create it next. The `AdminEditTabModel.cs` class belongs in the _Models_ folder.
 
 ```csharp
 using Smartstore.Web.Modelling;
@@ -150,9 +150,9 @@ Please also place the localized values for this model in the [corresponding XML 
 </div>
 ```
 
-When the project is compiled and the product configuration is opened in the admin area, the new tab will be displayed.
+When the project is compiled and the product configuration is opened in the admin area, the new tab is displayed.
 
-Next, make sure that the entered value is also saved when the product is saved. For this listen to the `ModelBoundEvent`, which is published whenever a form is posted and the _MVC model binder_ bound the model. To find all the places where the event is published, search throughout the solution for the following code:
+Next, make sure that the entered value is also saved when the product is saved. To do this, listen to the `ModelBoundEvent` that is published whenever a form is posted and the _MVC model binder_ has bound the model. To find all the places where the event is published, look throughout the solution for the following code:
 
 ```csharp
 EventPublisher.PublishAsync(new ModelBoundEvent
@@ -176,7 +176,7 @@ public async Task HandleEventAsync(ModelBoundEvent message, SmartDbContext db)
 }
 ```
 
-The value is stored in the `GenericAttributes` of the product. A `GenericAttribute` is a separate entity that stores any simple value for each entity. For more complex data structures you should provide your own domain objects in your module.
+The value is stored in the product's `GenericAttributes`. A generic attribute is a separate entity that stores any simple value for each entity. For more complex data structures you should provide your own domain objects in your module.
 
 {% hint style="info" %}
 To learn more about events, please refer to [events.md](../../../framework/platform/events.md "mention")
