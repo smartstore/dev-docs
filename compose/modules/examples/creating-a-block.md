@@ -73,7 +73,7 @@ The input for this attribute represents the metadata of your block. Three things
 * `Hello World`: Specifies the label text of your block as it will appear in Page Builder.
 * `fa fa-eye`: Specifies the Font Awesome icon that appears next to the label in the Page Builder.
 
-You don't need to add any code to your `BlockHandler`. It will have the default behavioryou want at this point. See [Advanced topics](creating-a-block.md#advanced-topics) for other uses.
+You don't need to add any code to your `BlockHandler`. It will have the default behavior you want at this point. See [Advanced topics](creating-a-block.md#advanced-topics) for other uses.
 
 ### Add a validator
 
