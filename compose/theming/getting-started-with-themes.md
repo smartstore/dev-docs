@@ -1,4 +1,4 @@
-# Getting started with themes
+# 🥚 Getting started with themes
 
 ## Overview
 
@@ -20,7 +20,7 @@ To keep static files as small as possible, Smartstore minifies JavaScript, Sass,
 
 Vendor-specific prefixes are added to CSS declarations in Sass files by an **autoprefixer**.
 
-Smartstore is built using the [MVC-Pattern](https://learn.microsoft.com/en-us/aspnet/core/mvc/overview?view=aspnetcore-7.0). This pattern specifies that the HTML output is provided by views. Views are Razor files located in the subdirectories of the web project's Views directory. They can be easily overwritten at the theme level without having to worry about preparing the model or deploying actions.
+Smartstore is built using the [MVC-Pattern](https://learn.microsoft.com/en-us/aspnet/core/mvc/overview?view=aspnetcore-7.0). This pattern specifies that the HTML output is provided by views. Views are Razor files located in the subdirectories of the web project's _Views_ directory. They can be easily overwritten at the theme level without having to worry about preparing the model or deploying actions.
 
 Even more developing convenience is provided by 3rd party components. Among others, Smartstore has integrated:
 
@@ -30,8 +30,30 @@ Even more developing convenience is provided by 3rd party components. Among othe
 
 ## Anatomy of a theme
 
-* Where are themes located?
-* File organization table, similar to [this chapter](../modules/getting-started-with-modules.md#files-and-folders-best-practices).
+Themes are located in the Smartstore.Web project in the _Themes_ directory. Any folder in here that contains a `theme.config` file is treated as a theme.
+
+### Files & Folders Best Practices
+
+There are some conventions for organizing files and directories within a theme. While there is no requirement to follow them, it makes things predictable and easier to maintain.
+
+The following is an exhaustive list of files and directories.
+
+| Directory        | Description                         |
+| ---------------- | ----------------------------------- |
+| _wwwroot_        | Static files (including Sass files) |
+| _wwwroot/images_ | Images                              |
+| _wwwroot/css_    | CSS files                           |
+| \_wwwroot/js     | Javascript files                    |
+| _Views_          | Razor view / template files         |
+
+| File                                 | Description                                         |
+| ------------------------------------ | --------------------------------------------------- |
+| `theme.config`                       | Required. Theme metadata manifest.                  |
+| _Views/Shared/ConfigureTheme.cshtml_ | Configuration view for configuring theme variables. |
+
+{% hint style="info" %}
+For more information about file organization, see [Files & Folders: Best Practices](../modules/getting-started-with-modules.md#files-and-folders-best-practices).
+{% endhint %}
 
 ## Runtime compilation
 
