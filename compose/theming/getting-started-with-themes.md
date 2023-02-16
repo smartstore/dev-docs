@@ -38,18 +38,15 @@ There are some conventions for organizing files and directories within a theme. 
 
 The following is an exhaustive list of files and directories.
 
-| Directory        | Description                         |
-| ---------------- | ----------------------------------- |
-| _wwwroot_        | Static files (including Sass files) |
-| _wwwroot/images_ | Images                              |
-| _wwwroot/css_    | CSS files                           |
-| \_wwwroot/js     | Javascript files                    |
-| _Views_          | Razor view / template files         |
-
-| File                                 | Description                                         |
-| ------------------------------------ | --------------------------------------------------- |
-| `theme.config`                       | Required. Theme metadata manifest.                  |
-| _Views/Shared/ConfigureTheme.cshtml_ | Configuration view for configuring theme variables. |
+| Entry                              | Description                                         |
+| ---------------------------------- | --------------------------------------------------- |
+| **wwwroot**                        | Static files (including Sass files)                 |
+| **wwwroot/images**                 | Images                                              |
+| **wwwroot/css**                    | CSS files                                           |
+| **wwwroot/js**                     | Javascript files                                    |
+| **Views**                          | Razor view / template files                         |
+| theme.config                       | Required. Theme metadata manifest.                  |
+| Views/Shared/ConfigureTheme.cshtml | Configuration view for configuring theme variables. |
 
 {% hint style="info" %}
 For more information about file organization, see [Files & Folders: Best Practices](../modules/getting-started-with-modules.md#files-and-folders-best-practices).
