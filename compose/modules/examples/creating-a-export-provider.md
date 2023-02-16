@@ -1,24 +1,24 @@
 # ✔ Creating an Export provider
 
-Using export providers you can export your shop data into many different formats. Smartstore primarily uses CSV and XML. In this tutorial, you will write an export provider for the product catalog.
+Export providers allow you to export your store data in many different formats. Smartstore mainly uses CSV and XML. In this tutorial you will write an export provider for the product catalog.
 
 {% hint style="info" %}
-To learn more about export, refer to [Export](../../../framework/platform/export.md).
+To learn more about exporting, see [Export](../../../framework/platform/export.md).
 {% endhint %}
 
 ## Create a configuration
 
-If you want to make your export provider customizable, you will need a configuration. This step is optional. The configuration is made up of three things:
+If you want to customize your export provider, you must configure it. This step is optional. There are three things to configure:
 
-1. The profile configuration model `ProfileConfigurationModel` that describes the configurable data.
-2. The view component `HelloWorldConfigurationViewComponent` that converts saved data into usable formats for your view.
-3. The view that is displayed to the user. This acts like a widget view and must abide to the same directory structure.
+1. The `ProfileConfigurationModel` that describes the configurable data.
+2. The `HelloWorldConfigurationViewComponent`, which converts stored data into usable formats for your view.
+3. The view shown to the user. This acts like a widget view and must adhere to the same directory structure.
 
-In this configuration, you will be able to limit the number of rows that are exported.
+This configuration allows you to limit the number of rows that are exported.
 
 ### The Model
 
-Create a class `ProfileConfigurationModel.cs` and add it to the _Models_ folder.
+Create the `ProfileConfigurationModel.cs` class and add it to the _Models_ directory.
 
 ```csharp
 namespace MyOrg.HelloWorld.Models
@@ -46,7 +46,7 @@ Add the resources to your localization file.
 
 ### The ViewComponent
 
-Create a class `HelloWorldConfigurationViewComponent.cs` and add it to the _Components_ folder.
+Create the `HelloWorldConfigurationViewComponent.cs` class and add it to the _Components_ directory.
 
 ```csharp
 namespace MyOrg.HelloWorld.Components
@@ -64,7 +64,7 @@ namespace MyOrg.HelloWorld.Components
 
 ### The View
 
-Create a razor view `Default.cshtml` and add it to _Views / Shared / Components / HelloWorldConfiguration_.
+Create a Razor view `Default.cshtml` and add it to _Views / Shared / Components / HelloWorldConfiguration_.
 
 ```cshtml
 @model ProfileConfigurationModel
@@ -90,7 +90,7 @@ Create a razor view `Default.cshtml` and add it to _Views / Shared / Components 
 
 ### The CSV export provider
 
-Create a class `HelloWorldCsvExportProvider.cs` and add it to the new folder _Providers_.
+Create the `HelloWorldCsvExportProvider.cs` class and add it to the new _Providers_ directory.
 
 ```csharp
 namespace MyOrg.HelloWorld.Providers
@@ -104,11 +104,11 @@ namespace MyOrg.HelloWorld.Providers
 }
 ```
 
-This class implements the `ExportProviderBase` interface, which requires you to override the `ExportAsync` method.
+This class inherits from the abstract base class `ExportProviderBase`, so you must override the `ExportAsync` method.
 
 #### Add Attributes
 
-Smartstore uses the following attributes to integrate the providers correctly: `SystemName`, `FriendlyName` and `ExportFeatures` (optional).
+Smartstore uses the following attributes to properly integrate the providers: `SystemName`, `FriendlyName` and the optional `ExportFeatures`.
 
 Add these attributes to your class definition.
 
@@ -124,23 +124,23 @@ Add these attributes to your class definition.
 `SystemName` is the system name of the provider, not the system name of the module.
 {% endhint %}
 
-| Export feature                  | Description                                                                                                                                                                              |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CreatesInitialPublicDeployment  | Automatically create a file based public deployment when an export profile is created.                                                                                                   |
-| CanOmitGroupedProducts          | Offer option to include/exclude grouped products.                                                                                                                                        |
-| CanProjectAttributeCombinations | Offer option to export attribute combinations as products.                                                                                                                               |
-| CanProjectDescription           | Offer further options to manipulate the product description.                                                                                                                             |
-| OffersBrandFallback             | Offer option to enter a brand fallback.                                                                                                                                                  |
-| CanIncludeMainPicture           | Offer option to set a picture size and to get the URL of the main image.                                                                                                                 |
-| UsesSkuAsMpnFallback            | Use SKU as manufacturer part number if MPN is empty.                                                                                                                                     |
-| OffersShippingTimeFallback      | Offer option to enter a shipping time fallback.                                                                                                                                          |
-| OffersShippingCostsFallback     | Offer option to enter a shipping costs fallback and a free shipping threshold.                                                                                                           |
-| CanOmitCompletionMail           | Automatically send a completion email.                                                                                                                                                   |
-| UsesAttributeCombination        | Provide additional data of attribute combinations.                                                                                                                                       |
-| UsesAttributeCombinationParent  | <p>Export attribute combinations as products including parent product.</p><p>This is only effective in combination with the <em>CanProjectAttributeCombinations</em> export feature.</p> |
-| UsesRelatedDataUnits            | Provide extra data units for related data.                                                                                                                                               |
+| Export feature                  | Description                                                                                                                                                               |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CreatesInitialPublicDeployment  | Automatically create a file-based public deployment when an export profile is created.                                                                                    |
+| CanOmitGroupedProducts          | Offer option to include/exclude grouped products.                                                                                                                         |
+| CanProjectAttributeCombinations | Provide the ability to export attribute combinations as products.                                                                                                         |
+| CanProjectDescription           | Offer more options to manipulate the product description.                                                                                                                 |
+| OffersBrandFallback             | Offer the option to enter a brand fallback.                                                                                                                               |
+| CanIncludeMainPicture           | Provide an option to set an image size and get the URL of the main image.                                                                                                 |
+| UsesSkuAsMpnFallback            | Use SKU as manufacturer part number if MPN is blank.                                                                                                                      |
+| OffersShippingTimeFallback      | Provide an option to enter a shipping time fallback.                                                                                                                      |
+| OffersShippingCostsFallback     | Offer the option to enter a shipping cost fallback and a free shipping threshold.                                                                                         |
+| CanOmitCompletionMail           | Automatically send a completion email.                                                                                                                                    |
+| UsesAttributeCombination        | Provide additional data for attribute combinations.                                                                                                                       |
+| UsesAttributeCombinationParent  | Export attribute combinations as products, including the parent product. This is only effective in conjunction with the _CanProjectAttributeCombinations_ export feature. |
+| UsesRelatedDataUnits            | Provide additional data units for related data.                                                                                                                           |
 
-To tell the provider that you want to export a CSV file, the `FileExtension` property has to be overriden. The `Localizer` is used for localizing messages. `CsvConfiguration` specifies details of the CSV format.
+To tell the provider that you want to export a CSV file, override the `FileExtension` property. The `Localizer` is used to localize messages. `CsvConfiguration` specifies CSV format details.
 
 ```csharp
 public override string FileExtension => "CSV";
@@ -166,7 +166,7 @@ private CsvConfiguration CsvConfiguration
 
 #### Add configuration
 
-Next you need to tell the provider how it should be configured (_ViewComponent_ and _Model_). For this the `ConfigurationInfo` method is used.
+Next, you need to tell the provider how it should be configured (_ViewComponent_ and _Model_). This is done with the `ConfigurationInfo` method.
 
 ```csharp
 public override async ExportConfigurationInfo ConfigurationInfo => new()
@@ -178,13 +178,13 @@ public override async ExportConfigurationInfo ConfigurationInfo => new()
 
 #### Export data
 
-Now you can start exporting your data. Start off by fetching the profile configuration data.
+You are now ready to begin exporting your data. Start by retrieving the profile configuration data.
 
 ```csharp
 var config = (context.ConfigurationData as ProfileConfigurationModel) ?? new ProfileConfigurationModel();
 ```
 
-Get a `CsvWriter` and write the first row with column names.
+Get a `CsvWriter` and write the first row of column names.
 
 ```csharp
 using var writer = new CsvWriter(new StreamWriter(context.DataStream, Encoding.UTF8, 1024, true));
@@ -209,7 +209,7 @@ while (context.Abort == DataExchangeAbortion.None && await context.DataSegmenter
 }
 ```
 
-Inside the while loop we fetch the product and it's entity.
+Inside the while loop, we get the product and it's entity.
 
 ```csharp
 foreach (dynamic product in segment)
@@ -224,10 +224,10 @@ foreach (dynamic product in segment)
 ```
 
 {% hint style="info" %}
-The difference between `entity` and `product` is the following:
+The difference between Entity and Product is as follows:
 
-* `entity`: Represents the original entity read from the database.
-* `product`: A dynamic object that encapsulates and enriches the entity with some computed data.
+* Entity: Represents the original entity read from the database.
+* Product: A dynamic object that encapsulates the entity and enriches it with some calculated data.
 {% endhint %}
 
 Add a try-catch block for error handling.
@@ -249,14 +249,14 @@ catch (Exception ex)
 }
 ```
 
-Now you calculate the savings inside the try-block.
+Now calculate the savings within the try block.
 
 ```csharp
 var calculatedPrice = (CalculatedPrice)product._Price;
 var saving = calculatedPrice.Saving;
 ```
 
-Next we write the fields in order of our columns. After that we increment the row count.
+Next, we write the fields in the order of our columns. Then we increment the number of rows.
 
 ```csharp
 writer.WriteFields(new string[]
@@ -272,7 +272,7 @@ writer.NextRow();
 context.RecordsSucceeded++;
 ```
 
-And finally you want to limit your row exports to `NumberOfExportedRows` from the profile configuration data.
+Finally, you want to limit your row exports to `NumberOfExportedRows` from the profile configuration data.
 
 ```csharp
 if (context.RecordsSucceeded >= config.NumberOfExportedRows)
@@ -281,7 +281,7 @@ if (context.RecordsSucceeded >= config.NumberOfExportedRows)
 }
 ```
 
-Your code may look something like this:
+Your code could look like this:
 
 {% code title="HelloWorldCsvExportProvider.cs" %}
 ```csharp
@@ -390,29 +390,27 @@ namespace MyOrg.HelloWorld.Providers
 
 ### The XML export provider
 
-XML export is very similar to CSV. First you need to change the _file extension_ to `XML`.
+XML export is very similar to CSV export. First, you need to change the file extension to `XML`.
 
 ```csharp
 public override string FileExtension => "XML";
 ```
 
-The `Localizer` and `ConfigurationInfo` stay the same. Now you only need to modify `ExportAsync`.
-
-For XML the writer comes from an `ExportXmlHelper`.
+The `Localizer` and `ConfigurationInfo` are the same. Now you just need to change `ExportAsync`. For XML, you get the writer from an `ExportXmlHelper`.
 
 ```csharp
 using var helper = new ExportXmlHelper(context.DataStream);
 var writer = helper.Writer;
 ```
 
-Next you start the document and write the grouping tag.
+Next, you start the document and write the grouping tag.
 
 ```csharp
 writer.WriteStartDocument();
 writer.WriteStartElement("products");
 ```
 
-Same as with CSV provider, you fetch the next data segment, iterate through the products.
+As with the CSV provider, you fetch the next data segment, iterating through the products.
 
 ```csharp
 while (context.Abort == DataExchangeAbortion.None && await context.DataSegmenter.ReadNextSegmentAsync())
@@ -431,7 +429,7 @@ while (context.Abort == DataExchangeAbortion.None && await context.DataSegmenter
 }
 ```
 
-Write a new product XML node including the values to be exported.
+Write a new Product XML node with the values you want to export.
 
 ```csharp
 writer.WriteStartElement("product");
@@ -460,20 +458,18 @@ try
 writer.WriteEndElement(); // product
 ```
 
-And when the while-loop is complete, the grouping and the document need to be closed.
+And when the while loop is complete, the grouping and the document must be closed.
 
 ```csharp
 writer.WriteEndElement(); // products
 writer.WriteEndDocument();
 ```
 
-You can find the source code in `HelloWorldXmlExportProvider.cs`.
+The source code can be found in `HelloWorldXmlExportProvider.cs`.
 
 ## Delete export profiles
 
-Finally you just need to clean up any existing profiles on `UnistallAsync` in `Module.cs`.
-
-Pass `SmartDbContext` and `IExportProfileService` to the module class constructor.
+Finally, you just need to clean up any existing profiles on `UnistallAsync` in `Module.cs`. Pass `SmartDbContext` and `IExportProfileService` to the module class constructor.
 
 ```csharp
 private readonly SmartDbContext _db;
@@ -486,7 +482,7 @@ public Module(SmartDbContext db, IExportProfileService exportProfileService)
 }
 ```
 
-Then add the following lines to the beginning of your `UninstallAsync` method.
+Then add the following lines to the top of your `UninstallAsync` method
 
 ```csharp
 // Read the export profile entities associated with your export provider
@@ -502,7 +498,7 @@ await profiles.EachAsync(x => _exportProfileService.DeleteExportProfileAsync(x, 
 
 ## Conclusion
 
-In this tutorial you built an export provider. You created a configuration profile and a CSV export provider.
+In this tutorial, you created an export provider. You have created a configuration profile and a CSV export provider.
 
 The code for this module can be downloaded here:
 
