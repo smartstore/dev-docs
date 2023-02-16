@@ -1,14 +1,14 @@
 # ✔ Adding menu items
 
 {% hint style="info" %}
-For a more in-depth view on menus, please refer to [Menus](../../../framework/content/menus.md).
+For a more in-depth look at menus, see [Menus](../../../framework/content/menus.md).
 {% endhint %}
 
-Menus are a very important tool to structurise Smartstore's interface. Building on the previous tutorial, you will add a menu entry to the admin menu.
+Menus are a very important tool for structuring the Smartstore interface. Building on the previous tutorial, you will add a menu item to the Admin menu.
 
 ## Adding a menu
 
-First you create the class `AdminMenu.cs` in the root folder of your module.
+First, you create the `AdminMenu.cs` class in the root folder of your module.
 
 ```csharp
 namespace MyOrg.HelloWorld
@@ -21,7 +21,7 @@ namespace MyOrg.HelloWorld
 
 ### Implement the `AdminMenuProvider`
 
-You need to add the interface `AdminMenuProvider` and implement the method `BuildMenuCore`.
+This class inherits from the abstract base class `AdminMenuProvider` and implements the `BuildMenuCore` method.
 
 ```csharp
 public class AdminMenu : AdminMenuProvider
@@ -34,7 +34,7 @@ public class AdminMenu : AdminMenuProvider
 
 ### Create a menu item
 
-Next you create a `MenuItem`.
+Next, you create a `MenuItem` using the `ToBuilder()` method.
 
 ```csharp
 var myMenuItem = new MenuItem().ToBuilder()
@@ -52,7 +52,7 @@ var myMenuItem = new MenuItem().ToBuilder()
 
 ### Add a localization string
 
-Add a new resource to your localization, so that the menu text will show.
+Add a new resource to your localization to display the menu text.
 
 ```xml
 <LocaleResource Name="MyMenuItem">
@@ -68,19 +68,19 @@ Create a `TreeNode` _menuNode_ from `myMenuItem`.
 var menuNode = new TreeNode<MenuItem>(myMenuItem);
 ```
 
-Fetch a reference node from `modulesNode`. In this example the menu id `settings` is used.
+Get a reference node from `modulesNode`. This example uses the menu id `settings`.
 
 ```csharp
 var refNode = modulesNode.Root.SelectNodeById("settings");
 ```
 
 {% hint style="info" %}
-For more menu ids:
+For more menu items:
 
-* Open the Smartstore admin page
-* Right-Click the desired menu
-* Choose the _inspector_
-* Look for **`data-id`**
+* Open the Smartstore Admin page
+* Right-click on the desired menu
+* Select the _Inspector_
+* Search for "**data-id**"
 {% endhint %}
 
 Insert `menuNode` after `refNode`.
@@ -89,9 +89,7 @@ Insert `menuNode` after `refNode`.
 menuNode.InsertAfter(refNode);
 ```
 
-Now you should see a menu item in the admin configuration menu.
-
-Your code should look something like this:
+Now you should see a menu item in the admin configuration menu. Your code should look something like this:
 
 {% code title="AdminMenu.cs" %}
 ```csharp
@@ -122,7 +120,7 @@ namespace MyOrg.HelloWorld
 
 ## Adding a submenu
 
-To add a submenu is very simple. First you add a menu just like you did above. The only difference is, that you won't give the menu item an action.
+Adding a submenu is very easy. First, you add a menu, just as you did above. The only difference is that you don't give the menu item an action.
 
 ```csharp
 var secondMenuItem = new MenuItem().ToBuilder()
@@ -154,7 +152,7 @@ Add two new resources to your localization.
 
 ### Create tree nodes
 
-Once again you create a `TreeNode` for each menu item.
+Again, create a `TreeNode` for each menu item.
 
 ```csharp
 var secondMenuNode = new TreeNode<MenuItem>(secondMenuItem);
@@ -211,7 +209,7 @@ namespace MyOrg.HelloWorld
 
 ## Conclusion
 
-In this tutorial you created a menu item, added it to the admin menu and added a submenu.
+In this tutorial, you created a menu item, added it to the Admin menu, and added a submenu.
 
 The code for this module can be downloaded here:
 
