@@ -14,7 +14,7 @@ New themes should always be derived from the Flex base theme or from a theme ori
 
 A theme provides **variables** that can be configured by the end user. These are automatically translated into Sass variables and can be used in custom Sass files.
 
-Sass files are automatically compiled at runtime using the **built-in Sass parser**. Razor views are also **compiled at runtime**. A built-in file watcher keeps track of all changes made to Sass and Razor files. When a Razor file is changed, the Razor views are recompiled in the background. When a Sass file is changed, the CSS is regenerated and the cache is cleared. Simply refresh the browser page while the application is running to see changes to Sass files and Razor views live.
+Sass files are automatically compiled at runtime using the **built-in Sass parser**. Razor views are also **compiled at runtime**. A built-in `FileWatcher` keeps track of all changes made to Sass and Razor files. When a Razor file is changed, the Razor views are recompiled in the background. When a Sass file is changed, the CSS is regenerated and the cache is cleared. Simply refresh the browser page while the application is running to see changes to Sass files and Razor views live.
 
 To keep static files as small as possible, Smartstore minifies JavaScript, Sass, and CSS files. Files are packaged into **bundles**, which combine multiple physical files of a web project into one and are minified.
 
@@ -24,9 +24,9 @@ Smartstore is built using the [MVC-Pattern](https://learn.microsoft.com/en-us/as
 
 Even more developing convenience is provided by 3rd party components. Among others, Smartstore has integrated:
 
-* **Bootstrap**: Very useful for creating HTML structures with its classes.
-* **jQuery**: Simplifies DOM element selection and provides browser polyfills.
-* **Modern icon libraries like Font Awesome**: Provide a sophisticated and consistent look.
+* [Bootstrap](getting-started-with-themes.md#bootstrap): Very useful for creating HTML structures with its classes.
+* [jQuery](getting-started-with-themes.md#jquery): Simplifies DOM element selection and provides browser polyfills.
+* [Modern icon libraries](getting-started-with-themes.md#icon-libraries) like [Font Awesome](getting-started-with-themes.md#font-awesome): Provide a sophisticated and consistent look.
 
 ## Anatomy of a theme
 
@@ -54,16 +54,46 @@ For more information about file organization, see [Files & Folders: Best Practic
 
 ## Runtime compilation
 
-* Razor runtime compilation
-* Sass runtime compilation
-  * AutoPrefixer in production (not in Debug)
-* Any change to an included file triggers recompilation
-* Cache, DiskCache
+### Razor runtime compilation
+
+Razor runtime compilation is a feature in ASP.NET Core that allows Razor pages to be dynamically compiled, rather than being compiled when the application is compiled. This allows changes to Razor pages to be applied in real time without having to restart the application.
+
+Smartstore has a setting for this feature that is enabled by default. If you want to disable it, open the `appsettings.json` file in the root of the Smartstore.Web project and change the value of the `EnableRazorRuntimeCompilation` property.
+
+### Sass runtime compilation
+
+[Sass](https://sass-lang.com/) is a CSS preprocessor, which means it extends the CSS language by adding features like variables, mixins, functions, and many other techniques. These allow you to create CSS that is more maintainable, themable, and extensible.
+
+In Smartstore, CSS declarations are declared in in `.scss` files. This way Sass variables and functions can be used. Sass is automatically translated into CSS by the built-in Sass parser, so any browser can render it, unlike Sass.
+
+Smartstore's built-in `FileWatcher` keeps track of all changes made to the included Sass files while the application is running. When changes are made, the cache is automatically cleared and the Sass files are retranslated into CSS. This provides a convenient, time-saving way to check for CSS changes on page refresh without having to restart the application.
+
+### AutoPrefixer
+
+[Vendor prefixes](https://developer.mozilla.org/en-US/docs/Glossary/Vendor\_Prefix) are a part of CSS that can be added to certain properties and values. They enable experimental, non-standard features in different browsers. For example, the `-webkit-` prefix is used for properties and values supported by WebKit browsers (Google, Safari, ...), and Mozilla Firefox uses the `-moz-` prefix.
+
+Without using a tool like CSS Autoprefixer, you would have to take care of adding the correct prefixes yourself. This can be tedious and error-prone.
+
+To ensure compatibility with different browsers, Smartstore has a built-in CSS autoprefixer. It is enabled in production mode, but not in debugging mode. This allows you to write CSS code without having to add vendor prefixes yourself, as the tool will add them automatically. It uses the latest available [Can I Use](https://caniuse.com/) data to add the prefix to each corresponding CSS property and value.
+
+By using the CSS Autoprefixer, developers can rest assured that all CSS styles will display correctly in all major browsers. They can focus on designing the site without worrying about compatibility.
+
+### Cache, DiskCache
+
+Created assets are cached in RAM and on disk. This keeps the whole process highly performant and delays page rendering by only a few milliseconds when regenerating CSS files. The cache is automatically invalidated when an included file changes.
 
 ## Libraries
 
-* Bootstrap
-* FontAwesome
-* Fontastic
-* jQuery
-* etc.
+### jQuery
+
+### Bootstrap
+
+## Icon Libraries
+
+### Font Awesome
+
+#### Font Awesome Pro
+
+### Bootstrap Icons
+
+### Fontastic
