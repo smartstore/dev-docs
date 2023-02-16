@@ -32,21 +32,21 @@ Even more developing convenience is provided by 3rd party components. Among othe
 
 Themes are located in the Smartstore.Web project in the _Themes_ directory. Any folder in here that contains a `theme.config` file is treated as a theme.
 
-### Files & Folders Best Practices
+### Files & Folders: Best Practices
 
 There are some conventions for organizing files and directories within a theme. While there is no requirement to follow them, it makes things predictable and easier to maintain.
 
 The following is an exhaustive list of files and directories.
 
-| Entry                              | Description                                         |
-| ---------------------------------- | --------------------------------------------------- |
-| **wwwroot**                        | Static files (including Sass files)                 |
-| **wwwroot/images**                 | Images                                              |
-| **wwwroot/css**                    | CSS files                                           |
-| **wwwroot/js**                     | Javascript files                                    |
-| **Views**                          | Razor view / template files                         |
-| theme.config                       | Required. Theme metadata manifest.                  |
-| Views/Shared/ConfigureTheme.cshtml | Configuration view for configuring theme variables. |
+| Entry                                              | Description                                         |
+| -------------------------------------------------- | --------------------------------------------------- |
+| :file\_folder: **wwwroot**                         | Static files (including Sass files)                 |
+| :file\_folder: **wwwroot/images**                  | Images                                              |
+| :file\_folder: **wwwroot/css**                     | CSS files                                           |
+| :file\_folder: **wwwroot/js**                      | Javascript files                                    |
+| :file\_folder: **Views**                           | Razor view / template files                         |
+| :file\_cabinet: theme.config                       | Required. Theme metadata manifest.                  |
+| :file\_cabinet: Views/Shared/ConfigureTheme.cshtml | Configuration view for configuring theme variables. |
 
 {% hint style="info" %}
 For more information about file organization, see [Files & Folders: Best Practices](../modules/getting-started-with-modules.md#files-and-folders-best-practices).
