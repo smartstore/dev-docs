@@ -14,7 +14,7 @@ New themes should always be derived from the Flex base theme or from a theme ori
 
 A theme provides **variables** that can be configured by the end user. These are automatically translated into Sass variables and can be used in custom Sass files.
 
-Sass files are automatically compiled at runtime using the **built-in Sass parser**. Razor views are also **compiled at runtime**. A built-in file watcher keeps track of all changes made to Sass and Razor files. When a Razor file is changed, the Razor views are recompiled in the background. When a Sass file is changed, the CSS is regenerated. In both cases, the cache is cleared. Simply refresh the browser page while the application is running to see changes to Sass files and Razor views live.
+Sass files are automatically compiled at runtime using the **built-in Sass parser**. Razor views are also **compiled at runtime**. A built-in file watcher keeps track of all changes made to Sass and Razor files. When a Razor file is changed, the Razor views are recompiled in the background. When a Sass file is changed, the CSS is regenerated and the cache is cleared. Simply refresh the browser page while the application is running to see changes to Sass files and Razor views live.
 
 To keep static files as small as possible, Smartstore minifies JavaScript, Sass, and CSS files. Files are packaged into **bundles**, which combine multiple physical files of a web project into one and are minified.
 
