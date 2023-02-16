@@ -152,11 +152,7 @@ Please also place the localized values for this model in the [corresponding XML 
 
 When the project is compiled and the product configuration is opened in the admin area, the new tab is displayed.
 
-Next, make sure that the entered value is also saved when the product is saved. To do this, listen to the `ModelBoundEvent` that is published whenever a form is posted and the _MVC model binder_ has bound the model. To find all the places where the event is published, look throughout the solution for the following code:
-
-```csharp
-EventPublisher.PublishAsync(new ModelBoundEvent
-```
+Next, make sure that the entered value is also saved when the product is saved. To do this, listen to the `ModelBoundEvent` that is published whenever a form is posted and the _MVC model binder_ has bound the model.
 
 The code to save the value of the tab belongs in the `Events.cs` class and looks like this:
 
