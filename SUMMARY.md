@@ -101,7 +101,6 @@
     * [🐣 Creating a Block](compose/modules/examples/creating-a-block.md)
     * [✔ Creating an Export provider](compose/modules/examples/creating-a-export-provider.md)
     * [🥚 Creating a Domain entity](compose/modules/examples/creating-a-domain-entity.md)
-    * [Creating a Payment provider](compose/modules/examples/creating-a-payment-provider.md)
 * [Theming](compose/theming/README.md)
   * [🥚 Getting started with themes](compose/theming/getting-started-with-themes.md)
   * [Theme configuration](compose/theming/theme-configuration.md)
