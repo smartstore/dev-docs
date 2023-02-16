@@ -59,11 +59,11 @@ Add module.json next. For more information, refer to [the manifest](../getting-s
 {% endcode %}
 
 {% hint style="danger" %}
-**Version numbers must be kept up to date** with the current version of Smartstore.&#x20;
+**Version numbers in module.json must match** the current version of Smartstore.
 
-If the declared `MinAppVersion` of your module is smaller than the currently used Smartstore version (e.g.: `MinAppVersion` of `5.0` and the Smartstore version is `5.0.1`), your module **will not** be loaded by the application!
+A module is generally compatible if both the app version and the `MinAppVersion` of the module are the same, OR - if the app version is greater - it is _assumed_ to be compatible if there has been no breaking changes in the core since `MinAppVersion`.
 
-Please make sure that the `MinAppVersion` is equal to the current Smartstore version when applying the tutorials.
+Incompatible modules **will not** be loaded by Smartstore.
 {% endhint %}
 
 ## Creating the module
@@ -437,11 +437,3 @@ Now you have built a simple module that stores a setting and renders its value i
 The code for this tutorial can be downloaded here:
 
 {% file src="../../../.gitbook/assets/MyOrg.HelloWorld.zip" %}
-
-{% hint style="danger" %}
-**Version numbers in module.json must match** the current version of Smartstore.
-
-If the declared `MinAppVersion` of your module is smaller than the currently used Smartstore version (e.g.: `MinAppVersion` of `5.0` and the Smartstore version is `5.0.1`), your module **will not** be loaded by the application!
-
-Please make sure that the `MinAppVersion` is equal to the current Smartstore version when applying the tutorials.
-{% endhint %}
