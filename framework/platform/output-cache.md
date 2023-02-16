@@ -49,6 +49,10 @@ But, nevertheless, when developing custom modules for Smartstore, it's important
     * Because in the cached outer layer, the component output is replaced by a JSON representation of the component metadata and actual `Invoke` arguments.
   * But if the component is made cacheable, you don't have to care about parameter limitations ('cause the output is **not** removed for later substitution / is cached along with the outer layer).
   * WARN: Never ever make a component cacheable if it somehow displays user-related data (like cart for example). Another user could see it when it comes from cache.
+* Here's how you specify cacheable routes for your module:
+  * Add a class that implements [ICacheableRouteProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/OutputCache/ICacheableRouteProvider.cs). By convention we call it `CacheableRoutes` and make it internal. No need for DI registration.
+  * _SAMPLE_
+  * HINT: backend pages are never cached, only frontend pages.
 
 ## Display control & invalidation
 
