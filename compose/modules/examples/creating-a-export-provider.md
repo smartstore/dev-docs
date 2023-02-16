@@ -108,7 +108,7 @@ This class inherits from the abstract base class `ExportProviderBase`, so you mu
 
 #### Add Attributes
 
-Smartstore uses the following attributes to properly integrate the providers: `SystemName`, `FriendlyName` and the optional `ExportFeatures`.
+Smartstore uses the following attributes to correctly integrate the providers: `SystemName`, `FriendlyName` and the optional `ExportFeatures`.
 
 Add these attributes to your class definition.
 
@@ -227,7 +227,7 @@ foreach (dynamic product in segment)
 The difference between Entity and Product is as follows:
 
 * Entity: Represents the original entity read from the database.
-* Product: A dynamic object that encapsulates the entity and enriches it with some calculated data.
+* Product: A dynamic object that encapsulates the entity and enriches it with computed data.
 {% endhint %}
 
 Add a try-catch block for error handling.
@@ -396,7 +396,7 @@ XML export is very similar to CSV export. First, you need to change the file ext
 public override string FileExtension => "XML";
 ```
 
-The `Localizer` and `ConfigurationInfo` are the same. Now you just need to change `ExportAsync`. For XML, you get the writer from an `ExportXmlHelper`.
+The `Localizer` and `ConfigurationInfo` stay the same. Now you just need to change `ExportAsync`. For XML, you get the writer from an `ExportXmlHelper`.
 
 ```csharp
 using var helper = new ExportXmlHelper(context.DataStream);
