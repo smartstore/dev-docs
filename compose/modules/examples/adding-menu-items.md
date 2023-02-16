@@ -21,7 +21,7 @@ namespace MyOrg.HelloWorld
 
 ### Implement the `AdminMenuProvider`
 
-This class inherits from the abstract base class `AdminMenuProvider` and implements the `BuildMenuCore` method.
+This class inherits from the abstract base class `AdminMenuProvider` and overrides the `BuildMenuCore` method.
 
 ```csharp
 public class AdminMenu : AdminMenuProvider
