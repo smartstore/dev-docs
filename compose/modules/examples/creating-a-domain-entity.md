@@ -78,7 +78,7 @@ public class Notification : BaseEntity
 ```
 {% endcode %}
 
-This is the `Notification` table with three columns: `AuthorId`, `Published`, and `Message`. Because you will often search for notifications based on either `AuthorId` or `Published`, these are defined as indexes.
+This represents the `Notification` table with the three columns: `AuthorId`, `Published` and `Message`. Because you will often search for notifications based on either `AuthorId` or `Published`, these are defined as indexes.
 
 ### Create the Migration
 
