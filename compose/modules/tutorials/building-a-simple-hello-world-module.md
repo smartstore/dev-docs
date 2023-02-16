@@ -59,7 +59,11 @@ Add module.json next. For more information, refer to [the manifest](../getting-s
 {% endcode %}
 
 {% hint style="danger" %}
-**Version numbers must be kept up to date** with the current version of Smartstore. Otherwise the module will not be loaded!
+**Version numbers must be kept up to date** with the current version of Smartstore.&#x20;
+
+If the declared `MinAppVersion` of your module is smaller than the currently used Smartstore version (e.g.: `MinAppVersion` of `5.0` and the Smartstore version is `5.0.1`), your module **will not** be loaded by the application!
+
+Please make sure that the `MinAppVersion` is equal to the current Smartstore version when applying the tutorials.
 {% endhint %}
 
 ## Creating the module
@@ -435,5 +439,9 @@ The code for this tutorial can be downloaded here:
 {% file src="../../../.gitbook/assets/MyOrg.HelloWorld.zip" %}
 
 {% hint style="danger" %}
-**Version numbers in module.json must match** the current version of Smartstore. Otherwise the module will not be loaded!
+**Version numbers in module.json must match** the current version of Smartstore.
+
+If the declared `MinAppVersion` of your module is smaller than the currently used Smartstore version (e.g.: `MinAppVersion` of `5.0` and the Smartstore version is `5.0.1`), your module **will not** be loaded by the application!
+
+Please make sure that the `MinAppVersion` is equal to the current Smartstore version when applying the tutorials.
 {% endhint %}
