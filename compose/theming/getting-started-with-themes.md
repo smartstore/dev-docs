@@ -86,14 +86,61 @@ Created assets are cached in RAM and on disk. This keeps the whole process highl
 
 ### jQuery
 
+jQuery is an open-source JavaScript library that makes it easy for developers to work with the Document Object Model (DOM) and interact with HTML pages. It provides a set of methods for selecting, manipulating, and animating DOM elements. jQuery uses a short and concise syntax to simplify the use of JavaScript, and supports a variety of modern web browsers.
+
+{% hint style="info" %}
+For more information, see [jQuery](https://jquery.com/).
+{% endhint %}
+
 ### Bootstrap
+
+Bootstrap is a front-end framework based on HTML, CSS, and JavaScript. It is designed to provide developers with a quick and easy way to create responsive websites and web applications. It provides a set of CSS classes and JavaScript plugins that are preconfigured to ensure a consistent look and feel.
+
+One of Bootstrap's most important features is its grid system. It's a flexible grid system that allows developers to control how content is displayed on different screen sizes. Bootstrap's grid system can be used to render a website so that it looks good on desktops, tablets, and mobile devices.
+
+Bootstrap's grid system is based on 12 columns controlled by CSS classes. Each column can be scaled to a specific width to best display content on different devices. Bootstrap also provides different classes for displaying content on different device sizes, giving developers a flexible and customizable solution for displaying content on different devices.
+
+In Smartstore, the mobile-first approach is fully implemented with Bootstrap's CSS classes. All CSS classes provided by Bootstrap can be used in Smartstore to create HTML structures.
+
+{% hint style="info" %}
+For more information, see [Bootstrap](https://getbootstrap.com/docs/4.6/layout/overview/).
+{% endhint %}
 
 ## Icon Libraries
 
 ### Font Awesome
 
+Font Awesome is an icon library that provides high quality, scalable vector icons for use in websites and applications. The icons can be easily embedded using CSS classes and are available in different styles and sizes.
+
+One of the advantages of Font Awesome is that the icons are scalable, so they look good and fit well on different screen resolutions. In addition, the icons can be customized with CSS to match the design of the website. Font Awesome offers a wide range of icons for different areas such as social media, user interfaces, signs and much more.
+
+Font Awesome is fully integrated into Smartstore and can be used in all Razor views and CSS declarations.
+
+{% hint style="info" %}
+For more information, see [Font Awesome](https://fontawesome.com/icons).
+{% endhint %}
+
 #### Font Awesome Pro
+
+For licensing reasons, we cannot ship Font Awesome Pro directly. In order to use Font Awesome Pro, you must complete the following steps.
+
+* The `fa-use-pro` theme variable must be set to `true` in the `theme.config` file.
+* The Font Awesome Pro includes must be added to an appropriate location, such as `_Layout.cshtml`.
 
 ### Bootstrap Icons
 
+Bootstrap Icons is a library of graphics and icons designed specifically for the Bootstrap framework. They can be used in HTML and CSS code to add graphical elements to websites and mobile applications.
+
+Bootstrap icons are only available in Smartstore's backend, as the CSS for the frontend should remain as lightweight as possible.
+
+{% hint style="info" %}
+For more information, see [Bootstrap Icons](https://icons.getbootstrap.com/).
+{% endhint %}
+
 ### Fontastic
+
+Fontastic is another icon library that has been integrated into Smartstore. Since we also have to be careful not to overload the CSS in the frontend, we have made a special selection that is relevant for e-commerce.
+
+{% hint style="info" %}
+A full list of all available icons can be found in [fontastic.css](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Web/wwwroot/lib/fontastic/fontastic.css).
+{% endhint %}
