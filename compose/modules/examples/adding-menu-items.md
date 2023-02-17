@@ -1,10 +1,10 @@
 # ✔ Adding menu items
 
+Menus are UI components that make it easy for users to find and navigate to specific or even undiscovered content and features in the store. Building on the previous tutorial, you will add a menu item to the Admin menu.
+
 {% hint style="info" %}
 For a more in-depth look at menus, see [Menus](../../../framework/content/menus.md).
 {% endhint %}
-
-Menus are a very important tool for structuring the Smartstore interface. Building on the previous tutorial, you will add a menu item to the Admin menu.
 
 ## Adding a menu
 
