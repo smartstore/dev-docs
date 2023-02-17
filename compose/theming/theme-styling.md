@@ -1,4 +1,4 @@
-# Theme styling
+# 🥚 Theme styling
 
 ## Overview
 
@@ -6,7 +6,7 @@ To create a completely different look & feel of the store frontend, it is suffic
 
 ## theme.scss
 
-After `theme.config`, the most important file in a theme is theme.scss. It is the root Sass file that includes all other Sass files. Our Sass files are organized in a very granular way, representing each section of the store separately. For example, there is one file that contains all the CSS for the checkout process, one for the footer, one for the product detail page, and so on. A complete list of all included Sass files can be found below.
+After `theme.config`, the most important file in a theme is `theme.scss`. It is the root Sass file that includes all other Sass files. Our Sass files are organized in a very granular way, representing each section of the store separately. For example, there is one file that contains all the CSS for the checkout process, one for the footer, one for the product detail page, and so on. A complete list of all included Sass files can be found below.
 
 Bootstrap's Sass files are included very early in `theme.scss`, so you get access to Bootstrap's variables and mixins in later includes.
 
@@ -60,75 +60,40 @@ TODO
 
 ### Global / Shared
 
-| File | Description |
-| ---- | ----------- |
-|      |             |
-|      |             |
-|      |             |
-
-shared/\_colors.scss The Material Design color palette (commented out for performance reasons).
-
-shared/\_variables-shared.scss Used to define & override variables previously included by third-party libraries.
-
-shared/\_mixins.scss Contains our own mixins.
-
-shared/\_spacing.scss Mixins for responsive spacing (replaces the default Bootstrap spacing include).
-
-shared/\_typo.scss Defines typography styles.
-
-shared/\_fa.scss Contains custom styles for Font Awesome.
-
-shared/\_alert.scss Contains enhancements for Bootstrap's alert classes.
-
-shared/\_buttons.scss Contains enhancements for Bootstrap's button classes & introduces own button classes.
-
-shared/\_dropdown.scss Contains enhancements for Bootstrap's dropdown classes.
-
-shared/\_card.scss Contains enhancements for Bootstrap's card classes.
-
-shared/\_forms.scss Contains enhancements for Bootstrap's form classes.
-
-shared/\_numberinput.scss Styles for our own number input control.
-
-shared/\_breadcrumb.scss Contains enhancements for Bootstrap's breadcrumb classes.
-
-shared/\_pagination.scss Contains enhancements for Bootstrap's pagination classes.
-
-shared/\_nav.scss Contains enhancements for Bootstrap's Navbar classes & introduces own components based on Bootstraps Navbar classes.
-
-shared/\_nav-collapsible.scss Contains styles for a collapsible navbar.
-
-shared/\_modal.scss Contains enhancements for Bootstrap's modal classes.
-
-shared/\_throbber.scss Styles used by our throbber plugin.
-
-shared/\_spinner.scss Styles used by our throbber plugin.
-
-shared/\_star-rating.scss Styles to display beautiful stars for ratings.
-
-shared/\_sortable-grip.scss Styles to display a gripper.
-
-shared/\_choice.scss Styles to display our choice templates (used by Variants etc.)
-
-shared/\_offcanvas.scss Contains styles for our offcanvas components (e.g. Offcanvas-Cart)
-
-shared/\_sections.scss Contains styles to define theme colored sections.
-
-shared/\_bg.scss Contains declarations to be used as background classes.
-
-shared/\_custom-scrollbar.scss Defines a slimmer custom scrollbar.
-
-shared/\_box.scss Contains classes & effects used to display content in boxes (e.g. box image, box scale, box rise).
-
-shared/\_utils.scss Contains utility classes.
-
-shared/\_switch.scss Styles for our own (boolean) switch control.
-
-shared/\_media.scss Styles for media file display (in the context of Media Manager)
-
-shared/\_text-expander.scss Styles for our own text expander control.
-
-shared/\_entity-picker.scss Styles for our own entity picker control.
+| File                           | Description                                                                                                          |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| shared/\_colors.scss           | The Material Design color palette (commented out for performance reasons).                                           |
+| shared/\_variables-shared.scss | Used to define & override variables previously included by third-party libraries.                                    |
+| shared/\_mixins.scss           | Contains our own mixins.                                                                                             |
+| shared/\_spacing.scss          | Mixins for responsive spacing (replaces the default Bootstrap spacing include).                                      |
+| shared/\_typo.scss             | Defines typography styles.                                                                                           |
+| shared/\_fa.scss               | Contains custom styles for Font Awesome.                                                                             |
+| shared/\_alert.scss            | Contains enhancements for Bootstrap's alert classes.                                                                 |
+| shared/\_buttons.scss          | Contains enhancements for Bootstrap's button classes & introduces own button classes.                                |
+| shared/\_dropdown.scss         | Contains enhancements for Bootstrap's dropdown classes.                                                              |
+| shared/\_card.scss             | Contains enhancements for Bootstrap's card classes.                                                                  |
+| shared/\_forms.scss            | Contains enhancements for Bootstrap's form classes.                                                                  |
+| shared/\_numberinput.scss      | Styles for our own number input control.                                                                             |
+| shared/\_breadcrumb.scss       | Contains enhancements for Bootstrap's breadcrumb classes.                                                            |
+| shared/\_pagination.scss       | Contains enhancements for Bootstrap's pagination classes.                                                            |
+| shared/\_nav.scss              | Contains enhancements for Bootstrap's Navbar classes & introduces own components based on Bootstraps Navbar classes. |
+| shared/\_nav-collapsible.scss  | Contains styles for a collapsible navbar.                                                                            |
+| shared/\_modal.scss            | Contains enhancements for Bootstrap's modal classes.                                                                 |
+| shared/\_throbber.scss         | Styles used by our throbber plugin.                                                                                  |
+| shared/\_spinner.scss          | Styles used by our throbber plugin.                                                                                  |
+| shared/\_star-rating.scss      | Styles to display beautiful stars for ratings.                                                                       |
+| shared/\_sortable-grip.scss    | Styles to display a gripper.                                                                                         |
+| shared/\_choice.scss           | Styles to display our choice templates (used by Variants etc.)                                                       |
+| shared/\_offcanvas.scss        | Contains styles for our offcanvas components (e.g. Offcanvas-Cart)                                                   |
+| shared/\_sections.scss         | Contains styles to define theme colored sections.                                                                    |
+| shared/\_bg.scss               | Contains declarations to be used as background classes.                                                              |
+| shared/\_custom-scrollbar.scss | Defines a slimmer custom scrollbar.                                                                                  |
+| shared/\_box.scss              | Contains classes & effects used to display content in boxes (e.g. box image, box scale, box rise).                   |
+| shared/\_utils.scss            | Contains utility classes.                                                                                            |
+| shared/\_switch.scss           | Styles for our own (boolean) switch control.                                                                         |
+| shared/\_media.scss            | Styles for media file display (in the context of Media Manager)                                                      |
+| shared/\_text-expander.scss    | Styles for our own text expander control.                                                                            |
+| shared/\_entity-picker.scss    | Styles for our own entity picker control.                                                                            |
 
 ### Vendor component (skinning)
 
@@ -144,47 +109,26 @@ shared/\_entity-picker.scss Styles for our own entity picker control.
 
 ### Main
 
-| File | Description |
-| ---- | ----------- |
-|      |             |
-|      |             |
-|      |             |
-
-\_layout.scss Contains general layout styles.
-
-\_block.scss Contains styles to be used when a topic is rendered as a widget and should be wrapped by a container.
-
-\_shopbar.scss Contains styles used by the shopbar.
-
-\_footer.scss Contains styles used in the footer.
-
-\_menu.scss Contains styles used by menus.
-
-\_megamenu.scss Contains styles used by the mega menu.
-
-\_search.scss Contains styles used in instant search and search result page.
-
-\_login.scss Contains styles used on the login page.
-
-\_rating.scss Contains styles used for reviews and ratings.
-
-\_artlist.scss Contains styles used to display article lists.
-
-\_product.scss Contains styles used on product pages.
-
-\_gallery.scss Contains styles used by the Media Gallery on product pages.
-
-\_cart.scss Contains styles used on the shopping cart page.
-
-\_checkout.scss Contains styles used in the checkout process.
-
-\_accordion.scss Contains styles used to display an accordion.
-
-\_cookie-manager.scss Contains styles used by the Cookie Manager window.
-
-\_misc.scss Contains various styles that do not fit anywhere else.
-
-\_print.scss Contains styles used when printing documents.
+| File                  | Description                                                                                           |
+| --------------------- | ----------------------------------------------------------------------------------------------------- |
+| \_layout.scss         | Contains general layout styles.                                                                       |
+| \_block.scss          | Contains styles to be used when a topic is rendered as a widget and should be wrapped by a container. |
+| \_shopbar.scss        | Contains styles used by the shopbar.                                                                  |
+| \_footer.scss         | Contains styles used in the footer.                                                                   |
+| \_menu.scss           | Contains styles used by menus.                                                                        |
+| \_megamenu.scss       | Contains styles used by the mega menu.                                                                |
+| \_search.scss         | Contains styles used in instant search and search result page.                                        |
+| \_login.scss          | Contains styles used on the login page.                                                               |
+| \_rating.scss         | Contains styles used for reviews and ratings.                                                         |
+| \_artlist.scss        | Contains styles used to display article lists.                                                        |
+| \_product.scss        | Contains styles used on product pages.                                                                |
+| \_gallery.scss        | Contains styles used by the Media Gallery on product pages.                                           |
+| \_cart.scss           | Contains styles used on the shopping cart page.                                                       |
+| \_checkout.scss       | Contains styles used in the checkout process.                                                         |
+| \_accordion.scss      | Contains styles used to display an accordion.                                                         |
+| \_cookie-manager.scss | Contains styles used by the Cookie Manager window.                                                    |
+| \_misc.scss           | Contains various styles that do not fit anywhere else.                                                |
+| \_print.scss          | Contains styles used when printing documents.                                                         |
 
 ### Custom imports from modules
 
