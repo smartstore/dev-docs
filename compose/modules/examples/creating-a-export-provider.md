@@ -8,7 +8,7 @@ To learn more about exporting, see [Export](../../../framework/platform/export.m
 
 ## Create a configuration
 
-If you want to customize your export provider, you must configure it. This step is optional. There are three things to configure:
+If you want to be able to customize your export provider, you must add a configuration -model, -view and -ViewComponent. This step is optional. There are three things to configure:
 
 1. The `ProfileConfigurationModel` that describes the configurable data.
 2. The `HelloWorldConfigurationViewComponent`, which converts stored data into usable formats for your view.
