@@ -2,9 +2,14 @@
 
 ## Overview
 
-A Smartstore theme is a collection of Sass files, Razor views, images and scripts. In short, everything you need to create websites. Themes can be selected and customized by the store owner using the Theme Configurator (**Admin / Configuration / Themes**). Operators can modify them by configuring theme variables in the Theme Configurator. It is possible to set differing colors, font sizes, margins and much more.
+A Smartstore theme is a collection of Sass files, Razor views, images and scripts. In short, everything you need to create websites. Themes can be selected and customized by the store owner using the Theme Configurator (**Admin / Configuration / Themes**). Owners can modify them by configuring theme variables in the Theme Configurator. It is possible to set differing colors, font sizes, margins and much more.
 
-We put a lot of effort into making the theming engine easy, flexible and convenient to use. By using techniques such as multi-level theme inheritance, an integrated Sass compiler (which automatically translates all changes made to Sass files into CSS at runtime in an intelligent and highly performant way), we have managed to make creating themes in Smartstore very easy.
+We have put a lot of effort into developing the Theming Engine so that creating themes is easy, flexible and convenient to use. In addition, we have managed to make creating themes in Smartstore very easy by using techniques such as:
+
+* Multi-level theme inheritance
+* An integrated Sass compiler, that automatically translates all changes made to Sass files into CSS at runtime in an intelligent and highly performant way.
+* A CSS Autoprefixer
+* Using modern grid systems, Icon libraries and many more.
 
 Thanks to **multi-level theme inheritance**, it is possible to inherit from a base theme or from a theme that has inherited from another theme. This way, there is no need to start from scratch when developing a theme. Just use the existing components and change only what needs to be changed as you build the theme.
 
@@ -18,11 +23,11 @@ Sass files are automatically compiled at runtime using the **built-in Sass parse
 
 To keep static files as small as possible, Smartstore minifies JavaScript, Sass, and CSS files. Files are packaged into **bundles**, which combine multiple physical files of a web project into one and are minified.
 
-Vendor-specific prefixes are added to CSS declarations in Sass files by an **autoprefixer**.
+An **autoprefixer** adds vendor-specific prefixes to CSS declarations coming from the Sass parser.
 
-Smartstore is built using the [MVC-Pattern](https://learn.microsoft.com/en-us/aspnet/core/mvc/overview?view=aspnetcore-7.0). This pattern specifies that the HTML output is provided by views. Views are Razor files located in the subdirectories of the web project's _Views_ directory. They can be easily overwritten at the theme level without having to worry about preparing the model or deploying actions.
+Smartstore is built using the [MVC-Pattern](https://learn.microsoft.com/en-us/aspnet/core/mvc/overview?view=aspnetcore-7.0). This pattern specifies that the HTML output is provided by views. Views are Razor files located in the subdirectories of the web project's _Views_ directory. They can be easily overwritten at the theme level without having to worry about preparing the model or implementing actions.
 
-Even more developing convenience is provided by 3rd party components. Among others, Smartstore has integrated:
+Widely used third-party components make development even easier. Among others, Smartstore has integrated:
 
 * [Bootstrap](getting-started-with-themes.md#bootstrap): Very useful for creating HTML structures with its classes.
 * [jQuery](getting-started-with-themes.md#jquery): Simplifies DOM element selection and provides browser polyfills.
@@ -64,17 +69,17 @@ Smartstore has a setting for this feature that is enabled by default. If you wan
 
 [Sass](https://sass-lang.com/) is a CSS preprocessor, which means it extends the CSS language by adding features like variables, mixins, functions, and many other techniques. These allow you to create CSS that is more maintainable, themable, and extensible.
 
-In Smartstore, CSS declarations are declared in in `.scss` files. This way Sass variables and functions can be used. Sass is automatically translated into CSS by the built-in Sass parser, so any browser can render it, unlike Sass.
+Smartstore uses `.scss` files for CSS declarations. They provide a way to use Sass variables and functions. At runtime, Sass is automatically translated into CSS by the built-in Sass parser, which, unlike Sass, can be read by any browser.
 
-Smartstore's built-in `FileWatcher` keeps track of all changes made to the included Sass files while the application is running. When changes are made, the cache is automatically cleared and the Sass files are retranslated into CSS. This provides a convenient, time-saving way to check for CSS changes on page refresh without having to restart the application.
+Smartstore's built-in `FileWatcher` keeps track of all changes made to the included Sass files while the application is running. When a change is detected, the cache is automatically cleared and the Sass files are retranslated into CSS. This provides you with a convenient, time-saving way to check for CSS changes on page refresh without having to restart the application.
 
 ### AutoPrefixer
 
-[Vendor prefixes](https://developer.mozilla.org/en-US/docs/Glossary/Vendor\_Prefix) are a part of CSS that can be added to certain properties and values. They enable experimental, non-standard features in different browsers. For example, the `-webkit-` prefix is used for properties and values supported by WebKit browsers (Google, Safari, ...), and Mozilla Firefox uses the `-moz-` prefix.
+[Vendor prefixes](https://developer.mozilla.org/en-US/docs/Glossary/Vendor\_Prefix) are a part of CSS that is added to certain properties and values. They enable experimental, non-standard features in different browsers. For example, the `-webkit-` prefix is used for properties and values supported by WebKit browsers (Google, Safari, etc.), and Mozilla Firefox uses the `-moz-` prefix.
 
 Without using a tool like CSS Autoprefixer, you would have to take care of adding the correct prefixes yourself. This can be tedious and error-prone.
 
-To ensure compatibility with different browsers, Smartstore has a built-in CSS autoprefixer. It is enabled in production mode, but not in debugging mode. This allows you to write CSS code without having to add vendor prefixes yourself, as the tool will add them automatically. It uses the latest available [Can I Use](https://caniuse.com/) data to add the prefix to each corresponding CSS property and value.
+To ensure compatibility with different browsers, Smartstore has a built-in CSS autoprefixer. It is enabled in production mode, but not in debug mode. This allows you to write CSS code without having to add vendor prefixes yourself, as the tool will add them automatically. It uses the latest available [Can I Use](https://caniuse.com/) data to add the prefix to each corresponding CSS property and value.
 
 By using the CSS Autoprefixer, developers can rest assured that all CSS styles will display correctly in all major browsers. They can focus on designing the site without worrying about compatibility.
 
@@ -125,7 +130,13 @@ For more information, see [Font Awesome](https://fontawesome.com/icons).
 For licensing reasons, we cannot ship Font Awesome Pro directly. In order to use Font Awesome Pro, you must complete the following steps.
 
 * The `fa-use-pro` theme variable must be set to `true` in the `theme.config` file.
-* The Font Awesome Pro includes must be added to an appropriate location, such as `_Layout.cshtml`.
+* The Font Awesome Pro includes must be added to an appropriate location, such as `_Layout.cshtml`:
+
+```cshtml
+<link sm-target-zone="head_links" rel="preconnect" href="https://pro.fontawesome.com" />
+
+<link sm-target-zone="stylesheets" rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css" integrity="your key" crossorigin="anonymous" />
+```
 
 ### Bootstrap Icons
 
