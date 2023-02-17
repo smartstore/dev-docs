@@ -8,7 +8,7 @@ To create a completely different look & feel of the store frontend, it is suffic
 
 After `theme.config`, the most important file in a theme is `theme.scss`. It is the root Sass file that includes all other Sass files. Our Sass files are organized in a very granular way, representing each section of the store separately. For example, there is one file that contains all the CSS for the checkout process, one for the footer, one for the product detail page, and so on. A complete list of all included Sass files can be found below.
 
-Bootstrap's Sass files are included very early in `theme.scss`, so you get access to Bootstrap's variables and mixins in later includes.
+Bootstrap's Sass files are included very early in `theme.scss`, so you get access to Bootstrap's variables and mixins in subsequent includes.
 
 So it's possible to use the mixins provided by Bootstrap for responsive rendering everywhere:
 
