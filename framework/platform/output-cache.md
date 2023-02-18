@@ -49,10 +49,32 @@ But, nevertheless, when developing custom modules for Smartstore, it's important
     * Because in the cached outer layer, the component output is replaced by a JSON representation of the component metadata and actual `Invoke` arguments.
   * But if the component is made cacheable, you don't have to care about parameter limitations ('cause the output is **not** removed for later substitution / is cached along with the outer layer).
   * WARN: Never ever make a component cacheable if it somehow displays user-related data (like cart for example). Another user could see it when it comes from cache.
+  * HINT: backend pages are never cached, only frontend pages.
 * Here's how you specify cacheable routes for your module:
   * Add a class that implements [ICacheableRouteProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/OutputCache/ICacheableRouteProvider.cs). By convention we call it `CacheableRoutes` and make it internal. No need for DI registration.
-  * _SAMPLE_
-  * HINT: backend pages are never cached, only frontend pages.
+  * Example:
+
+```csharp
+internal sealed class CacheableRoutes : ICacheableRouteProvider
+{
+    public int Order => 0;
+
+    public IEnumerable<string> GetCacheableRoutes()
+    {
+        return new string[]
+        {
+            // Full pages: {ModuleSystemName}/{Controller}/{Action}
+            "BlogModule/Blog/List",
+            "BlogModule/Blog/BlogByTag",
+            "BlogModule/Blog/BlogByMonth",
+            "BlogModule/Blog/BlogPost",
+            // View components: vc:/{ModuleSystemName}/{ComponentShortName}
+            "vc:BlogModule/BlogSummaryList",
+            "vc:BlogModule/BlogSummary"
+        };
+    }
+}
+```
 
 ## Display control
 
@@ -97,6 +119,59 @@ public override void ConfigureServices(
 * The invalidation observer allows registration of custom output cache invalidation handlers for more complex scenarios
 * It allows registration of entity and setting observe handlers
 * The service is the singleton [IOutputCacheInvalidationObserver](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/OutputCache/IOutputCacheInvalidationObserver.cs):
-  * `ObserveEntity(Func<ObserveEntityContext, Task>)` registers a handler for an **entity type**&#x20;
-  * `ObserveSetting(string, Func<IOutputCacheProvider, Task>)` registers a handler for a **setting**&#x20;
-* TBD: SAMPLE with Blog and detailed explanation
+  * `ObserveEntity(Func<ObserveEntityContext, Task>)` registers an observer for an **entity type**. The passed observer is responsible for invalidating the cache by calling one of the invalidation methods in the `IOutputCacheProvider` instance. The observer must then set the property `ObserveEntityContext.Handled` to `true` to signal the framework that it should skip executing subsequent observers.
+  * `ObserveSetting(string, Func<IOutputCacheProvider, Task>)` registers an observer for a **setting key**. If the value for the passed setting key changes, the framework calls the `invalidationAction` handler. The key can either be fully qualified - e.g. "CatalogSettings.ShowProductSku" -, or prefixed - e.g. "CatalogSettings.\*". The latter calls the invalidator when ANY _CatalogSetting_ changes.
+* The best place to register observers is the `BuildPipeline` method of your starter class. Example:
+
+```csharp
+public override void BuildPipeline(RequestPipelineBuilder builder)
+{
+    // Resolve instance of singleton IOutputCacheInvalidationObserver
+    var observer = builder.ApplicationBuilder.ApplicationServices
+        .GetRequiredService<IOutputCacheInvalidationObserver>();
+    
+    // If any blog setting changes, invalidate all blog pages
+    observer.ObserveSettings<BlogSettings>(PurgeBlog);
+    
+    // If the BlogSettings.Enabled property changes, then invalidate ALL
+    // cached pages (whether blog or not). Because it is very likely
+    // that a global a menu item in the page header is being affected by this.
+    observer.ObserveSettingProperty<BlogSettings>(x => x.Enabled);
+    
+    // Register BlogPost entity change observer
+    observer.ObserveEntity(BlogPostObserver);
+}
+
+private static async Task BlogPostObserver(ObserveEntityContext context)
+{
+    // We gonna check if any visibility affecting property name
+    // was changed and - if true - invalidate ALL blog list pages also.
+    
+    if (context.Entity is not BlogPost)
+        return;
+        
+    if (context.EntityEntry.InitialState == Data.EntityState.Modified)
+    {
+        var toxicPropNames = BlogPost.GetVisibilityAffectingPropertyNames();
+        var modProps = context.EntityEntry.Entry.GetModifiedProperties();
+        if (modProps.Keys.Any(x => toxicPropNames.Contains(x)))
+        {
+            await context.OutputCacheProvider.InvalidateByRouteAsync(
+                "BlogModule/Blog/List",
+                "BlogModule/Blog/BlogByTag",
+                "BlogModule/Blog/BlogByMonth",
+                "BlogModule/Blog/BlogPost");
+        }
+    }
+}
+
+// Delete all pages that are asscoiated with blog routes from cache
+private static Task PurgeBlog(IOutputCacheProvider provider)
+{
+    return provider.InvalidateByRouteAsync(
+        "BlogModule/Blog/List",
+        "BlogModule/Blog/BlogByTag",
+        "BlogModule/Blog/BlogByMonth",
+        "BlogModule/Blog/BlogPost");
+}
+```
