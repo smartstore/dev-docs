@@ -107,7 +107,6 @@
   * [🥚 Theme styling](compose/theming/theme-styling.md)
   * [🥚 Theme inheritance](compose/theming/theme-inheritance.md)
   * [🥚 Asset bundling](compose/theming/asset-bundling.md)
-  * [Injecting content](compose/theming/injecting-content.md)
   * [✔ Tag Helpers](compose/theming/tag-helpers.md)
 
 ## Appendix
