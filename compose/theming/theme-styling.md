@@ -10,7 +10,7 @@ After `theme.config`, the most important file in a theme is `theme.scss`. It is 
 
 Bootstrap's Sass files are included very early in `theme.scss`, so you get access to Bootstrap's variables and mixins in subsequent includes.
 
-So it's possible to use the mixins provided by Bootstrap for responsive rendering everywhere:
+For example, it's possible to use the mixins provided by Bootstrap for responsive rendering everywhere:
 
 ```scss
 @include media-breakpoint-up(lg) {
@@ -20,10 +20,7 @@ So it's possible to use the mixins provided by Bootstrap for responsive renderin
 
 ## AutoPrefixer
 
-TODO
-
-* Not processed in Debug mode (perf)
-* But in production
+Smartstore has an integrated CSS autoprefixer to ensure compatibility with different browsers. It is enabled in production mode, but not in debug mode. This allows writing CSS code without vendor prefixes, because the Autoprefixer adds them automatically. It uses the latest available [Can I Use](https://caniuse.com/) data to add the prefix to each corresponding CSS property and value.
 
 ## All `.scss` files in Flex
 
@@ -80,7 +77,7 @@ TODO
 | shared/\_nav-collapsible.scss  | Contains styles for a collapsible navbar.                                                                            |
 | shared/\_modal.scss            | Contains enhancements for Bootstrap's modal classes.                                                                 |
 | shared/\_throbber.scss         | Styles used by our throbber plugin.                                                                                  |
-| shared/\_spinner.scss          | Styles used by our throbber plugin.                                                                                  |
+| shared/\_spinner.scss          | Styles for a spinner that uses the entire available space of the browser window.                                     |
 | shared/\_star-rating.scss      | Styles to display beautiful stars for ratings.                                                                       |
 | shared/\_sortable-grip.scss    | Styles to display a gripper.                                                                                         |
 | shared/\_choice.scss           | Styles to display our choice templates (used by Variants etc.)                                                       |
