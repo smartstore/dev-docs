@@ -38,50 +38,57 @@ View resolution in ASP.NET Core MVC is the process of mapping a view name to a p
 
 We've improved the process of finding views to search in the _Views_ directory of the theme being used, as well as in the base themes. If no views are found in these theme directories, a fallback is made to the _Views_ directory of the Smartstore.Web project.
 
-### View resolution pipeline
+### Pipeline
 
 Below is the exact order in which a Razor view is searched in the file system.
 
-```
 General:
-Own Theme > Views/{ControllerName}/{ActionName}.cshtml
-Own Theme > Views/Shared/{ActionName}.cshtml
-Base Themes > Views/{ControllerName}/{ActionName}.cshtml
-Base Themes > Views/Shared/{ActionName}.cshtml
-SmartStore.Web > Views/{ControllerName}/{ActionName}.cshtml
-SmartStore.Web > Views/Shared/{ActionName}.cshtml
+
+1. {Own Theme}/Views/{ControllerName}/{ActionName}.cshtml
+2. {Own Theme}/Views/Shared/{ActionName}.cshtml
+3. {Base Themes}/Views/{ControllerName}/{ActionName}.cshtml
+4. {Base Themes}/Views/Shared/{ActionName}.cshtml
+5. SmartStore.Web/Views/{ControllerName}/{ActionName}.cshtml
+6. SmartStore.Web/Views/Shared/{ActionName}.cshtml
 
 Modules:
-Own Theme > Modules/MyModulePath/Views/{ControllerName}/{ActionName}.cshtml
-Own Theme > Modules/MyModulePath/Views/Shared/{ActionName}.cshtml
-	    Modules/MyModulePath/Views/{ControllerName}/{ActionName}.cshtml
-	    Modules/MyModulePath/Views/Shared/{ActionName}.cshtml
+
+7. {Own Theme}/Modules/MyModulePath/Views/{ControllerName}/{ActionName}.cshtml
+8. {Own Theme}/Modules/MyModulePath/Views/Shared/{ActionName}.cshtml
+9. Modules/MyModulePath/Views/{ControllerName}/{ActionName}.cshtml
+10. Modules/MyModulePath/Views/Shared/{ActionName}.cshtml
 
 Partials & Layouts:
-Own Theme > Views/{ControllerName}/Partials/{ActionName}.cshtml
-Own Theme > Views/Shared/Partials/{ActionName}.cshtml
-Base Themes > Views/{ControllerName}/Partials/{ActionName}.cshtml
-Base Themes > Views/Shared/Partials/{ActionName}.cshtml
-SmartStore.Web > Views/{ControllerName}/Partials/{ActionName}.cshtml
-SmartStore.Web > Views/Shared/Partials/{ActionName}.cshtml
 
-Own Theme > Modules/MyModulePath/Views/{ControllerName}/Partials/{ActionName}.cshtml
-Own Theme > Modules/MyModulePath/Views/Shared/Partials/{ActionName}.cshtml
-	    Modules/MyModulePath/Views/{ControllerName}/Partials/{ActionName}.cshtml
-	    Modules/MyModulePath/Views/Shared/Partials/{ActionName}.cshtml
+11. {Own Theme}/Views/{ControllerName}/Partials/{ActionName}.cshtml
+12. {Own Theme}/Views/Shared/Partials/{ActionName}.cshtml
+13. {Base Themes}/Views/{ControllerName}/Partials/{ActionName}.cshtml
+14. {Base Themes}/Views/Shared/Partials/{ActionName}.cshtml
+15. SmartStore.Web/Views/{ControllerName}/Partials/{ActionName}.cshtml
+16. SmartStore.Web/Views/Shared/Partials/{ActionName}.cshtml
 
-Own Theme > Views/{ControllerName}/Layouts/{ActionName}.cshtml
-Own Theme > Views/Shared/Layouts/{ActionName}.cshtml
-Base Themes > Views/{ControllerName}/Layouts/{ActionName}.cshtml
-Base Themes > Views/Shared/Layouts/{ActionName}.cshtml
-SmartStore.Web > Views/{ControllerName}/Layouts/{ActionName}.cshtml
-SmartStore.Web > Views/Shared/Layouts/{ActionName}.cshtml
 
-Own Theme > Modules/MyModulePath/Views/{ControllerName}/Layouts/{ActionName}.cshtml
-Own Theme > Modules/MyModulePath/Views/Shared/Layouts/{ActionName}.cshtml
-	    Modules/MyModulePath/Views/{ControllerName}/Layouts/{ActionName}.cshtml
-	    Modules/MyModulePath/Views/Shared/Layouts/{ActionName}.cshtml
-```
+
+17. {Own Theme}/Modules/MyModulePath/Views/{ControllerName}/Partials/{ActionName}.cshtml
+18. {Own Theme}/Modules/MyModulePath/Views/Shared/Partials/{ActionName}.cshtml
+19. Modules/MyModulePath/Views/{ControllerName}/Partials/{ActionName}.cshtml
+20. Modules/MyModulePath/Views/Shared/Partials/{ActionName}.cshtml
+
+
+
+21. {Own Theme}/Views/{ControllerName}/Layouts/{ActionName}.cshtml
+22. {Own Theme}/Views/Shared/Layouts/{ActionName}.cshtml
+23. {Base Themes}/Views/{ControllerName}/Layouts/{ActionName}.cshtml
+24. {Base Themes}/Views/Shared/Layouts/{ActionName}.cshtml
+25. SmartStore.Web/Views/{ControllerName}/Layouts/{ActionName}.cshtml
+26. SmartStore.Web/Views/Shared/Layouts/{ActionName}.cshtml
+
+
+
+27. {Own Theme}/Modules/MyModulePath/Views/{ControllerName}/Layouts/{ActionName}.cshtml
+28. {Own Theme}/Modules/MyModulePath/Views/Shared/Layouts/{ActionName}.cshtml
+29. Modules/MyModulePath/Views/{ControllerName}/Layouts/{ActionName}.cshtml
+30. Modules/MyModulePath/Views/Shared/Layouts/{ActionName}.cshtml
 
 ### Localized Views
 
