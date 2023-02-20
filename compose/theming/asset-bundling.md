@@ -44,7 +44,7 @@ internal class Bundles : IBundleProvider
     {
         var cssRoot = "/Modules/Smartstore.MyModule/css/";
 
-        bundles.Add(new ScriptBundle("/bundle/js/my-module.css").Include(
+        bundles.Add(new StyleBundle("/bundle/js/my-module.css").Include(
             jsRoot + "my-styles-1.scss",
             jsRoot + "my-styles-2.scss",
 	    jsRoot + "my-styles-n.jscss"));
@@ -52,7 +52,7 @@ internal class Bundles : IBundleProvider
 }
 ```
 
-When a request is made, all included Sass or CSS files are now combined into one (`my-module.css`) and returned in a minified form. Additionally, the autoprefixer is enabled here and adds any vendor-specific prefixes to the CSS declarations.
+When a request is made, all included Sass or CSS files are now combined into one (`my-module.css`) and returned in a minified form. In addition, the autoprefixer adds vendor-specific prefixes to the CSS declarations.
 
 ### Settings
 
