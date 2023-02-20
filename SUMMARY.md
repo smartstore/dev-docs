@@ -102,11 +102,11 @@
     * [✔ Creating an Export provider](compose/modules/examples/creating-a-export-provider.md)
     * [🥚 Creating a Domain entity](compose/modules/examples/creating-a-domain-entity.md)
 * [Theming](compose/theming/README.md)
-  * [🥚 Getting started with themes](compose/theming/getting-started-with-themes.md)
-  * [🥚 Theme configuration](compose/theming/theme-configuration.md)
-  * [🥚 Theme styling](compose/theming/theme-styling.md)
-  * [🥚 Theme inheritance](compose/theming/theme-inheritance.md)
-  * [🥚 Asset bundling](compose/theming/asset-bundling.md)
+  * [🐣 Getting started with themes](compose/theming/getting-started-with-themes.md)
+  * [🐣 Theme configuration](compose/theming/theme-configuration.md)
+  * [🐣 Theme styling](compose/theming/theme-styling.md)
+  * [🐣 Theme inheritance](compose/theming/theme-inheritance.md)
+  * [🐣 Asset bundling](compose/theming/asset-bundling.md)
   * [✔ Tag Helpers](compose/theming/tag-helpers.md)
 
 ## Appendix
