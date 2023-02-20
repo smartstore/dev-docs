@@ -2,7 +2,7 @@
 description: Improve performance and scalability
 ---
 
-# 🐣 Output Cache
+# 🥚 Output Cache
 
 ## Concept
 
@@ -32,8 +32,8 @@ But, nevertheless, when developing custom modules for Smartstore, it's important
 * A cacheable route represents the stringified route to a page or a view component (route identifier)
 * Output caching is always opt-in: only explicitly specified routes are candidates. Meaning: if you develop a module and do not setup any caching stuff, nothing will be cached.
 * The route identifier looks like this:
-  * **Full page** route pattern: `[{Module}/]{ControllerShortName}/{Action}`. _Module_ must be omitted if controller is part of the application core. Example: `Smartstore.Blog/Blog/List`, `Catalog/Category`
-  * **View component** route pattern: `vc:[{Module}/]{ComponentShortName}`. _Module_ must be omitted if component is part of the application core. Example: `vc:SearchBox`, `vc:Smartstore.Blog/BlogSummary`.
+  * **Full page** route pattern: `[{Module}/]{ControllerShortName}/{Action}`. Module must be omitted if controller is part of the application core. Example: `Smartstore.Blog/Blog/List`, `Catalog/Category`
+  * **View component** route pattern: `vc:[{Module}/]{ComponentShortName}`. Module must be omitted if component is part of the application core. Example: `vc:SearchBox`, `vc:Smartstore.Blog/BlogSummary`.
 * If any **full page** route pattern matches the current request route, the generated page will be saved in cache.&#x20;
 * Several pieces of environmental information are used to compute the cache entry key (so that the cached entry varies by them):
   * Path and query string
