@@ -14,7 +14,7 @@ We have structured our CSS, JavaScript, and Razor View files in a very granular 
 
 If you want to change the HTML structure of the footer, first find the Razor view that is responsible for rendering in the Smartstore.Web project. In this case, it is _\Views\Shared\Components\Footer\Default.cshtml_.
 
-Copy this file to the exact same path in your theme. Now you can isolate your changes in this file without encountering merge conflicts during upgrades. The file in the _Smartstore.Web_ project is now completely ignored. The theme file is used instead.
+Copy this file to the exact same path in your theme. Now you can isolate your changes in this file without encountering merge conflicts during upgrades. The file in the _Smartstore.Web_ project is now completely ignored. The file located in the theme is used instead.
 
 {% hint style="info" %}
 If you work with an isolated theme and make graphical changes to the layout of your store, you have the advantage of being able to easily upgrade the base theme to a higher version when you upgrade. You will have the latest code from the higher version, and your changes will remain largely the same as before the update, since CSS selectors rarely change.
