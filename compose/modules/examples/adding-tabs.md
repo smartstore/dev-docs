@@ -84,6 +84,7 @@ public async Task<IActionResult> AdminEditTab(int entityId)
         MyTabValue = product.GenericAttributes.Get<string>("HelloWorldMyTabValue")
     };
     
+    // Very important for proper model binding.
     ViewData.TemplateInfo.HtmlFieldPrefix = "CustomProperties[MyTab]";
     return View(model);
 }
@@ -113,6 +114,9 @@ using Smartstore.Web.Modelling;
 
 namespace MyOrg.HelloWorld.Models
 {
+    // This attribute must be added for proper model binding.
+    // We've implemented it for security reasons. 
+    // Explaining this is beyond the scope of this tutorial.
     [CustomModelPart]
     public class AdminEditTabModel : ModelBase
     {
@@ -134,6 +138,7 @@ Please also place the localized values for this model in the [corresponding XML 
     Layout = "";
 }
 
+<!-- Very important for proper model binding. -->
 <input type="hidden" name="CustomProperties[MyTab].__Type__" value="@Model.GetType().AssemblyQualifiedName" />
 <input type="hidden" asp-for="EntityId" />
 
