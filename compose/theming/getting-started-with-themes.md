@@ -125,9 +125,15 @@ Font Awesome is fully integrated into Smartstore and can be used in all Razor vi
 For more information, see [Font Awesome](https://fontawesome.com/icons).
 {% endhint %}
 
+#### Font Awesome Free
+
+The free version of Font Awesome contains a subset of icons. All solid and few regular icons are included, but none of the light icons.
+
+To keep the store's look consistent, all icons are set to solid, then all supported regular icons are set back to regular. This ensures that all icons are displayed, although perhaps not in the preferred style, if you accidentally use a light icon or an unsupported regular icon.
+
 #### Font Awesome Pro
 
-For licensing reasons, we cannot ship Font Awesome Pro directly. In order to use Font Awesome Pro, you must complete the following steps.
+The professional version of Font Awesome removes the icon limitations and includes all solid, regular and light icons. For licensing reasons, we cannot ship Font Awesome Pro directly. In order to use Font Awesome Pro, you must complete the following steps.
 
 * The `fa-use-pro` theme variable must be set to `true` in the `theme.config` file.
 * The Font Awesome Pro includes must be added to an appropriate location, such as `_Layout.cshtml`:
