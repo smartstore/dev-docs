@@ -1,4 +1,4 @@
-# 🥚 Getting started with themes
+# 🐣 Getting started with themes
 
 ## Overview
 
@@ -125,15 +125,34 @@ Font Awesome is fully integrated into Smartstore and can be used in all Razor vi
 For more information, see [Font Awesome](https://fontawesome.com/icons).
 {% endhint %}
 
+#### Default font-weight
+
+All icons come in one of four `font-weight` classes. Their default values are set by `$icon-font-weight-default` and `$icon-font-variants`. Changing these values has no effect in the free version.
+
+| Class   | Prefix  | Sass variable                   | Default font-weight |
+| ------- | ------- | ------------------------------- | ------------------- |
+| Neutral | fa      | $icon-font-weight-default       | 900                 |
+| Solid   | fa**s** | $icon-font-variants\["solid"]   | 900                 |
+| Regular | fa**r** | $icon-font-variants\["regular"] | 400                 |
+| Light   | fa**l** | $icon-font-variants\["light"]   | 300                 |
+
 #### Font Awesome Free
 
 The free version of Font Awesome contains a subset of icons. All solid and few regular icons are included, but none of the light icons.
 
-To keep the store's look consistent, all icons are set to solid, then all supported regular icons are set back to regular. This ensures that all icons are displayed, although perhaps not in the preferred style, if you accidentally use a light icon or an unsupported regular icon.
+To keep the store's look consistent, the `font-weight` of all icons is set to `900`, then all supported regular icons are set back to `400`. This ensures that all icons are displayed, although perhaps not in the preferred style, if you accidentally use a light icon or an unsupported regular icon.
+
+{% hint style="info" %}
+The `font-weight` value for neutral icons is not affected.
+{% endhint %}
 
 #### Font Awesome Pro
 
-The professional version of Font Awesome removes the icon limitations and includes all solid, regular and light icons. For licensing reasons, we cannot ship Font Awesome Pro directly. In order to use Font Awesome Pro, you must complete the following steps.
+The professional version of Font Awesome removes the icon limitations and includes all solid, regular and light icons.
+
+Solid, regular and light icons all follow their font-weight values from `$icon-font-variants`. The `font-weight` of all neutral icons is set to `$icon-font-weight-default` unless it is not set to `900`.
+
+For licensing reasons, we cannot ship Font Awesome Pro directly. In order to use Font Awesome Pro, you must complete the following steps.
 
 * The `fa-use-pro` theme variable must be set to `true` in the `theme.config` file.
 * The Font Awesome Pro includes must be added to an appropriate location, such as `_Layout.cshtml`:
