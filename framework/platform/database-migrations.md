@@ -1,12 +1,12 @@
-# 🐣 Database Migrations
+# 🐥 Database Migrations
 
 ## Overview
 
-Migrations are a structured way to alter a database schema and required when changes need to be made to the Smartstore's database tables or new tables need to be added. Migrations can be in the Smartstore core or in a module, depending on who created the related entity.
+Migrations are a structured way to alter a database schema and are required when changes need to be made to Smartstore's database tables or when new tables need to be added. Migrations can be found in the Smartstore core or in a module, depending on who created the related entity.
 
-Smartstore uses [Fluent Migrator](https://fluentmigrator.github.io/) as a framework for database migrations. Fluent Migrator supports numerous database systems such as SQL Server, MySQL or PostgreSQL where migrations are described in C# classes that can be checked into the Fluent Migrator version control system.
+Smartstore uses [Fluent Migrator](https://fluentmigrator.github.io/) as a database migrations framework. Fluent Migrator supports many database systems such as SQL Server, MySQL or PostgreSQL, where migrations are described in C# classes that can be checked into the Fluent Migrator version control system.
 
-Fluent Migrator can also write data into the database or update existing data, but this is more comfortable with the help of [IDataSeeder](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Migrations/IDataSeeder.cs) or its abstract implementation [DataSeeder](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Data/Migrations/DataSeeder%60T.cs).
+Fluent Migrator can also write data to the database or update existing data, but this is more convenient using [IDataSeeder](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Data/Migrations/IDataSeeder.cs) or its abstract implementation [DataSeeder](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Data/Migrations/DataSeeder%60T.cs).
 
 {% hint style="info" %}
 Smartstore prefers Fluent Migrator over EF Core Migrations, because EF Migrations does not support database provider agnostic tooling and schema definition.
@@ -14,11 +14,13 @@ Smartstore prefers Fluent Migrator over EF Core Migrations, because EF Migration
 
 ## Database Migrator
 
-[DbMigrator](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Data/Migrations/DbMigrator%60T.cs) is responsible for performing migrations. `MigrateAsync` is used to migrate the database to a specified version or to the latest, if no version is specified.
+[DbMigrator](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Data/Migrations/DbMigrator%60T.cs) is responsible for performing migrations. `MigrateAsync` is used to migrate the database to a specified version, or to the latest, if none is specified.
 
-WARN: `MigrateAsync` has an assembly parameter to perform only those migrations of a specific module. In general, this should always be set. If it is `null`, the migrations of _all_ modules are executed!
+{% hint style="warning" %}
+`MigrateAsync` has an assembly parameter to perform only those migrations of a specific module. This should always be set. If it is `null`, the migrations of _all_ modules are executed!
+{% endhint %}
 
-Following `MigrateAsync` downgrades all migrations of a certain module. It allows to remove all changes made by the module to the database schema.
+After that `MigrateAsync` downgrades all migrations of a certain module. It allows to remove all changes made by the module to the database schema.
 
 ```csharp
 internal class Module : ModuleBase
@@ -40,15 +42,15 @@ internal class Module : ModuleBase
 
 ## What does a migration look like?
 
-A migration is an internal class inherited from Fluent Migrator's abstract `Migration` class. To give the migration files an ascending order by date, they should be named according to the pattern `YYYYMMDDHHMMSS_<migration name>.cs`.
+A migration is an internal class inherited from the Fluent Migrator's abstract `Migration` class. The migration files should be named using the pattern `YYYYMMDDHHMMSS_<migration name>.cs`, so that they are ordered by date in ascending order.
 
-The migration class must be decorated with the [MigrationVersionAttribute](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Data/Migrations/MigrationVersionAttribute.cs) to specify a version and a short description. The version is determined from a timestamp, which usually always represents the date when the migration was created. The timestamp can have one of the following formats:
+The migration class must be decorated with the [MigrationVersionAttribute](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Data/Migrations/MigrationVersionAttribute.cs) to specify a version and a short description. The version is determined by a timestamp, that typically represents the date when the migration was created. The timestamp can have one of the following formats:
 
 * yyyy-MM-dd HH:mm:ss (recommended)
 * yyyy/MM/dd HH:mm:ss
 * yyyy.MM.dd HH:mm:ss
 
-To make the short description more uniform, we recommend the format `<module name>:< migration name>`, e.g. _Core: ProductComparePriceLabel_. The very first migration is usually named _Initial_, e.g. _MegaSearch: Initial_. A good example of a typical migration is [ProductComparePriceLabel](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Migrations/20221103091500\_ProductComparePriceLabel.cs).
+To make the short description more uniform, we recommend the format `<module name>:<migration name>`, e.g. _Core: ProductComparePriceLabel_. The very first migration is usually named _Initial_, e.g. _MegaSearch: Initial_. A good example of a typical migration is [ProductComparePriceLabel](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Migrations/20221103091500\_ProductComparePriceLabel.cs).
 
 {% code title="20221103091500_ProductComparePriceLabel.cs" %}
 ```csharp
@@ -82,37 +84,43 @@ internal class ProductComparePriceLabel : Migration, ILocaleResourcesProvider, I
 ```
 {% endcode %}
 
-| Method or property                                                                   | Description                                                                                                               |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `IMigration.Up`                                                                      | Collects the _up_ migration expressions.                                                                                  |
-| `IMigration.Down`                                                                    | Collects the _down_ migration expressions.                                                                                |
-| `IDataSeeder.RollbackOnFailure`                                                      | Gets a value indicating whether migration should be completely rolled back when an error occurs during migration seeding. |
-| `IDataSeeder.SeedAsync`                                                              | Seeds any data into the database.                                                                                         |
-| <p><code>ILocaleResourcesProvider.</code><br><code>MigrateLocaleResources</code></p> | Seeds new or updated locale resources after a migration has run.                                                          |
+| Method or property                                                                   | Description                                                                                                                 |
+| ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `IMigration.Up`                                                                      | Collects the _up_ migration expressions.                                                                                    |
+| `IMigration.Down`                                                                    | Collects the _down_ migration expressions.                                                                                  |
+| `IDataSeeder.RollbackOnFailure`                                                      | Gets a value indicating whether the migration should be completely rolled back if an error occurs during migration seeding. |
+| `IDataSeeder.SeedAsync`                                                              | Seeds any data in the database.                                                                                             |
+| <p><code>ILocaleResourcesProvider.</code><br><code>MigrateLocaleResources</code></p> | Seeds new or updated locale resources after a migration has been performed.                                                 |
 
-More examples can be found in the [DevTools](https://github.com/smartstore/Smartstore/tree/main/src/Smartstore.Modules/Smartstore.DevTools/Migrations) module. They are for illustration purposes and are therefore commented out so that they are not executed.
+More examples can be found in the [DevTools](https://github.com/smartstore/Smartstore/tree/main/src/Smartstore.Modules/Smartstore.DevTools/Migrations) module. They are for illustrative purposes only and are therefore commented out so that they are not executed.
 
-TIP: In the `ProductComparePriceLabel` migration, each statement is preceded by an existence check of the related resource (for a table, column, foreign key, field index, etc.). This is not mandatory but it is recommended. It makes your migration less vulnerable and ensures that in case of unpredictable events the migration will still execute correctly, regardless of how many times it is executed. If your migration was only partially executed due to an error, it will not be able to run successfully again without these existence checks and manual modification of the database schema would be required.
+{% hint style="info" %}
+In the `ProductComparePriceLabel` migration, each statement is preceded by an existence check of the related resource (for a table, column, foreign key, field index, etc.). This is not mandatory but it is recommended. It makes your migration less vulnerable and ensures that in case of unpredictable events, the migration will still execute correctly, regardless of how many times it is executed. If your migration was only partially executed due to an error, it will not be able to run successfully again without these existence checks, and manual changes to of the database schema would be required.
+{% endhint %}
 
-In most cases, modules create migrations to extend the [domain model](../../compose/modules/examples/creating-a-domain-entity.md), i.e. to add their own entities. For example, the [Google Merchant Center](https://github.com/smartstore/Smartstore/tree/main/src/Smartstore.Modules/Smartstore.Google.MerchantCenter) module adds the `GoogleProduct` entity to the domain model and allows editing it via a data grid and a tab on the product editing page.
+In most cases, modules create migrations to extend the [domain model](../../compose/modules/examples/creating-a-domain-entity.md), i.e. to add their own entities. For example, the [Google Merchant Center](https://github.com/smartstore/Smartstore/tree/main/src/Smartstore.Modules/Smartstore.Google.MerchantCenter) module adds the `GoogleProduct` entity to the domain model and allows it to be edited via a data grid and a tab on the product editing page.
 
-A migration can also inherit from `AutoReversingMigration`. In this case no `Down` method is necessary, because FluentMigrator generates the necessary expressions automatically from the expressions of the `Up` method. This only works for some expressions like `CREATE TABLE`, but not for `DROP TABLE`.
+A migration can also inherit from `AutoReversingMigration`. In this case, no `Down` method is necessary, because FluentMigrator generates the necessary expressions automatically from the expressions of the `Up` method. This only works for some expressions like `CREATE TABLE`, but not for `DROP TABLE`.
 
-WARN: Deleting a table added by `Up` method should be well planned. The user may have stored a lot of data in it, which should not be deleted without asking. If in doubt, simply leave a table in the database when uninstalling the module. Often the `Down` method of the initial migration is left empty for this reason.
+{% hint style="warning" %}
+Deleting a table added by the `Up` method should be well planned. The user may have stored a lot of data in it, which should not be deleted without asking. If in doubt, simply leave a table in the database when uninstalling the module. Often the `Down` method of the initial migration is left empty for this reason.
+{% endhint %}
 
 ## Migrations history
 
-Fluent Migrator keeps a version history of successfully executed migrations in the _\_\_MigrationVersionInfo_ database table. The content of this table could look like this
+Fluent Migrator keeps a version history of successfully executed migrations in the _\_\_MigrationVersionInfo_ database table. The contents of this table could look like this:
 
-<figure><img src="../../.gitbook/assets/migration-history.png" alt=""><figcaption><p>Content of __MigrationVersionInfo table.</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/migration-history.png" alt=""><figcaption><p>Contents of the __MigrationVersionInfo table.</p></figcaption></figure>
 
-By deleting an entry in this history, it is possible to run the related migration again at the next application startup. For example, if I want to run the inital migration of the Google Merchant Center module again, then delete the row for the related migration (see highlighted row in the image above). I also delete the `GoogleProduct` table because it is created by this migration. Without deleting of the table, the migration would be executed, but it would do nothing because `GoogleProduct` already exists. Or it would generate an error if it didn't first check if the table already exists.
+By deleting an entry in this history, it is possible to run the associated migration, the next time you start the application. For example, if I want to run the inital migration of the Google Merchant Center module again, I delete the row for that migration (see the highlighted row in the image above). I also delete the `GoogleProduct` table because it is created by this migration. Without deleting the table, the migration would be executed but do nothing because `GoogleProduct` already exists, or generate an error if it didn't first check if the table already existed.
 
-WARN: Manual modifications to the database schema should only be carried out with great caution and sufficient knowledge of Smartstore. They may cause the software to stop working correctly and may require a database restorage from a backup.
+{% hint style="warning" %}
+Manual modifications to the database schema should only be done with great care and sufficient knowledge of Smartstore. They may cause the software to stop working correctly and may require restoring a database from a backup.
+{% endhint %}
 
 ## Data seeding
 
-Data seeding allows to add data to the database or to update existing data. If this is done in conjunction with a migration, you usually implement `IDataSeeder<SmartDbContext>` directly via its migration class, as shown earlier. Without a migration or if larger amounts of data need to be transferred to the database, then you use a separate class inheriting from `DataSeeder<SmartDbContext>`. For example, if sample data is to be added to the database during the installation of Smartstore or a module.
+Data seeding allows you to add data to the database or to update existing data. If this is done in conjunction with a migration, you usually implement `IDataSeeder<SmartDbContext>` directly via its migration class, as shown earlier. Without a migration, or if larger amounts of data need to be transferred to the database, you use a separate class that inherits from `DataSeeder<SmartDbContext>`. For example, if you need to add sample data to the database during the installation of Smartstore or a module.
 
 ```csharp
 internal class MyInstallationDataSeeder : DataSeeder<SmartDbContext>
@@ -156,7 +164,7 @@ internal class MyInstallationDataSeeder : DataSeeder<SmartDbContext>
 }
 ```
 
-And finally integrate your data seeder into module installation.
+Finally integrate your data seeder into the module installation.
 
 ```csharp
 internal class Module : ModuleBase
@@ -186,17 +194,17 @@ internal class Module : ModuleBase
 
 The data seeder obtains `ModuleInstallationContext` via its constructor. It contains context information about the installation process of the application or the module and has the following properties:
 
-| Property             | Description                                                                                                                                                                                                                                                                    |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `ApplicationContext` | The application context.                                                                                                                                                                                                                                                       |
-| `Scope`              | The request scoped container to resolve services from.                                                                                                                                                                                                                         |
-| `ModuleDescriptor`   | The descriptor of module currently being installed.                                                                                                                                                                                                                            |
-| `SeedSampleData`     | A value indicating whether sample data should be seeded. During app installation, reflects the choice the user made in the install wizard. During module installation value is always `null`; in this case the module author should decide whether to seed sample data or not. |
-| `Culture`            | ISO code of the primary installation language. Usually only data representing this language is seeded.                                                                                                                                                                         |
-| `Stage`              | <p>Installation stage. Possible values are</p><ul><li><em>AppInstallation</em>: application is in installation stage.</li><li><em>ModuleInstallation</em>: application is installed and bootstrapped. The module should be installed by user request.</li></ul>                |
-| `Logger`             | Logger to use.                                                                                                                                                                                                                                                                 |
+| Property             | Description                                                                                                                                                                                                                                                                                               |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ApplicationContext` | The application context.                                                                                                                                                                                                                                                                                  |
+| `Scope`              | The request scoped container from which to resolve services.                                                                                                                                                                                                                                              |
+| `ModuleDescriptor`   | The descriptor of the module currently being installed.                                                                                                                                                                                                                                                   |
+| `SeedSampleData`     | A value indicating whether sample data should be seeded. During application installation, this reflects the choice made by the user in the installation wizard. During module installation, the value is always `null`; in this case, the module author should decide whether to seed sample data or not. |
+| `Culture`            | ISO code of the primary installation language. Usually only data representing this language is seeded.                                                                                                                                                                                                    |
+| `Stage`              | <p>Installation stage. Possible values are</p><ul><li><em>AppInstallation</em>: application is in installation stage.</li><li><em>ModuleInstallation</em>: application is installed and bootstrapped. The module should be installed by user request.</li></ul>                                           |
+| `Logger`             | Logger to use.                                                                                                                                                                                                                                                                                            |
 
-The [database migrator](database-migrations.md#database-migrator) publishes a `SeedingDbMigrationEvent` before any `IDataSeeder.SeedAsync` call and `SeededDbMigrationEvent` after it.
+The [database migrator](database-migrations.md#database-migrator) publishes a `SeedingDbMigrationEvent` before each `IDataSeeder.SeedAsync` call and a `SeededDbMigrationEvent` after it.
 
 ### Seeding tools
 
@@ -209,15 +217,17 @@ There are some tools available for frequently recurring migration tasks. Use `Sm
 | `Delete`      | Deletes one or many locale resources in any language.           |
 | `DeleteFor`   | Deletes one or many locale resources in the specified language. |
 
-Use `SmartDbContext.MigrateSettingsAsync` to add or delete settings. The action delegate provides a `SettingsBuilder` with following methods:
+Use `SmartDbContext.MigrateSettingsAsync` to add or delete settings. The action delegate provides a `SettingsBuilder` with the following methods:
 
-| Method        | Description                                                                                            |
-| ------------- | ------------------------------------------------------------------------------------------------------ |
-| `Add`         | Adds a setting if it doesn't exist yet.                                                                |
-| `Delete`      | Deletes one or many setting records.                                                                   |
-| `DeleteGroup` | Deletes all settings records prefixed with the specified group name (usually the settings class name). |
+| Method        | Description                                                                                           |
+| ------------- | ----------------------------------------------------------------------------------------------------- |
+| `Add`         | Adds a setting if it doesn't exist yet.                                                               |
+| `Delete`      | Deletes one or many setting records.                                                                  |
+| `DeleteGroup` | Deletes all setting records prefixed with the specified group name (usually the settings class name). |
 
-Tip: use the `TypeHelper` to build the name of a setting:
+{% hint style="info" %}
+Use the `TypeHelper` to build the name of a setting:
+{% endhint %}
 
 ```csharp
 public async Task SeedAsync(SmartDbContext context, CancellationToken cancelToken = default)
@@ -231,7 +241,7 @@ public async Task SeedAsync(SmartDbContext context, CancellationToken cancelToke
 
 ### SmartDbContextDataSeeder
 
-`SmartDbContextDataSeeder` is a special data seeder that Smartstore uses to collect seeding instructions until the next version is released. In most cases for adding or updating locale string resources. Immediately before a new version is released, these are moved to a new migration that finalizes the version. This is done to avoid having to create new migrations for small changes and to limit the number of migrations.
+`SmartDbContextDataSeeder` is a special data seeder that Smartstore uses to collect seeding instructions until the next version is released, mostly used to add or update locale string resources. Immediately before a new version is released, these are moved to a new migration that finalizes the version. This is done to avoid having to create new migrations for small changes and to limit the number of migrations.
 
 ## Appendix
 
@@ -249,7 +259,7 @@ if (!Schema.Table(nameof(Product)).Column(nameof(Product.ComparePriceLabelId)).E
 }
 ```
 
-Reverse above migration:
+Reverse the above migration:
 
 ```csharp
 if (products.Index("IX_Product_ComparePriceLabelId").Exists())
