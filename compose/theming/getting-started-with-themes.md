@@ -140,7 +140,7 @@ All icons come in one of four `font-weight` classes. Their default values are se
 
 The free version of Font Awesome contains a subset of icons. All solid and few regular icons are included, but none of the light icons.
 
-To keep the store's look consistent, the `font-weight` of all icons is set to `900`, then all supported regular icons are set back to `400`. This ensures that all icons are displayed, although perhaps not in the preferred style, if you accidentally use a light icon or an unsupported regular icon.
+To keep the store's look consistent, the `font-weight` of all icons is set to `900`, then all supported regular icons and their light counterparts are set to `400`. This will ensure that all supported icons are displayed, although the `font-weight` will change if light icons are used.
 
 {% hint style="info" %}
 The `font-weight` value for neutral icons is not affected.

@@ -1,4 +1,4 @@
-# 🥚 Theme styling
+# 🐣 Theme styling
 
 ## Overview
 
@@ -43,8 +43,8 @@ Smartstore has an integrated CSS autoprefixer to ensure compatibility with diffe
 
 | File                           | Description                                                                                                                                                           |
 | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| lib/rfs/\_rfs.scss             | Set automated, responsive values for font sizes, padding, margins, and more.                                                                                          |
-| lib/photoswipe/photoswipe.scss | Styles for basic PhotoSwipe functionality (sliding area, open/close transitions)                                                                                      |
+| lib/rfs/\_rfs.scss             | Used to set automated, responsive values for font sizes, padding, margins, and more.                                                                                  |
+| lib/photoswipe/photoswipe.scss | Styles for basic PhotoSwipe functionality (sliding area, open / close transitions)                                                                                    |
 | lib/slick/slick.scss           | Styles for Slick Slider                                                                                                                                               |
 | lib/select2/scss/core.scss     | Styles for Select2, which gives you a customizable select box with support for searching, tagging, remote records, infinite scrolling, and many more popular options. |
 | lib/aos/scss/aos.scss          | Styles for AOS (Animate On Scroll) library.                                                                                                                           |
