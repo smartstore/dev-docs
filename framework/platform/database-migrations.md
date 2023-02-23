@@ -1,4 +1,4 @@
-# 🐥 Database Migrations
+# ✔ Database Migrations
 
 ## Overview
 
@@ -20,7 +20,7 @@ Smartstore prefers Fluent Migrator over EF Core Migrations, because EF Migration
 `MigrateAsync` has an assembly parameter to perform only those migrations of a specific module. This should always be set. If it is `null`, the migrations of _all_ modules are executed!
 {% endhint %}
 
-After that `MigrateAsync` downgrades all migrations of a certain module. It allows to remove all changes made by the module to the database schema.
+The `MigrateAsync` below downgrades all migrations of a certain module. It allows to remove all changes made by the module to the database schema.
 
 ```csharp
 internal class Module : ModuleBase
