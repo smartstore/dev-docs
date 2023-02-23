@@ -97,7 +97,7 @@ public class ConfigurationModel : ModelBase
 
 ## Display Hints
 
-If you want to store a hint for the setting in addition to the label, containing more information about the functionality of the setting, you can use a `LocaleResource`. Name it the same as the resource for labeling the setting but add the `.hint` suffix.
+If you want to add a hint to a setting's label, describing it in more detail, use a `LocaleResource`. Name it the same as the resource for labeling the setting but add the `.Hint` suffix.
 
 ```xml
 <LocaleResource Name="Plugins.MyOrg.MyModule.MySetting.Hint">
