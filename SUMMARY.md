@@ -93,7 +93,7 @@
   * [✔ Licensable modules](compose/modules/licensable-modules.md)
   * [🥚 Deploying modules](compose/modules/deploying-modules.md)
   * [Visual Studio extension](compose/modules/visual-studio-extension.md)
-  * [Tutorials](compose/modules/examples/README.md)
+  * [🥚 Tutorials](compose/modules/examples/README.md)
     * [✔ Building a simple "Hello World" module](compose/modules/tutorials/building-a-simple-hello-world-module.md)
     * [🐣 Adding tabs](compose/modules/examples/adding-tabs.md)
     * [✔ Creating a Widget provider](compose/modules/examples/creating-a-widget-provider.md)
