@@ -71,9 +71,9 @@ Using the event message’s `TabFactory`, you can inject a new tab.
 | **Action**             | The MVC `action` that should be invoked to display the tab                    |
 | **Ajax**               | Specifies whether the tab content should be lazy loaded via Ajax when clicked |
 
-## Controlling the tab
+## Adding an action
 
-Now that the tab has been added, you need to add the action that controls the tab. Open the admin controller and add the following action:
+Now that the tab has been added, you need to a corresponding action that returns a view. Open the admin controller and add the following action:
 
 ```csharp
 public async Task<IActionResult> AdminEditTab(int entityId)
@@ -161,7 +161,7 @@ Please also place the localized values for this model in the [corresponding XML 
 
 When the project is compiled and the product configuration is opened in the admin area, the new tab is displayed.
 
-## Using GenericAttributes
+## Using the ModelBoundEvent
 
 Next, make sure that the entered value is also saved when the product is saved. To do this, listen to the `ModelBoundEvent` that is published whenever a form is posted and the _MVC model binder_ has bound the model.
 
@@ -191,7 +191,7 @@ To learn more about events, please refer to [events.md](../../../framework/platf
 
 ## Conclusion
 
-In this tutorial you added a tab to a tabstrip using the TabFactory, learned how to control the tab, and used a View to set a value in GenericAttributes.
+In this tutorial you added a tab to the product's edit tabstrip using the `TabFactory` and used the `ModelBoundEvent` to save a product specific value.
 
 {% hint style="info" %}
 The code for [this tutorial](https://github.com/smartstore/dev-docs-code-examples/tree/main/src/MyOrg.TabsTutorial) can be found in the examples repository.
