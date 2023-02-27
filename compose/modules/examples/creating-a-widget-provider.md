@@ -277,7 +277,6 @@ Don't forget to activate your widget!
 
 In this tutorial you built a widget using the `IActivatableWidget` interface and specified your widget zones. You created a `ViewComponent` and bound it to different widget zones. Hopefully this will get you started with widgets and enable you to build more complex modules.
 
-The code for this module can be downloaded here:
-
-{% file src="../../../.gitbook/assets/MyOrg.HelloWorldWidget.zip" %}
-
+{% hint style="info" %}
+The code for [this tutorial](https://github.com/smartstore/dev-docs-code-examples/tree/main/src/MyOrg.WidgetTutorial) can be found in the examples repository.
+{% endhint %}

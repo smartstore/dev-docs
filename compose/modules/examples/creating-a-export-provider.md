@@ -500,6 +500,6 @@ await profiles.EachAsync(x => _exportProfileService.DeleteExportProfileAsync(x, 
 
 In this tutorial, you created an export provider. You have created a configuration profile and a CSV export provider.
 
-The code for this module can be downloaded here:
-
-{% file src="../../../.gitbook/assets/MyOrg.HelloWorldExport.zip" %}
+{% hint style="info" %}
+The code for [this tutorial](https://github.com/smartstore/dev-docs-code-examples/tree/main/src/MyOrg.ExportTutorial) can be found in the examples repository.
+{% endhint %}

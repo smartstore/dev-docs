@@ -405,8 +405,6 @@ namespace MyOrg.HelloWorld.Blocks
 
 In this tutorial, you created your own `Block`. You learned how to access the different view modes and how to use a widget as output for a block.
 
-The code for this module can be downloaded here:
-
-{% file src="../../../.gitbook/assets/MyOrg.HelloWorldBlock.zip" %}
-
-{% file src="../../../.gitbook/assets/MyOrg.HelloWorldBlock_Advanced.zip" %}
+{% hint style="info" %}
+The code for [the simple tutorial](https://github.com/smartstore/dev-docs-code-examples/tree/main/src/MyOrg.BlockTutorial) and [the advanced tutorial](https://github.com/smartstore/dev-docs-code-examples/tree/main/src/MyOrg.BlockTutorialAdvanced) can be found in the examples repository.
+{% endhint %}

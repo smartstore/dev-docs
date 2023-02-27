@@ -1,4 +1,4 @@
-# 🥚 Theme inheritance
+# 🐣 Theme inheritance
 
 ## Overview
 

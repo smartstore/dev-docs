@@ -1,4 +1,4 @@
-# 🐣 Adding tabs
+# 🥚 Adding tabs
 
 _Smartstore_ uses tabs in different places in the backend and frontend. The `TabTagHelper` is used for this exact purpose.
 
@@ -183,6 +183,10 @@ The value is stored in the product's `GenericAttributes`. A generic attribute is
 To learn more about events, please refer to [events.md](../../../framework/platform/events.md "mention")
 {% endhint %}
 
-### Download
+### Conclusion
 
-{% file src="../../../.gitbook/assets/MyOrg.HelloWorldTabs.zip" %}
+What we have learned...
+
+{% hint style="info" %}
+The code for [this tutorial](https://github.com/smartstore/dev-docs-code-examples/tree/main/src/MyOrg.TabsTutorial) can be found in the examples repository.
+{% endhint %}

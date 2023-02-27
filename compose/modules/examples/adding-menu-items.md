@@ -211,6 +211,6 @@ namespace MyOrg.HelloWorld
 
 In this tutorial, you created a menu item, added it to the Admin menu, and added a submenu.
 
-The code for this module can be downloaded here:
-
-{% file src="../../../.gitbook/assets/MyOrg.HelloWorldMenus.zip" %}
+{% hint style="info" %}
+The code for [this tutorial](https://github.com/smartstore/dev-docs-code-examples/tree/main/src/MyOrg.MenuTutorial) can be found in the examples repository.
+{% endhint %}

@@ -434,6 +434,6 @@ Open the project file and remove all `ItemGroup` properties because they are not
 
 Now you have built a simple module that stores a setting and renders its value in the frontend, when accessing the route _helloworld / publicinfo_. Of course this is the starting point on the way to build more complex modules by using: Action Filters, own _DataContext_ and _View Components_, which are rendered in Widget Zones.
 
-The code for this tutorial can be downloaded here:
-
-{% file src="../../../.gitbook/assets/MyOrg.HelloWorld.zip" %}
+{% hint style="info" %}
+The code for [this tutorial](https://github.com/smartstore/dev-docs-code-examples/tree/main/src/MyOrg.HelloWorld) can be found in the examples repository.
+{% endhint %}
