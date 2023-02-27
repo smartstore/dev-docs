@@ -1,4 +1,4 @@
-# 🥚 Adding tabs
+# 🐣 Adding tabs
 
 _Smartstore_ uses tabs in different places in the backend and frontend. The `TabTagHelper` is used for this exact purpose.
 
@@ -21,7 +21,7 @@ You can use this _Tag Helper_ in any view. To do this, you must make the tag hel
 @addTagHelper Smartstore.Web.TagHelpers.Shared.*, Smartstore.Web.Common
 ```
 
-### Add individual tabs to existing tabstrips
+## Adding a tab
 
 If you as a developer are faced with the task to extend an existing entity e.g.: `Product`, `Category` or `Manufacturer`, you should not do this in the core code itself but attach it to the tab of a module. In the course of this tutorial, you will extend the _HelloWorld_ module, created in the [last tutorial](../tutorials/building-a-simple-hello-world-module.md), adding an `Events.cs` class to the root of the module.
 
@@ -71,6 +71,8 @@ Using the event message’s `TabFactory`, you can inject a new tab.
 | **Action**             | The MVC `action` that should be invoked to display the tab                    |
 | **Ajax**               | Specifies whether the tab content should be lazy loaded via Ajax when clicked |
 
+## Controlling the tab
+
 Now that the tab has been added, you need to add the action that controls the tab. Open the admin controller and add the following action:
 
 ```csharp
@@ -106,6 +108,8 @@ public HelloWorldAdminController(SmartDbContext db)
     _db = db;
 }
 ```
+
+## Adding a view
 
 Since the action we just added uses a model that has two simple properties and returns a view, we'll need to create the model and the view next. The `AdminEditTabModel.cs` class belongs in the _Models_ folder.
 
@@ -157,6 +161,8 @@ Please also place the localized values for this model in the [corresponding XML 
 
 When the project is compiled and the product configuration is opened in the admin area, the new tab is displayed.
 
+## Using GenericAttributes
+
 Next, make sure that the entered value is also saved when the product is saved. To do this, listen to the `ModelBoundEvent` that is published whenever a form is posted and the _MVC model binder_ has bound the model.
 
 The code to save the value of the tab belongs in the `Events.cs` class and looks like this:
@@ -183,9 +189,9 @@ The value is stored in the product's `GenericAttributes`. A generic attribute is
 To learn more about events, please refer to [events.md](../../../framework/platform/events.md "mention")
 {% endhint %}
 
-### Conclusion
+## Conclusion
 
-What we have learned...
+In this tutorial you added a tab to a tabstrip using the TabFactory, learned how to control the tab, and used a View to set a value in GenericAttributes.
 
 {% hint style="info" %}
 The code for [this tutorial](https://github.com/smartstore/dev-docs-code-examples/tree/main/src/MyOrg.TabsTutorial) can be found in the examples repository.
