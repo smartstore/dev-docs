@@ -42,8 +42,8 @@ Create your own PageBuilder-Block to display in stories. Tweak the Story view mo
 
 ### [Export](creating-a-export-provider.md)
 
-Export a specified number of products to the CSV and XML file format.
+Provide a configurable export for products, store information, etc.
 
-### [Domains](creating-a-domain-entity.md)
+### [Entities](creating-a-domain-entity.md)
 
 Create a small messaging system, using your own database table.
