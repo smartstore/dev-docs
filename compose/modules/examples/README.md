@@ -20,30 +20,30 @@ All tutorials are included in the [solution file](https://github.com/smartstore/
 
 ## List of Tutorials
 
-### ["Hello World"](../tutorials/building-a-simple-hello-world-module.md)
+### [Building a simple "Hello World" module](../tutorials/building-a-simple-hello-world-module.md)
 
 Start your journey here and build your first Smartstore module.
 
-### [Tabs](adding-tabs.md)
+### [Adding tabs](adding-tabs.md)
 
 Add a tab to the product editing page in the backend.
 
-### [Widgets](creating-a-widget-provider.md)
+### [Creating a Widget provider](creating-a-widget-provider.md)
 
 Create a widget, that displays custom content in the frontend.
 
-### [Menus](adding-menu-items.md)
+### [Adding menu items](adding-menu-items.md)
 
 Access the menu bar in the backend and add a menu item and a submenu.
 
-### [Blocks](creating-a-block.md)
+### [Creating a Block](creating-a-block.md)
 
 Create your own PageBuilder-Block to display in stories. Tweak the Story view modes, to provide a better user experience and render a widget.
 
-### [Export](creating-a-export-provider.md)
+### [Creating an Export provider](creating-a-export-provider.md)
 
 Provide a configurable export for products, store information, etc.
 
-### [Entities](creating-a-domain-entity.md)
+### [Creating a Domain entity](creating-a-domain-entity.md)
 
 Create a small messaging system, using your own database table.
