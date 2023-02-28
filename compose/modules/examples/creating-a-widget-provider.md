@@ -235,7 +235,7 @@ namespace MyOrg.HelloWorld
         {
             return new string[]
             {
-                "vc:MyOrg.HelloWorld/HelloWorldViewComponent"
+                "vc:MyOrg.HelloWorld/HelloWorld"
             };
         }
     }

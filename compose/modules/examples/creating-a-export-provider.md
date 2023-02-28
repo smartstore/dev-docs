@@ -178,7 +178,7 @@ public override async ExportConfigurationInfo ConfigurationInfo => new()
 
 #### Export data
 
-You are now ready to begin exporting your data. Start by retrieving the profile configuration data.
+You are now ready to begin exporting your data. Going back to the `ExportAsync` method, start by retrieving the profile configuration data.
 
 ```csharp
 var config = (context.ConfigurationData as ProfileConfigurationModel) ?? new ProfileConfigurationModel();

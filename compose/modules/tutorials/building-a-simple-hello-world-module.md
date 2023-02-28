@@ -17,7 +17,7 @@ Now alter `MyOrg.HelloWorld.csproj` to look like this:
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
-        <Product>Smartstore Hello World</Product>
+        <Product>A Hello World module for Smartstore</Product>
         <OutputPath>..\..\Smartstore.Web\Modules\MyOrg.HelloWorld</OutputPath>
         <OutDir>$(OutputPath)</OutDir>
     </PropertyGroup>
@@ -44,7 +44,7 @@ Add module.json next. For more information, refer to [the manifest](../getting-s
 ```json
 {
   "$schema": "../module.schema.json",
-  "Author": "MyOrg",
+  "Author": "My Org",
   "Group": "Admin",
   "SystemName": "MyOrg.HelloWorld",
   "FriendlyName": "Hello World",

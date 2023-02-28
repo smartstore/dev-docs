@@ -162,7 +162,7 @@ This is your configuration view. It appears when you are configuring the block. 
             <smart-label asp-for="Name" />
         </div>
         <div class="adminData">
-            <setting-editor asp-for="Name"></setting-editor>
+            <input asp-for="Name" />
             <span asp-validation-for="Name"></span>
         </div>
     </div>
@@ -204,10 +204,10 @@ Create a new block-setting `MyLocalVar` in `HelloWorldBlock`.
 public string MyLocalVar { get; set; } = "Initialised in Block";
 ```
 
-Add the `LoadAsync` function to the `HelloWorldBlockHandler`.
+Add the `Load` function to the `HelloWorldBlockHandler`.
 
 ```csharp
-public override Task<HelloWorldBlock> LoadAsync(
+protected override HelloWorldBlock Load(
     IBlockEntity entity, 
     StoryViewMode viewMode)
 ```
@@ -322,8 +322,8 @@ namespace MyOrg.HelloWorld.Blocks
     [Block("helloworld", Icon = "fa fa-eye", FriendlyName = "Hello World")]
     public class HelloWorldBlockHandler : BlockHandlerBase<HelloWorldBlock>
     {
-        public override Task<HelloWorldBlock> LoadAsync(
-            IBlockEntity entity, 
+        protected override HelloWorldBlock Load(
+            IBlockEntity entity,
             StoryViewMode viewMode)
         {
             var block = base.Load(entity, viewMode);
@@ -387,6 +387,7 @@ namespace MyOrg.HelloWorld.Blocks
     {
         [LocalizedDisplay("Plugins.MyOrg.HelloWorld.Name")]
         public string Name { get; set; }
+        
         public string MyLocalVar { get; set; } = "Initialised in Block";
     }
     

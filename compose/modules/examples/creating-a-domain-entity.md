@@ -70,15 +70,16 @@ Your `Notification` class should look something like this:
 public class Notification : BaseEntity
 {
     public int AuthorId { get; set; }
-    
+
     public DateTime Published { get; set; }
-    
+
+    [MaxLength]
     public string Message { get; set; }
 }
 ```
 {% endcode %}
 
-This represents the `Notification` table with the three columns: `AuthorId`, `Published` and `Message`. Because you will often search for notifications based on either `AuthorId` or `Published`, these are defined as indexes.
+This represents the `Notification` table with the three columns: `AuthorId`, `Published` and `Message`. The `MaxLength` attribute will truncate `Message` to the maximum supported length of strings allowed in a property. Because you will often search for notifications based on either `AuthorId` or `Published`, these are defined as indexes.
 
 ### Create the Migration
 
@@ -98,9 +99,11 @@ Create the _Migrations_ directory and add the migration class whose name include
 The class must inherit from the `Migration` base class to have access to the SQL database schema helper methods such as `Create`, `Remove`, or `Update`. You can now use these methods to check if the table already exists, and if it does not, to create it.
 
 ```csharp
-if (!Schema.Table("Notification").Exists())
+var tableName = "Notification";
+
+if (!Schema.Table(tableName).Exists())
 {
-    Create.Table("Notification");
+    Create.Table(tableName);
 }
 ```
 
@@ -114,7 +117,7 @@ To add columns, set indexes, and specify primary keys, you can simply chain the 
 You can define a column type (Boolean, Integer, String, Date, Currency, etc.) and declare it as (not) nullable, unique, a primary key, indexed, etc.
 
 ```csharp
-Create.Table("Notification")
+Create.Table(tableName)
     .WithIdColumn()
     .WithColumn(nameof(Notification.AuthorId))
         .AsInt32()
@@ -125,7 +128,7 @@ Create.Table("Notification")
         .NotNullable()
         .Indexed("IX_Notification_Published")
     .WithColumn(nameof(Notification.Message))
-        .AsString()
+        .AsMaxString()
         .NotNullable();
 ```
 
@@ -158,7 +161,7 @@ public class _20221214103422_Initial : Migration
                     .NotNullable()
                     .Indexed("IX_Notification_Published")
                 .WithColumn(nameof(Notification.Message))
-                    .AsString()
+                    .AsMaxString()
                     .NotNullable();
         }
     }
@@ -196,7 +199,7 @@ public override void ConfigureServices(IServiceCollection services, IApplication
 
 private class SmartDbContextConfigurer : IDbContextConfigurationSource<SmartDbContext>
 {
-    public void Configure(IServiceProvider s, DbContextOptionsBuilder builder)
+    public void Configure(IServiceProvider services, DbContextOptionsBuilder builder)
     {
         builder.UseDbFactory(b => 
         {
@@ -224,8 +227,8 @@ It is not necessary to add the `SmartDbContext` extension. You can just as easil
 The following steps are included in the module code:
 
 1. Add a [configuration view](../tutorials/building-a-simple-hello-world-module.md#adding-configuration). Configure the number of days to display a notification.
-2. Add a **new notification** button. Let the current admin create a message.
-3. Display the notification as [a widget](creating-a-widget-provider.md). This way, you can place it anywhere you want in the store.
+2. Display the notification as [a widget](creating-a-widget-provider.md). This way, you can place it anywhere you want in the store.
+3. Add a **new notification** button. Let the current admin create a message.
 4. Schedule a task to purge the table. This will increase database speed by removing old, unnecessary messages from your table.
 
 ### Further ideas
