@@ -126,32 +126,28 @@ Font Awesome is fully integrated into Smartstore and can be used in all Razor vi
 For more information, see [Font Awesome](https://fontawesome.com/icons).
 {% endhint %}
 
-#### Default font-weight
+#### Icon variants
 
-All icons come in one of four `font-weight` classes. Their default values are set by `$icon-font-weight-default` and `$icon-font-variants`. Changing these values has no effect in the free version.
+Font Awesome icons feature _light_, _regular_ and _solid_ variants. The variant to display is specified by a CSS-class (fa, fas, far or fal) that handles the display by setting the  corresponding `font-weight` value. The `font-weight` values for the variant classes are set by `$icon-font-weight-default` and `$icon-font-variants`. Changing these values has no effect when using the free version.
 
-| Class   | Prefix  | Sass variable                   | Default font-weight |
-| ------- | ------- | ------------------------------- | ------------------- |
-| Neutral | fa      | $icon-font-weight-default       | 900                 |
-| Solid   | fa**s** | $icon-font-variants\["solid"]   | 900                 |
-| Regular | fa**r** | $icon-font-variants\["regular"] | 400                 |
-| Light   | fa**l** | $icon-font-variants\["light"]   | 300                 |
+| Variant           | Class   | Sass variable                   | font-weight |
+| ----------------- | ------- | ------------------------------- | ----------- |
+| Fallback to Solid | fa      | $icon-font-weight-default       | 900         |
+| Solid             | fa**s** | $icon-font-variants\["solid"]   | 900         |
+| Regular           | fa**r** | $icon-font-variants\["regular"] | 400         |
+| Light             | fa**l** | $icon-font-variants\["light"]   | 300         |
 
 #### Font Awesome Free
 
 The free version of Font Awesome contains a subset of icons. All solid and few regular icons are included, but none of the light icons.
 
-To keep the store's look consistent, the `font-weight` of all icons is set to `900`, then all supported regular icons and their light counterparts are set to `400`. This will ensure that all supported icons are displayed, although the `font-weight` will change if light icons are used.
-
-{% hint style="info" %}
-The `font-weight` value for neutral icons is not affected.
-{% endhint %}
+To keep the store's look consistent, the `font-weight` of all icons is set to `900`, then all supported regular icons and their light counterparts are set to `400`. This will ensure that all supported icons are displayed, even when using classes (like fal) whose icons are not available in the free version.
 
 #### Font Awesome Pro
 
 The professional version of Font Awesome removes the icon limitations and includes all solid, regular and light icons.
 
-Solid, regular and light icons all follow their font-weight values from `$icon-font-variants`. The `font-weight` of all neutral icons is set to `$icon-font-weight-default` unless it is not set to `900`.
+Solid, regular and light icons all follow their font-weight values from `$icon-font-variants`. The `font-weight` of the class `fa` is set to `$icon-font-weight-default` unless it is not set to `900`.
 
 For licensing reasons, we cannot ship Font Awesome Pro directly. In order to use Font Awesome Pro after you bought a license, you must complete the following steps.
 
