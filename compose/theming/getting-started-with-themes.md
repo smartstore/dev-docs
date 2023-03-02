@@ -62,7 +62,13 @@ Razor Runtime Compilation is a feature in ASP.NET Core that responds to changes 
 
 Smartstore has a setting for this feature that is enabled by default. If you want to disable it, open the `appsettings.json` file in the root of the `Smartstore.Web` project and change the value of the `EnableRazorRuntimeCompilation` property.
 
+#### DebugNoRazorCompile
+
 <mark style="color:blue;">Erläutern: um ein Kompilat zu erzeugen, dass keine präkompilierten Views enthält, muss man in VS die Build-Konfiguration</mark> <mark style="color:blue;"></mark><mark style="color:blue;">**DebugNoRazorCompile**</mark> <mark style="color:blue;"></mark><mark style="color:blue;">wählen. Damit lässt sich die Solution auch sehr viel schneller kompilieren. Aber mit dem Nachteil, dass die Seiten-Ausführungsgeschwindigkeit für den ersten Hit etwas abnimmt (weil im Hintergrund erstmal jene Views kompiliert werden müssen, die gerade benötigt werden). Für</mark> <mark style="color:blue;"></mark><mark style="color:blue;">**Hot Reload**</mark> <mark style="color:blue;"></mark><mark style="color:blue;">während Debugging empfehlen wir definitiv die Build-Konfiguration</mark> <mark style="color:blue;"></mark><mark style="color:blue;">**DebugNoRazorCompile**</mark> <mark style="color:blue;"></mark><mark style="color:blue;">zu wählen, weil</mark> <mark style="color:blue;"></mark><mark style="color:blue;">**Debug**</mark> <mark style="color:blue;"></mark><mark style="color:blue;">sehr sehr langsam ist beim Ermitteln und Anwenden von Code-Änderungen.</mark>
+
+To run Smartstore in Visual Studio without precompiled views, select the **DebugNoRazorCompile** build configuration in Visual Studio. This also has the advantage of speeding up the compilation of the solution. However, it has the disadvantage of slowing down the page load speed for the first hit. This is due to the fact that all used views must first be compiled in the background.
+
+When using **Hot Reload** during debugging, we recommend using the **DebugNoRazorCompile** build configuration. The **Debug** build configuration is extremely slow in detecting and applying code changes.
 
 ### Sass runtime compilation
 
@@ -82,11 +88,19 @@ To ensure compatibility with different browsers, Smartstore has a built-in CSS A
 
 By using CSS Autoprefixer, developers can rest assured that all CSS styles will display correctly in all major browsers. They can focus on designing the site without worrying about compatibility.
 
-### Cache & DiskCache
+### Cache
 
 Generated assets are cached in RAM and on disk. This keeps the whole process highly performant and delays page rendering by only a few milliseconds when regenerating CSS files. The cache is automatically invalidated when an included file changes.
 
 <mark style="color:blue;">Erläutern: DiskCache hat den Vorteil, dass generierte Assets einen App-Neustart überdauern. Ohne DiskCache (was man abschalten kann, bitte erläutern) muss bspw. bei jedem App-Neustart der Sass-Parser angeschmissen werden, was wiederum den Start etwas verzögert. Der DiskCache legt Dateien im Ordner</mark> <mark style="color:blue;"></mark>_<mark style="color:blue;">App\_Data/Tenants/Default/BundleCache</mark>_ <mark style="color:blue;"></mark><mark style="color:blue;">ab.</mark>
+
+This is done by using `DiskCache`. The big advantage is that the generated assets are preserved when the application is restarted. Without it<mark style="color:yellow;">, for instance,</mark> the Sass parser would have to be run on each restart, delaying the entire startup process.
+
+The cached files are located in the _App\_Data/Tenants/Default/BundleCache_ directory. `DiskCache` can be disabled by changing the `AssetCachingEnabled` property in [ThemeSettings](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Theming/Settings/ThemeSettings.cs) to `1`.
+
+{% hint style="info" %}
+To learn more, see [Caching](../../framework/platform/caching.md).
+{% endhint %}
 
 ## Libraries
 
