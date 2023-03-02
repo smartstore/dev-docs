@@ -1,4 +1,4 @@
-# Dependency injection
+# 🥚 Dependency injection
 
 ## Overview
 
@@ -11,7 +11,62 @@ A simple output writer example in the [Autofac](https://autofac.readthedocs.io/e
 
 ## Registering services
 
-In order for the dependencies to be resolved, the related service must be registered.
+In order for the dependencies to be resolved, the related service must be registered. The registration is done via a startup class inheriting from [StarterBase](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Builders/StarterBase.cs). It should be declared as _internal_. In the Smartstore core, the startup classes are located in a bootstrapping folder of the related code section (for instance _DataExchange_). Override the `ConfigureContainer` method to add services to the Autofac container.
+
+```csharp
+internal class DataExchangeStarter : StarterBase
+{
+    public override void ConfigureServices(IServiceCollection services, IApplicationContext appContext)
+    {
+        services.AddDownloadManager();
+    }
+
+    public override void ConfigureContainer(ContainerBuilder builder, IApplicationContext appContext)
+    {
+        builder.RegisterType<ExportProfileService>().As<IExportProfileService>().InstancePerLifetimeScope();
+        builder.RegisterType<ImportProfileService>().As<IImportProfileService>().InstancePerLifetimeScope();
+        builder.RegisterType<DataExporter>().As<IDataExporter>().InstancePerLifetimeScope();
+        builder.RegisterType<DataImporter>().As<IDataImporter>().InstancePerLifetimeScope();
+        builder.RegisterType<MediaImporter>().As<IMediaImporter>().InstancePerDependency();
+
+        builder.Register<Func<ImportEntityType, IEntityImporter>>(c =>
+        {
+            var cc = c.Resolve<IComponentContext>();
+            return key => cc.ResolveKeyed<IEntityImporter>(key);
+        });
+    }
+}
+```
+
+The `DataExchangeStarter` registers import and export related services, such as the `DataExporter` and `DataImporter` using a type name and a dependency scope. This form of registration is the most common, although Autofac's `ContainerBuilder` offers a number of other possibilities. The most common dependency scopes are:
+
+| Configure as             | Results in                                                                                                                                                                                      |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SingleInstance           | Every dependent component or call to `Resolve` gets the same, shared instance.                                                                                                                  |
+| InstancePerLifetimeScope | Every dependent component or call to `Resolve` within a single `ILifetimeScope` gets the same, shared instance. Dependent components in different lifetime scopes will get different instances. |
+| InstancePerDependency    | Every dependent component or call to `Resolve` gets a new, unique instance (default).                                                                                                           |
+
+The override `ConfigureServices` can also be used for registering services. It uses Microsoft's .NET dependency injection extensions. An example for a common extension is `AddHttpClient`.
+
+```csharp
+public override void ConfigureServices(IServiceCollection services,
+    IApplicationContext appContext)
+{
+    // Register a HTTP client to communicate with the PayPal API.
+    services.AddHttpClient<PayPalHttpClient>()
+        .AddSmartstoreUserAgent()
+        .ConfigurePrimaryHttpMessageHandler(c => new HttpClientHandler
+        {
+            AutomaticDecompression = DecompressionMethods.GZip
+        })
+        .ConfigureHttpClient(client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
+}
+```
+
+HINT: by convention the startup class of a module is named _Startup_ and located in the root of the module project. This gives modules a uniform structure with code that is easier to find.
 
 ## Resolving services
 
