@@ -58,7 +58,7 @@ The following is an exhaustive list of files and directories.
 
 ### Razor runtime compilation
 
-Razor runtime compilation is a feature in ASP.NET Core that allows Razor pages to be dynamically compiled, rather than being compiled when the application is compiled. This allows changes to Razor pages to be applied in real time without having to restart the application.
+Razor Runtime Compilation is a feature in ASP.NET Core that responds to changes in Razor views and applies them in real time without having to restart the application.
 
 Smartstore has a setting for this feature that is enabled by default. If you want to disable it, open the `appsettings.json` file in the root of the `Smartstore.Web` project and change the value of the `EnableRazorRuntimeCompilation` property.
 
@@ -100,13 +100,9 @@ For more information, see [jQuery](https://jquery.com/).
 
 ### Bootstrap
 
-Bootstrap is a front-end framework based on HTML, CSS, and JavaScript. It is designed to provide developers with a quick and easy way to create responsive websites and web applications. It provides a set of CSS classes and JavaScript plugins that are preconfigured to ensure a consistent look and feel.
+Bootstrap is a front-end framework based on HTML, CSS, and JavaScript. One of Bootstrap's most important features is its grid system and the classes it provides for adapting content to different device sizes.
 
-One of Bootstrap's most important features is its grid system. It allows developers to control how content is displayed on different screen sizes and can be used to render a website so that it looks good on desktops, tablets, and mobile devices.
-
-Bootstrap's grid system is based on 12 columns controlled by CSS classes. Each column can be scaled to a specific width to best display content on different devices. Bootstrap also provides different classes for displaying content on different device sizes, giving developers a flexible and customizable solution for displaying content on different devices.
-
-In Smartstore, the mobile-first approach is fully implemented with Bootstrap's CSS classes. All CSS classes provided by Bootstrap can be used in Smartstore to create HTML structures.
+In Smartstore, the mobile-first approach is fully implemented using Bootstrap's CSS classes. All CSS classes provided by Bootstrap can be used in Smartstore to create HTML structures.
 
 {% hint style="info" %}
 For more information, see [Bootstrap](https://getbootstrap.com/docs/4.6/layout/overview/).
@@ -128,7 +124,7 @@ For more information, see [Font Awesome](https://fontawesome.com/icons).
 
 #### Icon variants
 
-Font Awesome icons feature _light_, _regular_ and _solid_ variants. The variant to display is specified by a CSS-class (fa, fas, far or fal) that handles the display by setting the  corresponding `font-weight` value. The `font-weight` values for the variant classes are set by `$icon-font-weight-default` and `$icon-font-variants`. Changing these values has no effect when using the free version.
+Font Awesome icons have light, regular, and solid variants. The displayed variant is specified by a CSS class (fa, fas, far, or fal), which sets the corresponding `font-weight` value. The `font-weight` values for the variant classes are defined by `$icon-font-weight-default` and `$icon-font-variants`. Changing these values has no effect when using the free version.
 
 | Variant           | Class   | Sass variable                   | font-weight |
 | ----------------- | ------- | ------------------------------- | ----------- |
@@ -147,12 +143,12 @@ To keep the store's look consistent, the `font-weight` of all icons is set to `9
 
 The professional version of Font Awesome removes the icon limitations and includes all solid, regular and light icons.
 
-Solid, regular and light icons all follow their font-weight values from `$icon-font-variants`. The `font-weight` of the class `fa` is set to `$icon-font-weight-default` unless it is not set to `900`.
+Solid, regular and light icons all follow their font-weight values from `$icon-font-variants`. The `font-weight` of the `fa` class is set to `$icon-font-weight-default`, unless it is 900.
 
 For licensing reasons, we cannot ship Font Awesome Pro directly. In order to use Font Awesome Pro after you bought a license, you must complete the following steps.
 
 * The `fa-use-pro` theme variable must be set to `true` in the `theme.config` file.
-* The Font Awesome Pro includes must be added to an appropriate location, such as `_Layout.cshtml`:
+* The Font Awesome Pro includes must be added to a view that is rendered globally for each page, such as `Head.cshtml`:
 
 ```cshtml
 <link sm-target-zone="head_links" rel="preconnect" href="https://pro.fontawesome.com" />
@@ -171,7 +167,7 @@ For more information, see [Bootstrap Icons](https://icons.getbootstrap.com/).
 
 ### Fontastic
 
-Fontastic is another icon library that has been integrated into Smartstore. Since we also have to be careful not to overload the CSS in the frontend, we have made a special selection that is relevant for e-commerce.
+We’ve used Fontastic to integrate a special selection of icons that are relevant to e-commerce.
 
 {% hint style="info" %}
 A full list of all available icons can be found in [fontastic.css](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Web/wwwroot/lib/fontastic/fontastic.css).
