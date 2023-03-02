@@ -2,9 +2,9 @@
 
 ## Overview
 
-A Smartstore theme is a collection of Sass files, Razor views, images and scripts. In short, everything you need to create websites. Themes can be selected and customized by the store owner using the Theme Configurator (**Admin / Configuration / Themes**). Owners can modify them by configuring theme variables in the Theme Configurator. It is possible to set differing colors, font sizes, margins and much more.
+A Smartstore theme is a collection of Sass files, Razor views, images and scripts. In short, everything you need to create websites. Themes can be selected and customized by the store owner using the Theme Configurator (**Admin / Configuration / Themes**). Owners can customize them by configuring theme variables to set different colors, font sizes, margins, and more.
 
-We have put a lot of effort into developing the Theming Engine so that creating themes is easy, flexible and convenient to use. In addition, we have managed to make creating themes in Smartstore very easy by using techniques such as:
+A lot of effort has gone into the development of the Theming Engine to make creating themes easy, flexible and convenient. In addition, we have managed to make creating themes in Smartstore very easy by using techniques such as:
 
 * Multi-level theme inheritance
 * An integrated Sass compiler, that automatically translates all changes made to Sass files into CSS at runtime in an intelligent and highly performant way.
@@ -22,7 +22,7 @@ A theme provides **variables** that can be configured by the end user. These are
 
 Sass files are automatically compiled at runtime using the **built-in Sass parser**. Razor views are also **compiled at runtime**. A built-in file watcher keeps track of all changes made to Sass and Razor files. When a Razor file is changed, the Razor views are recompiled in the background. When a Sass file is changed, the CSS is regenerated and the cache is cleared. Simply refresh the browser page while the application is running to see changes to Sass files and Razor views live.
 
-To keep static files as small as possible, Smartstore minifies JavaScript, Sass, and CSS files. Files are packaged into **bundles**, which combine multiple physical files of a web project into one and are minified.
+To keep static files as small as possible, Smartstore minifies JavaScript, Sass, and CSS files. Multiple physical files of a web project are combined into one file and then minified to create a bundle.
 
 The _Autoprefixer_ adds vendor-specific prefixes to CSS declarations coming from the Sass parser.
 
@@ -30,9 +30,9 @@ Smartstore is built using the [MVC-Pattern](https://learn.microsoft.com/en-us/as
 
 Widely used third-party components make development even easier. Among others, Smartstore has integrated:
 
-* [Bootstrap](getting-started-with-themes.md#bootstrap): Very useful for creating HTML structures with its classes.
-* [jQuery](getting-started-with-themes.md#jquery): Simplifies DOM element selection and provides browser polyfills.
-* [Modern icon libraries](getting-started-with-themes.md#icon-libraries) like [Font Awesome](getting-started-with-themes.md#font-awesome): Provide a sophisticated and consistent look.
+* [Bootstrap](getting-started-with-themes.md#bootstrap): A popular HTML/CSS framework for creating responsive, mobile-friendly websites. It includes features such as forms, list groups, and custom components.
+* [jQuery](getting-started-with-themes.md#jquery): A cross-platform JavaScript library designed to simplify the client-side scripting of HTML. It is designed to make it easier to navigate a document, select DOM elements, create animations, handle events, and develop Ajax applications.
+* [Modern icon libraries](getting-started-with-themes.md#icon-libraries) like [Font Awesome](getting-started-with-themes.md#font-awesome): Used to add visual elements to web pages and enhance the user experience. Icons are available in a variety of styles and formats to meet different design needs.
 
 ## Anatomy of a theme
 
@@ -102,7 +102,7 @@ For more information, see [jQuery](https://jquery.com/).
 
 Bootstrap is a front-end framework based on HTML, CSS, and JavaScript. It is designed to provide developers with a quick and easy way to create responsive websites and web applications. It provides a set of CSS classes and JavaScript plugins that are preconfigured to ensure a consistent look and feel.
 
-One of Bootstrap's most important features is its grid system. It's a flexible grid system that allows developers to control how content is displayed on different screen sizes. Bootstrap's grid system can be used to render a website so that it looks good on desktops, tablets, and mobile devices.
+One of Bootstrap's most important features is its grid system. It allows developers to control how content is displayed on different screen sizes and can be used to render a website so that it looks good on desktops, tablets, and mobile devices.
 
 Bootstrap's grid system is based on 12 columns controlled by CSS classes. Each column can be scaled to a specific width to best display content on different devices. Bootstrap also provides different classes for displaying content on different device sizes, giving developers a flexible and customizable solution for displaying content on different devices.
 
