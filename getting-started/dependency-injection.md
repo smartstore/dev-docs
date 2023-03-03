@@ -40,11 +40,11 @@ internal class DataExchangeStarter : StarterBase
 
 The `DataExchangeStarter` registers import and export related services, such as the `DataExporter` and `DataImporter` using a type name and a dependency scope. This form of registration is the most common, although Autofac's `ContainerBuilder` offers a number of other possibilities. The most common dependency scopes are:
 
-| Configure as             | Results in                                                                                                                                                                                      |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SingleInstance           | Every dependent component or call to `Resolve` gets the same, shared instance.                                                                                                                  |
-| InstancePerLifetimeScope | Every dependent component or call to `Resolve` within a single `ILifetimeScope` gets the same, shared instance. Dependent components in different lifetime scopes will get different instances. |
-| InstancePerDependency    | Every dependent component or call to `Resolve` gets a new, unique instance (default).                                                                                                           |
+| Configure as             | Results in                                                                                                                                                                                                                   |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SingleInstance           | Every dependent component or call to `Resolve` gets the same, shared instance.                                                                                                                                               |
+| InstancePerLifetimeScope | Every dependent component or call to `Resolve` within a single `ILifetimeScope` - usually the HTTP request - gets the same, shared instance. Dependent components in different lifetime scopes will get different instances. |
+| InstancePerDependency    | Every dependent component or call to `Resolve` gets a new, unique instance (default).                                                                                                                                        |
 
 The override `ConfigureServices` can also be used for registering services. It uses Microsoft's .NET dependency injection extensions. An example for a common extension is `AddHttpClient`.
 
