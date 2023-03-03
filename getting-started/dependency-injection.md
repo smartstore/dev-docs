@@ -69,17 +69,21 @@ The most common dependency scopes are:
 
 ### Special registrations
 
-Use Autofac's `ContainerBuilder` for special service registrations. An [IIndexScopeManager](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/DefaultIndexScopeManager.cs) uses named, metadata supporting registrations of search index scopes like this
+Use Autofac's `ContainerBuilder` for special service registrations. For example, an [IIndexScopeManager](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/DefaultIndexScopeManager.cs) uses named, metadata supporting registrations of search index scopes like this
 
 ```csharp
-public override void ConfigureContainer(ContainerBuilder builder, IApplicationContext appContext)
+public override void ConfigureContainer(
+    ContainerBuilder builder, 
+    IApplicationContext appContext)
 {
-    builder.RegisterType<CatalogIndexScope>().As<IIndexScope>()
+    builder.RegisterType<CatalogIndexScope>()
+        .As<IIndexScope>()
         .Named<IIndexScope>("Catalog")
         .WithMetadata<IndexScopeMetadata>(m => m.For(em => em.Name, "Catalog"))
         .InstancePerLifetimeScope();
 
-    builder.RegisterType<ForumIndexScope>().As<IIndexScope>()
+    builder.RegisterType<ForumIndexScope>()
+        .As<IIndexScope>()
         .Named<IIndexScope>("Forum")
         .WithMetadata<IndexScopeMetadata>(m => m.For(em => em.Name, "Forum"))
         .InstancePerLifetimeScope();
@@ -123,11 +127,11 @@ After a service has been registered it can be resolved from the IoC container or
 > "While it is possible to resolve components right from the root container, doing this through your application in some cases may result in a memory leak. It is recommended you always resolve components from a lifetime scope where possible to make sure service instances are properly disposed and garbage collected."\
 > — _Autofac_
 
-You can use Autofac's `ILifetimeScope` or Microsoft's `IServiceProvider` to resolve dependencies. In places where dependency resolving is often necessary, an instance of one of them is usually supplied as a parameter. You can also get such an instance via [constructor injection](dependency-injection.md#constructor-injection).
+You can use Autofac's `ILifetimeScope` or Microsoft's `IServiceProvider` to resolve dependencies. In places where dependency resolution is often necessary, an instance of one of them is usually supplied as a parameter. You can also get such an instance via [constructor injection](dependency-injection.md#constructor-injection).
 
-WARN: Never resolve scoped dependencies from `IApplicationContext.Services` because it is the root application services container! Only singleton dependencies can be resolved from it.
+WARN: Never resolve scoped dependencies from `IApplicationContext.Services` because it is the root application services container! Only singleton dependencies should be resolved from it.
 
-WARN: Avoid resolving dependencies via `EngineContext.Current.Scope` whenever possible. It can make working with unit tests difficult or even impossible.
+WARN: Avoid resolving dependencies via `EngineContext.Current.Scope` whenever possible. It can make writing unit tests difficult or even impossible.
 
 If your code is always executed in the context of an HTTP request, then dependencies can also be resolved the "ASP.NET way" via `HttpContext.RequestServices`. It gives access to the request's service container.
 
@@ -180,9 +184,9 @@ While constructor injection is the preferred method of passing dependencies to a
 
 HINT: It is recommended to avoid property injection if possible and to use it only for special cases (like abstract classes) or very simple services (like `Logger` or `Localizer`). Auto injected properties must be public, although in most cases a component dependency should not be.
 
-### "Work of" dependency
+### "Work\<T>" dependency
 
-Sometimes a dependency needs to be resolved when it is used, rather than when the component's constructor is called (e.g. when it is called at a very early stage when the IoC container cannot yet resolve services). A solution for this is the [Work](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Work.cs) class. The dependency is resolved from `ILifetimeScope` whenever its `Value` property is accessed.
+Sometimes a dependency needs to be resolved when it is accessed for the first time, rather than when the component's constructor is called (e.g. when it is called at a very early stage when the DI container cannot yet resolve services). A solution for this is the [Work](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Work.cs) class. The dependency is resolved from `ILifetimeScope` whenever its `Value` property is accessed.
 
 ```csharp
 public class MyComponent
@@ -205,7 +209,7 @@ public class MyComponent
 
 ### Custom dependency scopes
 
-Use [ILifetimeScopeAccessor](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/ILifetimeScopeAccessor.cs) to create your own dependency scopes. The `DataImporter` uses this possibility to separate the dependencies of the respective importer from its own.
+Use [ILifetimeScopeAccessor](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/ILifetimeScopeAccessor.cs) to create custom dependency scopes. The `DataImporter` uses this possibility to separate the dependencies of the respective importer from its own.
 
 ```csharp
 while (context.Abort == DataExchangeAbortion.None && segmenter.ReadNextBatch())
@@ -224,4 +228,4 @@ while (context.Abort == DataExchangeAbortion.None && segmenter.ReadNextBatch())
 }
 ```
 
-The `batchScope` here resides inside the segmenter loop and is disposed after the batch has been processed. This way the entities loaded per batch (by the importer) are automatically removed from entity framework's change tracker, thus clearing the memory and ensuring that nothing past remains there.
+The `batchScope` here resides inside the segmenter loop and is disposed after the batch has been processed. This way the entities loaded per batch (by the importer) are automatically removed from Entity Framework's change tracker, thus clearing the memory and ensuring that nothing past remains there.
