@@ -92,14 +92,16 @@ By using CSS Autoprefixer, developers can rest assured that all CSS styles will 
 
 Generated assets are cached in RAM and on disk. This keeps the whole process highly performant and delays page rendering by only a few milliseconds when regenerating CSS files. The cache is automatically invalidated when an included file changes.
 
+#### DiskCache
+
 <mark style="color:blue;">Erläutern: DiskCache hat den Vorteil, dass generierte Assets einen App-Neustart überdauern. Ohne DiskCache (was man abschalten kann, bitte erläutern) muss bspw. bei jedem App-Neustart der Sass-Parser angeschmissen werden, was wiederum den Start etwas verzögert. Der DiskCache legt Dateien im Ordner</mark> <mark style="color:blue;"></mark>_<mark style="color:blue;">App\_Data/Tenants/Default/BundleCache</mark>_ <mark style="color:blue;"></mark><mark style="color:blue;">ab.</mark>
 
-This is done by using `DiskCache`. The big advantage is that the generated assets are preserved when the application is restarted. Without it<mark style="color:yellow;">, for instance,</mark> the Sass parser would have to be run on each restart, delaying the entire startup process.
+This is done by using `DiskCache`. The big advantage is that the generated assets are preserved when the application is restarted. Without it the Sass parser would have to be run on each restart, delaying the entire startup process.
 
-The cached files are located in the _App\_Data/Tenants/Default/BundleCache_ directory. `DiskCache` can be disabled by changing the `AssetCachingEnabled` property in [ThemeSettings](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Theming/Settings/ThemeSettings.cs) to `1`.
+The cached files are located in the _App\_Data/Tenants/Default/BundleCache_ directory. `DiskCache` can be disabled programmatically by setting the `AssetCachingEnabled` property in [ThemeSettings](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Theming/Settings/ThemeSettings.cs) to `1`, or via the backend by disabling **Enable asset caching** in **Configuration / Themes / Settings**.
 
 {% hint style="info" %}
-To learn more, see [Caching](../../framework/platform/caching.md).
+To learn more about the different ways cache is used in Smartstore, see [Caching](../../framework/platform/caching.md).
 {% endhint %}
 
 ## Libraries
