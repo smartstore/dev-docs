@@ -1,4 +1,4 @@
-# 🥚 Dependency injection
+# 🐣 Dependency injection
 
 ## Overview
 
@@ -118,7 +118,90 @@ public class DefaultIndexScopeManager : IIndexScopeManager
 }
 ```
 
-TODO: more special stuff ....
+Components registered by key (a parameter of type `object`) can be resolved by a function delegate.
+
+```csharp
+builder.RegisterType<ProductImporter>().Keyed<IEntityImporter>(ImportEntityType.Product).InstancePerLifetimeScope();
+builder.RegisterType<CategoryImporter>().Keyed<IEntityImporter>(ImportEntityType.Category).InstancePerLifetimeScope();
+// More importers being registered...
+
+builder.Register<Func<ImportEntityType, IEntityImporter>>(c =>
+{
+    var cc = c.Resolve<IComponentContext>();
+    return key => cc.ResolveKeyed<IEntityImporter>(key);
+});
+```
+
+Whenever a registered service is needed as part of a strongly-typed setting configuration, you need to use `IConfigureOptions<T>` or `IConfigureNamedOptions<T>`. By implementing these interfaces, you can configure an options object `T` using any required services from the DI container.
+
+```csharp
+builder.RegisterType<ODataOptionsConfigurer>()
+    .As<IConfigureOptions<ODataOptions>>()
+    .SingleInstance();
+
+// Place class in Bootstrapping folder.
+internal class ODataOptionsConfigurer : IConfigureOptions<ODataOptions>
+{
+    private readonly IApplicationContext _appContext;
+    private ODataOptions _prevOptions;
+
+    public ODataOptionsConfigurer(IApplicationContext appContext)
+    {
+        _appContext = appContext;
+    }
+
+    public void Configure(ODataOptions options)
+    {
+        // "Resolve" required. Do not get via ctor.
+        var settings = _appContext.Services.Resolve<WebApiSettings>();
+
+        if (_prevOptions == null)
+        {
+            // Do initial configuration of "options".
+            var modelProviders = _appContext.TypeScanner
+                .FindTypes<IODataModelProvider>()
+                .Select(x => (IODataModelProvider)Activator.CreateInstance(x))
+                .ToList();
+                
+            var modelBuilder = new ODataConventionModelBuilder();
+
+            foreach (var provider in modelProviders)
+            {
+                provider.Build(modelBuilder, 1);
+            }
+
+            var edmModel = modelBuilder.GetEdmModel();
+            // TODO: more configuration. Additional code omitted for clarity.
+        }
+        else
+        {
+            // Is already configured.
+            // TODO: apply updated settings etc. to configuration (if required).
+        }
+        
+        _prevOptions = options;
+    }
+}
+```
+
+The above configuration must be re-triggered if anything is to be changed to it subsequently. This can be achieved as follows:
+
+```csharp
+private readonly Lazy<IConfigureOptions<ODataOptions>> _odataOptionsConfigurer;
+private readonly IOptions<ODataOptions> _odataOptions;
+
+[HttpPost]
+public async Task<IActionResult> Configure(ConfigurationModel model)
+{
+    // TODO: detect reconfigurationRequired somehow.
+    bool reconfigurationRequired = true;
+    if (reconfigurationRequired)
+    {
+        _odataOptionsConfigurer.Value.Configure(_odataOptions.Value);
+    }
+    //...
+}
+```
 
 ## Resolving services
 
