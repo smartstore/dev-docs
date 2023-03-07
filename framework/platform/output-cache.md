@@ -2,7 +2,7 @@
 description: Improve performance and scalability
 ---
 
-# 🥚 Output Cache
+# 🐣 Output Cache
 
 ## Concept
 
@@ -14,7 +14,7 @@ Smartstore also ensures that cached content is invalidated or refreshed when it 
 
 Smartstore follows the so-called _Donut Hole Caching_ strategy. In this strategy, a dynamic web page is divided into two parts: a non-dynamic or semi-static outer layer, and a dynamic inner layer. The outer layer is cached, while the inner layer is not, and is generated on each request.
 
-The term "donut hole" refers to the inner dynamic layer, which is surrounded by the static outer layer. The outer layer is cached in its entirety, including its HTML, CSS, and JavaScript files. When a user requests the web page, the server first checks the cache for the outer layer. If it is found, it is returned to the user, which can result in a significant performance improvement since the server does not need to generate the outer layer on each request.
+The term "donut hole" refers to the inner dynamic layer, which is surrounded by the static outer layer. The outer layer is cached in its entirety, including its HTML, CSS, and JavaScript files. When a user requests the web page, the server first checks the cache for the outer layer, and if it is found, returns it to the user. This can result in a significant performance improvement since the server does not need to generate the outer layer on each request.
 
 However, the inner dynamic layer, which contains content that changes frequently, such as user-specific data or real-time information, is not cached. This ensures that the content remains fresh and up-to-date. When a request for the inner layer is received, the server generates it dynamically and inserts it into the cached outer layer, creating the final page that is returned to the user.
 
@@ -24,13 +24,27 @@ Donut Hole Caching is a balance between the performance benefits of caching and 
 
 In Smartstore, output caching is handled by a commercial module that is **not** part of the open-source Community Edition. The module builds on the caching infrastructure provided by the Smartstore core and provides all the necessary implementations to actually enable and operate the output cache.
 
-But, nevertheless, when developing custom modules for Smartstore, it's important to take output caching into account. This means that you need to ensure that your module works correctly with the output caching system. This may involve configuring the caching settings for the module or using cache tags to ensure that the cache is cleared when necessary.
+However, when developing custom modules for Smartstore, it's important to take output caching into account. This means that you need to ensure that your module works properly with the output caching system. This may involve configuring the caching settings for the module or using cache tags to ensure that the cache is cleared when necessary.
 
 ## Cacheable routes
 
 * _Terminology: page --> static outer layer, component --> dynamic inner layer (see above)_
+
+{% hint style="info" %}
+Clarification of the terminology relating to the [Donut Hole](output-cache.md#donut-hole-caching):
+
+* **Page** is the static outer layer.
+* **Component** is the dynamic inner layer.
+{% endhint %}
+
 * A cacheable route represents the stringified route to a page or a view component (route identifier)
+
+A _cachable route_ represents the stringified route to a page or view component. It acts as a route identifier.
+
 * Output caching is always opt-in: only explicitly specified routes are candidates. Meaning: if you develop a module and do not setup any caching stuff, nothing will be cached.
+
+Output caching implements the _opt-in_ approach. This means that only **explicitly specified** routes are recognized as candidates. If you develop a module and do not include any caching functionality, nothing will be cached.
+
 * The route identifier looks like this:
   * **Full page** route pattern: `[{Module}/]{ControllerShortName}/{Action}`. Module must be omitted if controller is part of the application core. Example: `Smartstore.Blog/Blog/List`, `Catalog/Category`
   * **View component** route pattern: `vc:[{Module}/]{ComponentShortName}`. Module must be omitted if component is part of the application core. Example: `vc:SearchBox`, `vc:Smartstore.Blog/BlogSummary`.
