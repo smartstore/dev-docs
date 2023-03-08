@@ -28,8 +28,6 @@ However, when developing custom modules for Smartstore, it's important to take o
 
 ## Cacheable routes
 
-* _Terminology: page --> static outer layer, component --> dynamic inner layer (see above)_
-
 {% hint style="info" %}
 Clarification of the terminology relating to the [Donut Hole](output-cache.md#donut-hole-caching):
 
@@ -37,36 +35,48 @@ Clarification of the terminology relating to the [Donut Hole](output-cache.md#do
 * **Component** is the dynamic inner layer.
 {% endhint %}
 
-* A cacheable route represents the stringified route to a page or a view component (route identifier)
+### Route identifiers
 
-A _cachable route_ represents the stringified route to a page or view component. It acts as a route identifier.
+A _cachable route_ represents the stringified route to a page or view component. It is the route identifier and structured as follows:
 
-* Output caching is always opt-in: only explicitly specified routes are candidates. Meaning: if you develop a module and do not setup any caching stuff, nothing will be cached.
+| Element            | Route pattern                               | Example                                          |
+| ------------------ | ------------------------------------------- | ------------------------------------------------ |
+| **Full page**      | `[{Module}/]{ControllerShortName}/{Action}` | `Smartstore.Blog/Blog/List`, `Catalog/Category`  |
+| **View component** | `vc:[{Module}/]{ComponentShortName}`        | `vc:SearchBox`, `vc:Smartstore.Blog/BlogSummary` |
 
+{% hint style="warning" %}
+**Module must be omitted** if the controller / component is part of the application core.
+{% endhint %}
+
+{% hint style="info" %}
 Output caching implements the _opt-in_ approach. This means that only **explicitly specified** routes are recognized as candidates. If you develop a module and do not include any caching functionality, nothing will be cached.
+{% endhint %}
 
-* The route identifier looks like this:
-  * **Full page** route pattern: `[{Module}/]{ControllerShortName}/{Action}`. Module must be omitted if controller is part of the application core. Example: `Smartstore.Blog/Blog/List`, `Catalog/Category`
-  * **View component** route pattern: `vc:[{Module}/]{ComponentShortName}`. Module must be omitted if component is part of the application core. Example: `vc:SearchBox`, `vc:Smartstore.Blog/BlogSummary`.
-* If any **full page** route pattern matches the current request route, the generated page will be saved in cache.&#x20;
-* Several pieces of environmental information are used to compute the cache entry key (so that the cached entry varies by them):
-  * Path and query string
-  * Current language
-  * Current currency
-  * Current store
-  * Current theme
-  * All customer roles
-  * App version
-* But the output of contained view components that don't match any registered **component** route pattern will be removed from the outer layer. Their content is generated dynamically on each request later. This procedure (replacing these _donut holes_ in a deferred manner) is also called _substitution_.
-  * But: for this to work you have to ensure that the method arguments of the component's `Invoke` method do not depend on any parent/outer view model. Because: this model is gone in successive requests ('cause content comes from cache)
-  * You also have to ensure that the arguments can be serialized to JSON
-    * Because in the cached outer layer, the component output is replaced by a JSON representation of the component metadata and actual `Invoke` arguments.
-  * But if the component is made cacheable, you don't have to care about parameter limitations ('cause the output is **not** removed for later substitution / is cached along with the outer layer).
-  * WARN: Never ever make a component cacheable if it somehow displays user-related data (like cart for example). Another user could see it when it comes from cache.
-  * HINT: backend pages are never cached, only frontend pages.
-* Here's how you specify cacheable routes for your module:
-  * Add a class that implements [ICacheableRouteProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/OutputCache/ICacheableRouteProvider.cs). By convention we call it `CacheableRoutes` and make it internal. No need for DI registration.
-  * Example:
+If any **full page** route pattern matches the current request route, the generated page is cached.
+
+Several environmental elements are used to generate the cache entry key. The cached entry is different for each of these variants: The path and query string; the current language, the current currency; the current store; the current theme; all customer roles; the version of the application.
+
+### Substitution
+
+The output of view components, contained within the page, that do not match any registered **component** route patterns are removed from the outer layer. Their content is dynamically generated on each request later down the line. The deferred replacement of the _donut holes_ is called _substitution_.
+
+This procedure can only work if you ensure that the method arguments of the component’s `Invoke` method do not depend on any parent or outer view models. After the first request, the models will no longer be accessible because the content will be fetched from the cache. Additionally, the arguments must all be serializable to JSON. The component’s output is replaced by a JSON representation of its metadata and actual `Invoke` arguments in the cached outer layer.
+
+If the component is made cacheable, there is no need to worry about parameter restrictions. Their output will **not** be removed by later substitutions, but will be cached along with the outer layer.
+
+{% hint style="warning" %}
+**Never make user-related components cacheable.** If they display personal information and are cached, that information could be served to another user.
+{% endhint %}
+
+{% hint style="info" %}
+Backend pages are **never** cached, only the frontend pages.
+{% endhint %}
+
+### Apply cacheable routes
+
+To specify cacheable routes for your module, simply add an `internal` class that implements the [ICacheableRouteProvider](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/OutputCache/ICacheableRouteProvider.cs). By convention, the class is called `CacheableRoutes`. No DI registration is required.
+
+Here is an example of a module’s cacheable routes:
 
 ```csharp
 internal sealed class CacheableRoutes : ICacheableRouteProvider
@@ -92,18 +102,35 @@ internal sealed class CacheableRoutes : ICacheableRouteProvider
 
 ## Display control
 
-* The most complicated issue with output caching is determining when cached content becomes stale or outdated.
-* For example: if _Product A_ has been updated or deleted in the backend, then **any** page that displayed _Product A_ **in any way** needs to be removed from cache. The same applies to categories, brands, blog, news etc.
-* In order for Output Cache to automate this invalidation, you need to **announce** that you are about to display entities.
-* The best place to do this announcement is when you are preparing a view model to be rendered by a view.
-* The [IDisplayControl](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/OutputCache/IDisplayControl.cs) service is responsible for collecting such announcements. Just pass it to the constructor of your controller and call its `Announce` method, passing the entity instance you are going to display.
-  * _SAMPLE_
-  * The `Announce` method creates **tags** for passed entities that are later collected by the cache service during cache entry generation.
-  * The collected tags are cached along with the content
-  * ...and if an entity is edited or deleted at some point in the future, any cached entries that contain the entity's tag will be invalidated.
-  * But in order for `IDisplayControl` to generate tags for your custom entity types, you need to register tag generation handlers.
-    * Call the static `DisplayControl.RegisterHandlerFor(Type, DisplayControlHandler)` method for this
-    * The best place to register a handler is the `ConfigureServices` method of your starter class. Example:
+The most complicated issue with output caching is determining when cached content becomes stale or outdated. For example, if _product A_ is updated or deleted in the backend, **any** page that displays _product A_ **in any way** must be removed from the cache. The same goes for categories, brands, blog, news, etc.
+
+### Announcing
+
+By **announcing** the display of entities, Output Cache can automate this invalidation. The best point to make this announcement is when you are preparing a view model to be rendered by a view.
+
+The [IDisplayControl](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/OutputCache/IDisplayControl.cs) service collects these announcements. You simply pass it to the constructor of your controller. After that, you call its `Announce` method wherever you need it, passing the entity instance you want to display as a parameter.
+
+```csharp
+private readonly IDisplayControl _displayControl;
+
+public MyAnnouncer(IDisplayControl displayControl)
+{
+    _displayControl = displayControl;
+}
+
+public void AnnounceProduct(Product product)
+{
+    _displayControl.Announce(product);
+}
+```
+
+The `Announce` method creates **tags** for all passed entities. They are collected later by the cache service during the cache entry generation and are also cached. This way, any time an entity is edited or deleted, all cached entries containing the entity’s tag are invalidated.
+
+### Tag generation handlers
+
+In order for `IDisplayControl` to generate tags for custom entity types, you must register tag generation handlers. To do this, call the static `DisplayControl.RegisterHandlerFor(Type, DisplayControlHandler)` method.
+
+It is best to register a handler in the `ConfigureServices` method of your starter class:
 
 ```csharp
 public override void ConfigureServices(
@@ -126,16 +153,23 @@ public override void ConfigureServices(
 }
 ```
 
-* If for some reason the generated output contains content that should not be cached (despite a matching route identifier), you can mark the request as uncacheable: just call `IDisplayControl.MarkRequestAsUncacheable()`. The cache provider will no longer intercept the action after this call.
+### Uncacheable Requests
+
+If the generated output contains content that should not be cached, even though it has a matching route identifier, you can mark the request as `uncacheable`. Call the `IDisplayControl.MarkRequestAsUncacheable()` method, and the cache provider will no longer intercept the action after this call.
 
 ## Invalidation observer
 
-* The invalidation observer allows registration of custom output cache invalidation handlers for more complex scenarios
-* It allows registration of entity and setting observe handlers
-* The service is the singleton [IOutputCacheInvalidationObserver](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/OutputCache/IOutputCacheInvalidationObserver.cs):
-  * `ObserveEntity(Func<ObserveEntityContext, Task>)` registers an observer for an **entity type**. The passed observer is responsible for invalidating the cache by calling one of the invalidation methods in the `IOutputCacheProvider` instance. The observer must then set the property `ObserveEntityContext.Handled` to `true` to signal the framework that it should skip executing subsequent observers.
-  * `ObserveSetting(string, Func<IOutputCacheProvider, Task>)` registers an observer for a **setting key**. If the value for the passed setting key changes, the framework calls the `invalidationAction` handler. The key can either be fully qualified - e.g. "CatalogSettings.ShowProductSku" -, or prefixed - e.g. "CatalogSettings.\*". The latter calls the invalidator when ANY _CatalogSetting_ changes.
-* The best place to register observers is the `BuildPipeline` method of your starter class. Example:
+The invalidation observer provides handler registration for custom output cache invalidation used in more complex scenarios. The registrable handlers are Entity and Setting observe handlers.
+
+### IOutputCacheInvalidationObserver
+
+[IOutputCacheInvalidationObserver](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/OutputCache/IOutputCacheInvalidationObserver.cs) is the required singleton service, which has two methods for registering observers.
+
+`ObserveEntity(Func<ObserveEntityContext, Task>)` registers an observer for an **entity type**. The passed observer is responsible for invalidating the cache by calling an invalidation method on the `IOutputCacheProvider` instance. The observer must set the `ObserveEntityContext.Handled` property to `true` to signal the framework to skip execution of subsequent observers.
+
+`ObserveSetting(string, Func<IOutputCacheProvider, Task>)` registers an observer for a **setting key**. When the value of the passed setting key changes, the framework calls the `invalidationAction` handler. The key can either be fully qualified like "CatalogSettings.ShowProductSku", or prefixed like "CatalogSettings.\*". The latter will call the invalidator whenever **any** _CatalogSetting_ changes.
+
+The best place to register observers is in the `BuildPipeline` method of your starter class:
 
 ```csharp
 public override void BuildPipeline(RequestPipelineBuilder builder)
@@ -148,8 +182,8 @@ public override void BuildPipeline(RequestPipelineBuilder builder)
     observer.ObserveSettings<BlogSettings>(PurgeBlog);
     
     // If the BlogSettings.Enabled property changes, then invalidate ALL
-    // cached pages (whether blog or not). Because it is very likely
-    // that a global a menu item in the page header is being affected by this.
+    // cached pages (whether they are blogs or not). Because it is very likely
+    // that a global a menu item in the page header is affected.
     observer.ObserveSettingProperty<BlogSettings>(x => x.Enabled);
     
     // Register BlogPost entity change observer
@@ -158,8 +192,8 @@ public override void BuildPipeline(RequestPipelineBuilder builder)
 
 private static async Task BlogPostObserver(ObserveEntityContext context)
 {
-    // We gonna check if any visibility affecting property name
-    // was changed and - if true - invalidate ALL blog list pages also.
+    // We are going to check if any visibility affecting property name
+    // has been changed, and if so, invalidate ALL blog list pages as well.
     
     if (context.Entity is not BlogPost)
         return;
@@ -179,7 +213,7 @@ private static async Task BlogPostObserver(ObserveEntityContext context)
     }
 }
 
-// Delete all pages that are asscoiated with blog routes from cache
+// Delete all pages that are associated with blog routes from cache
 private static Task PurgeBlog(IOutputCacheProvider provider)
 {
     return provider.InvalidateByRouteAsync(
