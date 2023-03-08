@@ -2,7 +2,7 @@
 description: Improve performance and scalability
 ---
 
-# 🐣 Output Cache
+# 🐥 Output Cache
 
 ## Concept
 
@@ -183,7 +183,7 @@ public override void BuildPipeline(RequestPipelineBuilder builder)
     
     // If the BlogSettings.Enabled property changes, then invalidate ALL
     // cached pages (whether they are blogs or not). Because it is very likely
-    // that a global a menu item in the page header is affected.
+    // that a global menu item in the page header is affected.
     observer.ObserveSettingProperty<BlogSettings>(x => x.Enabled);
     
     // Register BlogPost entity change observer
