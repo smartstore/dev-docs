@@ -1,8 +1,8 @@
-# 🐣 Validation
+# 🐥 Validation
 
 ## FluentValidation
 
-Smartstore uses [FluentValidation](https://fluentvalidation.net/) for building strongly-typed validation rules to validate view models on the server-side. For this purpose, rules are defined for properties of the related view model. If the value of a property is changed via an edit page, it will be validated against its rule and, if necessary an error message is issued if the rule is not fulfilled. Typically, the validation class is located directly below the view model in the same file as the model.
+Smartstore uses [FluentValidation](https://fluentvalidation.net/) to create strongly-typed validation rules to validate view models on the server-side. This is done by defining rules for properties of the associated view model. When the value of a property is changed via an edit page, it is validated against its rule and, if necessary, an error message is issued if the rule is not fulfilled. Typically, the validation class is located directly below the view model in the same file as the model.
 
 The class of a validator inherits from `AbstractValidator`, to which the view model type is passed as a generic parameter.
 
@@ -30,7 +30,7 @@ public partial class CustomerValidator : AbstractValidator<CustomerModel>
 }
 ```
 
-FluentMigrator provides a number of ways to specify complex validation rules.
+`FluentMigrator` provides a number of ways to specify complex validation rules.
 
 ```csharp
 public AddressValidator(Localizer T, AddressSettings addressSettings)
@@ -76,9 +76,9 @@ public ConfigurationValidator(Localizer T)
 
 ### SmartValidator
 
-Typically view models properties have the same names as the corresponding object that is to be modified (e.g. an entity such as a category or a settings class). This way the values of the properties can be copied from an object to its model and vice versa by a single `MiniMapper` statement. This allows Smartstore to provide additional utilities.
+Typically, the properties of view models have the same names as the corresponding object that is to be modified (e.g. an entity such as a category or a settings class). This way, the values of the properties can be copied from an object to its model and vice versa with a single `MiniMapper` statement. This allows Smartstore to provide additional utilities.
 
-`SmartValidator.ApplyEntityRules` copies common validation rules from the entity type over to the corresponding view model type. Common rules are `Required` and `MaxLength` rules on string properties (either fluently mapped or annotated). It also adds the `Required` rule to non-nullable intrinsic model property type to bypass MVC's non-localized `RequiredAttributeAdapter`.
+`SmartValidator.ApplyEntityRules` copies common validation rules from the entity type over to the corresponding view model type. Common rules are `Required` and `MaxLength` rules on string properties (either fluently mapped or annotated). It also adds the `Required` rule to non-nullable intrinsic model property types to bypass MVC's non-localized `RequiredAttributeAdapter`.
 
 ```csharp
 public partial class CategoryValidator : SmartValidator<CategoryModel>
@@ -90,7 +90,9 @@ public partial class CategoryValidator : SmartValidator<CategoryModel>
 }
 ```
 
-TIP: Validation errors and support requests can be avoided by automatically trimming certain data before saving it. Especially when it comes to data that never starts and ends with spaces, such as data for an API access, a bank account or passwords:
+{% hint style="info" %}
+Validation errors and support requests can be avoided by automatically trimming certain data before saving it. Especially when it comes to data that never starts or ends with a space, such as data for an API access, a bank account or passwords:
+{% endhint %}
 
 ```csharp
 model.ApiPassword = model.ApiPassword.TrimSafe();
@@ -100,7 +102,7 @@ MiniMapper.Map(model, settings);
 
 ### SettingModelValidator
 
-`SettingModelValidator` is an abstract validator that is capable of ignoring rules for unchecked setting properties in a store-specific edit session.
+The `SettingModelValidator` is an abstract validator that can ignore rules for unchecked setting properties in a store-specific edit session.
 
 ```csharp
 public class SearchSettingValidator : SettingModelValidator<SearchSettingsModel, SearchSettings>
@@ -115,14 +117,16 @@ public class SearchSettingValidator : SettingModelValidator<SearchSettingsModel,
 }
 ```
 
-The rule validates `InstantSearchNumberOfProducts` with a value between 1 and 16 under the following conditions:
+The rule validates `InstantSearchNumberOfProducts` with a value between 1 and 16 under one of the following conditions:
 
-* In case of store-agnostic setting mode: the result of the predicate parameter returns true, OR
-* In case of store-specific setting mode: validated setting `InstantSearchNumberOfProducts` is overriden for current store.
+* In case of store-agnostic setting mode: the result of the predicate parameter returns `true`
+* In case of store-specific setting mode: the validated `InstantSearchNumberOfProducts` setting is overridden for the current store.
 
-HINT: `SettingModelValidator` does not support manually validation using `IValidator` directly.
+{% hint style="info" %}
+`SettingModelValidator` does not support manual validation using `IValidator` directly.
+{% endhint %}
 
-### Validate manually
+### Manual validation
 
 Use `IValidator` to manually validate a view model.
 
@@ -154,7 +158,7 @@ Since Smartstore is based on ASP.NET Core MVC, the server-side and client-side v
 
 ### Server-side validation
 
-The model state represents errors that come from the MVC model binding or from model validation. If the model state is not valid (i.e. it contains errors), then no data should be saved and instead the edit page should be called again including the model state errors.
+The model state represents errors that come from the MVC model binding or from model validation. If the model state is not valid (i.e. it contains errors), no data should be saved and instead the edit page should be reloaded with the model state errors.
 
 ```csharp
 [AuthorizeAdmin, Permission(DevToolsPermissions.Read), LoadSetting]
@@ -179,20 +183,22 @@ public IActionResult Configure(ConfigurationModel model, ProfilerSettings settin
 }
 ```
 
-HINT: In the case of an invalid model state, the GET Configure method must be called directly, without redirecting, otherwise the validation errors would be lost.
+{% hint style="info" %}
+In the case of an invalid model state, the `GET` Configure method must be called directly without redirecting, otherwise the validation errors will be lost.
+{% endhint %}
 
-Data annotation attributes let you specify validation rules for model properties. Most common built-in validation attributes:
+Data annotation attributes let you specify validation rules for model properties. The most common built-in validation attributes are:
 
-|  Attribute        | Description                                                                                             |
-| ----------------- | ------------------------------------------------------------------------------------------------------- |
-| Compare           | Validates that two properties in a model match.                                                         |
-| EmailAddress      | Validates that the property has an email format.                                                        |
-| Range             | Validates that the property value falls within a specified range.                                       |
-| RegularExpression | Validates that the property value matches a specified regular expression.                               |
-| Required          | Validates that the field is not null, not an empty string and not only contains white-space characters. |
-| StringLength      | Validates that a string property value does not exceed a specified length limit.                        |
-| Url               | Validates that the property has a URL format.                                                           |
-| ValidateNever     | Indicates that a property or parameter should be excluded from validation.                              |
+|  Attribute        | Description                                                                                                    |
+| ----------------- | -------------------------------------------------------------------------------------------------------------- |
+| Compare           | Validates that two properties in a model match.                                                                |
+| EmailAddress      | Validates that the property has an email format.                                                               |
+| Range             | Validates that the property value falls within a specified range.                                              |
+| RegularExpression | Validates that the property value matches a specified regular expression.                                      |
+| Required          | Validates that the field is not null, is not an empty string and does not only contain white-space characters. |
+| StringLength      | Validates that a string property value does not exceed a specified length limit.                               |
+| Url               | Validates that the property has a URL format.                                                                  |
+| ValidateNever     | Indicates that a property or parameter should be excluded from validation.                                     |
 
 Custom validation can be added to action methods.
 
@@ -204,7 +210,7 @@ if (model.Email.IsEmpty())
 }
 ```
 
-The key (first parameter) of `AddModelError` can also be `string.Empty`. In this case the error message will be displayed in the error summary and not directly at the related input field.
+The key (first parameter) of `AddModelError` can also be `string.Empty`. In this case, the error message will be displayed in the error summary and not directly at the related input field.
 
 The validation summary tag helper targets the HTML `div` element inside your razor view, and is used to render a summary of form validation error messages.
 
@@ -220,7 +226,9 @@ Possible `ValidationSummary` enumeration values are:
 | ModelOnly | Model-level errors only (excludes all property errors). |
 | All       | Model and property validation errors.                   |
 
-HINT: For forms placed in tabs, `ValidationSummary.All` should be used because otherwise the user may miss the error message.
+{% hint style="info" %}
+For forms placed in tabs, `ValidationSummary.All` should be used, otherwise the user may miss the error message.
+{% endhint %}
 
 The validation tag helper targets the HTML `span` element inside your razor view, and is used to render property-specific validation error messages.
 
@@ -230,6 +238,8 @@ The validation tag helper targets the HTML `span` element inside your razor view
 
 ### Client-side validation
 
-Client-side validation prevents submission of a HTML form until it is valid. The Submit button runs JavaScript that either submits the form or displays error messages. It avoids an unnecessary round trip to the server when there are input errors on a form. The validation messages correspond to the validation attributes specified for the model property. For instance, data type validation is based on the .NET type of a property, unless that is overridden by a `DataType` attribute.
+Client-side validation prevents an HTML form from being submitted until it is valid. The Submit button runs JavaScript that either submits the form or displays error messages. This avoids unnecessary round-trips to the server when there are input errors on a form. The validation messages correspond to the validation attributes specified for the model property. For instance, data type validation is based on the .NET type of a property, unless that is overridden by a `DataType` attribute.
 
-HINT: Client-side and server-side validation may differ. Whitespace in a string field is considered valid input in client-side validation. However, server-side validation considers a required string field invalid if only whitespace is entered.
+{% hint style="info" %}
+Client-side and server-side validation may differ. Whitespace in a string field is considered valid input in client-side validation. However, server-side validation considers a required string field invalid if only white-space characters are entered.
+{% endhint %}
