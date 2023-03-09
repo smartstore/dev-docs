@@ -11,7 +11,7 @@ A simple output writer example in the [Autofac](https://autofac.readthedocs.io/e
 
 ## Registering services
 
-In order for the dependencies to be resolved, the related service must be registered. The registration is done via a startup class inheriting from [StarterBase](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Builders/StarterBase.cs). It should be declared as _internal_. In the Smartstore core, the startup classes are located in a bootstrapping folder of the related code section (for instance _DataExchange_). Override the `ConfigureContainer` method to add services using Autofac's `ContainerBuilder` or override the `ConfigureServices` method to add services using Microsoft's `IServiceCollection`. In both ways, the resolved services end up in the same DI container.
+In order for the dependencies to be resolved, the corresponding service must be registered. The registration is done via a startup class inheriting from [StarterBase](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Builders/StarterBase.cs). It should be declared as _internal_. In the Smartstore core, the startup classes are located in a bootstrapping folder of the related code section (for instance _DataExchange_). Override the `ConfigureContainer` method to add services using Autofac's `ContainerBuilder` or override the `ConfigureServices` method to add services using Microsoft's `IServiceCollection`. Either way, the resolved services end up in the same DI container.
 
 ```csharp
 internal class DataExchangeStarter : StarterBase
@@ -33,9 +33,9 @@ internal class DataExchangeStarter : StarterBase
 }
 ```
 
-The `DataExchangeStarter` registers import and export related services, such as the `DataExporter` and `DataImporter` using a type name and a dependency scope. This form of registration is the most common, although Autofac's `ContainerBuilder` offers a number of [other possibilities](dependency-injection.md#special-registrations).
+The `DataExchangeStarter` registers import and export related services, such as the `DataExporter` and `DataImporter`, using a type name and a dependency scope. This is the most common kind of registration, although Autofac's `ContainerBuilder` offers a number of [other possibilities](dependency-injection.md#special-registrations).
 
-You can use `ConfigureServices` to comfortably register your own HTTP clients.
+You can use `ConfigureServices` to conveniently register your own HTTP clients.
 
 ```csharp
 public override void ConfigureServices(IServiceCollection services,
@@ -55,7 +55,9 @@ public override void ConfigureServices(IServiceCollection services,
 }
 ```
 
-HINT: by convention the startup class of a module is named _Startup_ and located in the root of the module project. This gives modules a uniform structure with code that is easier to find.
+{% hint style="info" %}
+By convention the startup class of a module is called `Startup` and is located in the root of the module project. This gives modules a uniform structure with code that is easier to find.
+{% endhint %}
 
 ### Dependency scopes
 
@@ -69,7 +71,7 @@ The most common dependency scopes are:
 
 ### Special registrations
 
-Use Autofac's `ContainerBuilder` for special service registrations. For example, an [IIndexScopeManager](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/DefaultIndexScopeManager.cs) uses named, metadata supporting registrations of search index scopes like this
+Use Autofac's `ContainerBuilder` for special service registrations. For example, an [IIndexScopeManager](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Search/Indexing/DefaultIndexScopeManager.cs) uses named metadata to support registrations of search index scopes like this:
 
 ```csharp
 public override void ConfigureContainer(
@@ -132,14 +134,14 @@ builder.Register<Func<ImportEntityType, IEntityImporter>>(c =>
 });
 ```
 
-Whenever a registered service is needed as part of a strongly-typed setting configuration, you need to use `IConfigureOptions<T>` or `IConfigureNamedOptions<T>`. By implementing these interfaces, you can configure an options object `T` using any required services from the DI container.
+Whenever a registered service is needed as part of a strongly-typed setting configuration, you need to use `IConfigureOptions<T>` or `IConfigureNamedOptions<T>`. By implementing these interfaces, you can configure an options object `T` using any required service from the DI container.
 
 ```csharp
 builder.RegisterType<ODataOptionsConfigurer>()
     .As<IConfigureOptions<ODataOptions>>()
     .SingleInstance();
 
-// Place class in Bootstrapping folder.
+// Place class in Bootstrapping directory.
 internal class ODataOptionsConfigurer : IConfigureOptions<ODataOptions>
 {
     private readonly IApplicationContext _appContext;
@@ -184,7 +186,7 @@ internal class ODataOptionsConfigurer : IConfigureOptions<ODataOptions>
 }
 ```
 
-The above configuration must be re-triggered if anything is to be changed to it subsequently. This can be achieved as follows:
+The above configuration must be retriggered if any changes are made to it. This can be done as follows:
 
 ```csharp
 private readonly Lazy<IConfigureOptions<ODataOptions>> _odataOptionsConfigurer;
@@ -210,13 +212,15 @@ After a service has been registered it can be resolved from the IoC container or
 > "While it is possible to resolve components right from the root container, doing this through your application in some cases may result in a memory leak. It is recommended you always resolve components from a lifetime scope where possible to make sure service instances are properly disposed and garbage collected."\
 > — _Autofac_
 
-You can use Autofac's `ILifetimeScope` or Microsoft's `IServiceProvider` to resolve dependencies. In places where dependency resolution is often necessary, an instance of one of them is usually supplied as a parameter. You can also get such an instance via [constructor injection](dependency-injection.md#constructor-injection).
+You can use Autofac's `ILifetimeScope` or Microsoft's `IServiceProvider` to resolve dependencies. In places where dependency resolution is often necessary, an instance of these is usually provided as a parameter. You can also get such an instance via [constructor injection](dependency-injection.md#constructor-injection).
 
-WARN: Never resolve scoped dependencies from `IApplicationContext.Services` because it is the root application services container! Only singleton dependencies should be resolved from it.
+{% hint style="warning" %}
+**Never resolve scoped dependencies from IApplicationContext.Services**, because it is the root application services container! Only singleton dependencies should be resolved from it.
 
-WARN: Avoid resolving dependencies via `EngineContext.Current.Scope` whenever possible. It can make writing unit tests difficult or even impossible.
+**Avoid resolving dependencies via EngineContext.Current.Scope** whenever possible. It can make writing unit tests difficult or even impossible.
+{% endhint %}
 
-If your code is always executed in the context of an HTTP request, then dependencies can also be resolved the "ASP.NET way" via `HttpContext.RequestServices`. It gives access to the request's service container.
+If your code is always executed in the context of an HTTP request, dependencies can also be resolved the "ASP.NET way" using `HttpContext.RequestServices`. It grants access to the request's service container.
 
 ```csharp
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
@@ -259,17 +263,21 @@ public partial class DataExportTask : ITask
 }
 ```
 
-TIP: only resolve what you really need. Avoid dependencies to components that themselves have many dependencies such as `ICommonServices` (it is primarily intended for controllers). It can make unit testing work more difficult.
+{% hint style="info" %}
+Only resolve what you really need. Avoid dependencies to components that themselves have many dependencies, such as `ICommonServices` (it is primarily intended for controllers). It can make unit testing work more difficult.
+{% endhint %}
 
 ### Property injection
 
-While constructor injection is the preferred method of passing dependencies to a component being constructed, you can also use the `PropertiesAutowired` method to get properties auto injected.
+While constructor injection is the preferred method of passing dependencies to a component being constructed, you can also use the `PropertiesAutowired` method to have properties injected automatically.
 
-HINT: It is recommended to avoid property injection if possible and to use it only for special cases (like abstract classes) or very simple services (like `Logger` or `Localizer`). Auto injected properties must be public, although in most cases a component dependency should not be.
+{% hint style="info" %}
+It is recommended to avoid property injection if possible and to use it only for special cases (like abstract classes) or very simple services (like `Logger` or `Localizer`). Auto injected properties must be public, although in most cases a component dependency should not be.
+{% endhint %}
 
 ### "Work\<T>" dependency
 
-Sometimes a dependency needs to be resolved when it is accessed for the first time, rather than when the component's constructor is called (e.g. when it is called at a very early stage when the DI container cannot yet resolve services). A solution for this is the [Work](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Work.cs) class. The dependency is resolved from `ILifetimeScope` whenever its `Value` property is accessed.
+Sometimes a dependency needs to be resolved when it is accessed for the first time, rather than when the component's constructor is called (e.g. when it is called at a very early stage, before the DI container can resolve services). A solution for this is the [Work](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/Work.cs) class. The dependency is resolved from `ILifetimeScope` whenever its `Value` property is accessed.
 
 ```csharp
 public class MyComponent
@@ -292,7 +300,7 @@ public class MyComponent
 
 ### Custom dependency scopes
 
-Use [ILifetimeScopeAccessor](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/ILifetimeScopeAccessor.cs) to create custom dependency scopes. The `DataImporter` uses this possibility to separate the dependencies of the respective importer from its own.
+Use the [ILifetimeScopeAccessor](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Engine/ILifetimeScopeAccessor.cs) to create custom dependency scopes. The `DataImporter` uses this possibility to separate the dependencies of the respective importer from its own.
 
 ```csharp
 while (context.Abort == DataExchangeAbortion.None && segmenter.ReadNextBatch())
@@ -311,4 +319,4 @@ while (context.Abort == DataExchangeAbortion.None && segmenter.ReadNextBatch())
 }
 ```
 
-The `batchScope` here resides inside the segmenter loop and is disposed after the batch has been processed. This way the entities loaded per batch (by the importer) are automatically removed from Entity Framework's change tracker, thus clearing the memory and ensuring that nothing past remains there.
+The `batchScope` in this example, resides inside the segmenter loop and is disposed after the batch has been processed. This way, the entities loaded per batch (by the importer) are automatically removed from the Entity Framework's change tracker, freeing up memory and ensuring that nothing is left.
