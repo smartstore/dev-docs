@@ -28,7 +28,7 @@
   * [✔ Modularity & Providers](framework/platform/modularity-and-providers.md)
   * [🐥 Output Cache](framework/platform/output-cache.md)
   * [✔ Profiling](framework/platform/diagnostics.md)
-  * [🐥 Validation](framework/platform/validation.md)
+  * [✔ Validation](framework/platform/validation.md)
   * [✔ Scheduling](framework/platform/scheduling.md)
   * [✔ Search](framework/platform/search.md)
   * [✔ Security](framework/platform/security.md)
