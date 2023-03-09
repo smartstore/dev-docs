@@ -3,7 +3,7 @@
 * [Getting Started](README.md)
   * [Source code organization](getting-started/source-code-organization.md)
   * [Architecture overview](getting-started/architecture-overview.md)
-  * [🐥 Dependency injection](getting-started/dependency-injection.md)
+  * [✔ Dependency injection](getting-started/dependency-injection.md)
   * [🐣 Data access](getting-started/data-access.md)
   * [✔ Domain](getting-started/domain.md)
   * [✔ Deployment & Build](getting-started/deployment-and-build.md)
