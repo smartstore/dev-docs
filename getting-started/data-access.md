@@ -259,9 +259,13 @@ Encapsulating LINQ queries and `Where` predicates in extension methods provides 
 
 Here are some of the most commonly used built-in query extension methods in Smartstore:
 
-* _TBD_
+* [GridCommandQueryExtension](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Web.Common/Models/DataGrid/GridCommandQueryExtensions.cs) -> `ToPagedList`
+* [IStoreRestrictedQueryExtension](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Stores/Extensions/IStoreRestrictedQueryExtensions.cs) -> `ApplyStoreFilter`
+* [CustomerQueryExtension](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Identity/Extensions/CustomerQueryExtensions.cs) -> `IncludeCustomerRoles`
+* [ManufacturerQueryExtension](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Catalog/Brands/Extensions/ManufacturerQueryExtensions.cs) -> `ApplyStandardFilter`
+* [OrderQueryExtension](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Checkout/Orders/Extensions/OrderQueryExtensions.cs) -> `ApplyStandardFilter`
 
-_SAMPLE how to create a custom query extension class_
+Here is what a custom query extension class might look like:
 
 ```csharp
 public static class MyEntityQueryExtensions
