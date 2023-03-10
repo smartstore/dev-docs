@@ -1,4 +1,4 @@
-# 🥚 Controllers & ViewComponents
+# 🐥 Controllers & ViewComponents
 
 Smartstore modules are pure MVC projects. This means that normal controller classes can be implemented using the MVC pattern. Since varying fields of application often require repetitive tasks, we have created base controllers following the [DRY principle](https://en.wikipedia.org/wiki/Don't\_repeat\_yourself). These take care of many tasks and can of course be used to implement your own controllers.
 
@@ -48,7 +48,7 @@ Provides the `ICommonServices` service collection using the `Services` shortcut.
 var customer = Services.WorkContext.CurrentCustomer;
 ```
 
-For more information, see `ICommonServices`.
+For more information, see [ICommonServices](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Common/ICommonServices.cs).
 
 </details>
 
@@ -122,7 +122,7 @@ The following call initializes the model, as long as it doesn’t contain any en
 AddLocales(model.Locales);
 ```
 
-If localized entities already exist, for example, when using `Edit` methods or methods that prepare the model for public rendering, the localized model can be initialized like this:
+If localized entities already exist, for example, when using `Edit` methods, the localized model can be initialized like this:
 
 ```csharp
 var myEntity = await _db.MyEntities().FindByIdAsync(id, false);
@@ -276,7 +276,7 @@ Provides the `ICommonServices` service collection using the `Services` shortcut.
 var customer = Services.WorkContext.CurrentCustomer;
 ```
 
-For more information, see `ICommonServices`.
+For more information, see [ICommonServices](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Common/ICommonServices.cs).
 
 </details>
 
@@ -343,7 +343,7 @@ public async Task HandleEventAsync(ViewComponentResultExecutingEvent message)
 
 The `ViewComponentInvokingEvent` is published just before a view component is about to be created or its model is about to be prepared. This event basically replaces the `OnActionExecuting` child action filter of classic MVC.
 
-Unlike the `ViewComponentResultExecutingEvent`, which is **ALWAYS** published implicitly by the `SmartViewComponent`, this event must be published explicitly by the view component authors. This is best done just before model creation.
+Unlike the `ViewComponentResultExecutingEvent`, which is always published implicitly by the `SmartViewComponent`, this event must be published explicitly by the view component authors. This is best done just before model creation.
 
 The component author should check if the model property has been assigned a non-null value by any event consumer. In this case, model creation should be skipped and an externally provided model should be used instead.
 

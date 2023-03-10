@@ -87,7 +87,7 @@
 
 * [Modules](compose/modules/README.md)
   * [✔ Getting started with modules](compose/modules/getting-started-with-modules.md)
-  * [🥚 Controllers & ViewComponents](compose/modules/controllers-and-viewcomponents.md)
+  * [🐥 Controllers & ViewComponents](compose/modules/controllers-and-viewcomponents.md)
   * [🥚 Filters](compose/modules/filters.md)
   * [🥚 Localizing modules](compose/modules/localizing-modules.md)
   * [✔ Licensable modules](compose/modules/licensable-modules.md)
