@@ -1,4 +1,4 @@
-# 🥚 Filters
+# 🐥 Filters
 
 Smartstore modules are pure MVC projects. This means that normal action filters, provided by the ASP.NET Core framework, can be implemented. Implementing filters in modules is the best way to extend, intercept and modify existing functionality in Smartstore.
 
@@ -80,7 +80,7 @@ o.Filters.AddConditional<MyFilter>(
     context => context.ControllerIs<PublicController>());
 ```
 
-Filters for specific controllers can be registered in the same way. Since there is one `ProductController` for the frontend and one for the backend, an additional condition must be added to ensure that the correct controller is used.
+Filters for specific controllers, like the `ProductController` in the frontend, can be registered in the same way. Since there is one `ProductController` for the frontend and one for the backend, an additional condition must be added to ensure that the correct controller is used.
 
 ```csharp
 o.Filters.AddConditional<MyFilter>(
