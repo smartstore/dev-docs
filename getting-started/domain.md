@@ -42,7 +42,7 @@ Refer to [Entity Framework Core: Creating and configuring a model](https://learn
 It may seem a bit cluttered at first glance, but it is good practice to keep entity class and _Fluent API_ mapping in a single code file.
 {% endhint %}
 
-For performance reasons, Smartstore does not use proxy classes for lazy loading, but the `ILazyLoader` interface instead. Therefore, a protected `LazyLoader` property that allows lazy loading of navigation properties is declared in the `BaseEntity` class.
+For performance reasons, Smartstore does not use proxy classes for lazy loading, but the `ILazyLoader` interface instead. Therefore, a protected `LazyLoader` property that allows lazy loading of navigation properties is declared in the `BaseEntity` class. You don't need to inject the `ILazyLoader` service, the property is automatically injected when an entity is attached to the context. If an entity is loaded without being tracked, or if it is manually detached from the context, the `NullLazyLoader` - which does nothing - will be injected instead.
 
 Lazy loader usage example:
 
