@@ -42,31 +42,19 @@ Refer to [Entity Framework Core: Creating and configuring a model](https://learn
 It may seem a bit cluttered at first glance, but it is good practice to keep entity class and _Fluent API_ mapping in a single code file.
 {% endhint %}
 
-For performance reasons, Smartstore does not use proxy classes for lazy loading, but the `ILazyLoader` interface instead. Because of this an entity class requires two constructors as long as the entity contains at least one [navigation property](https://learn.microsoft.com/en-us/dotnet/framework/data/adonet/navigation-property).
+For performance reasons, Smartstore does not use proxy classes for lazy loading, but the `ILazyLoader` interface instead. Therefore, a protected `LazyLoader` property that allows lazy loading of navigation properties is declared in the `BaseEntity` class.
 
-Special consideration is required for navigation properties:
+Lazy loader usage example:
 
 ```csharp
 public class MyEntity : BaseEntity 
 {
-    // Default constructor
-    public MyEntity()
-    {
-    }
-    
-    // Constructor called by EF internally to enable 
-    // lazy loading for navigation properties
-    private MyEntity(ILazyLoader lazyLoader)
-        : base(lazyLoader)
-    {
-    }
-    
     // 1:1 navigation property
     private Product _product;
     public Product Product
     {
-        // The "LazyLoader" property is declared in "BaseEntity" class
-        get => _product ?? LazyLoader?.Load(this, ref _products);
+        // The "LazyLoader" property is declared in the "BaseEntity" class
+        get => _product ?? LazyLoader?.Load(this, ref _product);
         set => _product = value;
     }
     
