@@ -1,4 +1,4 @@
-# 🐣 Getting started with themes
+# 🐥 Getting started with themes
 
 ## Overview
 
@@ -40,9 +40,7 @@ Themes are located in the `Smartstore.Web` project in the _Themes_ directory. An
 
 ### Files & Folders: Best Practices
 
-There are some conventions for organizing files and directories within a theme. While there is no requirement to follow them, it makes things predictable and easier to maintain.
-
-The following is an exhaustive list of files and directories.
+There are some conventions for organizing files and directories within a theme. While there is no requirement to follow them, it makes things predictable and easier to maintain:
 
 | Entry                                              | Description                                         |
 | -------------------------------------------------- | --------------------------------------------------- |
@@ -63,8 +61,6 @@ Razor Runtime Compilation is a feature in ASP.NET Core that responds to changes 
 Smartstore has a setting for this feature that is enabled by default. If you want to disable it, open the `appsettings.json` file in the root of the `Smartstore.Web` project and change the value of the `EnableRazorRuntimeCompilation` property.
 
 #### DebugNoRazorCompile
-
-<mark style="color:blue;">Erläutern: um ein Kompilat zu erzeugen, dass keine präkompilierten Views enthält, muss man in VS die Build-Konfiguration</mark> <mark style="color:blue;"></mark><mark style="color:blue;">**DebugNoRazorCompile**</mark> <mark style="color:blue;"></mark><mark style="color:blue;">wählen. Damit lässt sich die Solution auch sehr viel schneller kompilieren. Aber mit dem Nachteil, dass die Seiten-Ausführungsgeschwindigkeit für den ersten Hit etwas abnimmt (weil im Hintergrund erstmal jene Views kompiliert werden müssen, die gerade benötigt werden). Für</mark> <mark style="color:blue;"></mark><mark style="color:blue;">**Hot Reload**</mark> <mark style="color:blue;"></mark><mark style="color:blue;">während Debugging empfehlen wir definitiv die Build-Konfiguration</mark> <mark style="color:blue;"></mark><mark style="color:blue;">**DebugNoRazorCompile**</mark> <mark style="color:blue;"></mark><mark style="color:blue;">zu wählen, weil</mark> <mark style="color:blue;"></mark><mark style="color:blue;">**Debug**</mark> <mark style="color:blue;"></mark><mark style="color:blue;">sehr sehr langsam ist beim Ermitteln und Anwenden von Code-Änderungen.</mark>
 
 To run Smartstore in Visual Studio without precompiled views, select the **DebugNoRazorCompile** build configuration in Visual Studio. This also has the advantage of speeding up the compilation of the solution. However, it has the disadvantage of slowing down the page load speed for the first hit. This is due to the fact that all used views must first be compiled in the background.
 
@@ -94,15 +90,9 @@ Generated assets are cached in RAM and on disk. This keeps the whole process hig
 
 #### DiskCache
 
-<mark style="color:blue;">Erläutern: DiskCache hat den Vorteil, dass generierte Assets einen App-Neustart überdauern. Ohne DiskCache (was man abschalten kann, bitte erläutern) muss bspw. bei jedem App-Neustart der Sass-Parser angeschmissen werden, was wiederum den Start etwas verzögert. Der DiskCache legt Dateien im Ordner</mark> <mark style="color:blue;"></mark>_<mark style="color:blue;">App\_Data/Tenants/Default/BundleCache</mark>_ <mark style="color:blue;"></mark><mark style="color:blue;">ab.</mark>
-
 This is done by using `DiskCache`. The big advantage is that the generated assets are preserved when the application is restarted. Without it the Sass parser would have to be run on each restart, delaying the entire startup process.
 
 The cached files are located in the _App\_Data/Tenants/Default/BundleCache_ directory. `DiskCache` can be disabled programmatically by setting the `AssetCachingEnabled` property in [ThemeSettings](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Theming/Settings/ThemeSettings.cs) to `1`, or via the backend by disabling **Enable asset caching** in **Configuration / Themes / Settings**.
-
-{% hint style="info" %}
-To learn more about the different ways cache is used in Smartstore, see [Caching](../../framework/platform/caching.md).
-{% endhint %}
 
 ## Libraries
 
@@ -140,7 +130,7 @@ For more information, see [Font Awesome](https://fontawesome.com/icons).
 
 #### Icon variants
 
-Font Awesome icons have light, regular, and solid variants. The displayed variant is specified by a CSS class (fa, fas, far, or fal), which sets the corresponding `font-weight` value. The `font-weight` values for the variant classes are defined by `$icon-font-weight-default` and `$icon-font-variants`. Changing these values has no effect when using the free version.
+Font Awesome icons have light, regular, and solid variants. The displayed variant is specified by a CSS class (.fa, .fas, .far, or .fal), which sets the corresponding `font-weight` value. The `font-weight` values for the variant classes are defined by `$icon-font-weight-default` and `$icon-font-variants`. Changing these values has no effect when using the free version of Font Awesome.
 
 | Variant           | Class   | Sass variable                   | font-weight |
 | ----------------- | ------- | ------------------------------- | ----------- |
@@ -159,7 +149,7 @@ To keep the store's look consistent, the `font-weight` of all icons is set to `9
 
 The professional version of Font Awesome removes the icon limitations and includes all solid, regular and light icons.
 
-Solid, regular and light icons all follow their font-weight values from `$icon-font-variants`. The `font-weight` of the `fa` class is set to `$icon-font-weight-default`, unless it is 900.
+Solid, regular and light icons all follow their font-weight values from `$icon-font-variants`. The `font-weight` of the .`fa` class is set to `$icon-font-weight-default`, unless it is 900.
 
 For licensing reasons, we cannot ship Font Awesome Pro directly. In order to use Font Awesome Pro after you bought a license, you must complete the following steps.
 
@@ -173,9 +163,9 @@ For licensing reasons, we cannot ship Font Awesome Pro directly. In order to use
 
 ### Bootstrap Icons
 
-Bootstrap Icons is a library of graphics and icons designed specifically for the Bootstrap framework. They can be used in HTML and CSS code to add graphical elements to websites and mobile applications.
+_Bootstrap Icons_ is a free, high quality, open source icon library with over 1,800 icons. It can be used in HTML and CSS code to add graphical elements to websites and mobile applications.
 
-Bootstrap icons are only available in Smartstore's backend, as the CSS for the frontend should remain as lightweight as possible.
+_Bootstrap Icons_ is only available in Smartstore's backend, as the CSS for the frontend should remain as lightweight as possible.
 
 {% hint style="info" %}
 For more information, see [Bootstrap Icons](https://icons.getbootstrap.com/).
