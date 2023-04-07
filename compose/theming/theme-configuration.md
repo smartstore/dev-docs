@@ -1,10 +1,10 @@
-# 🐣 Theme configuration
+# 🐥 Theme configuration
 
 ## Overview
 
-The theme.config file is the manifest file for a theme. It contains all the theme information the system needs and can include theme variables. If a subdirectory of _/Smartstore/src/Smartstore.Web/Themes_ exists in the file system and contains a `theme.config` file, Smartstore interprets this directory as a theme directory.
+The _theme.config_ file is the manifest file for a theme. It contains all the theme information the system needs and can include theme variables. If a subdirectory of _/Smartstore/src/Smartstore.Web/Themes_ exists in the file system and contains a theme.config file, Smartstore interprets this directory as a theme directory.
 
-Here is an example of a `theme.config` file without variables.
+Here is an example of a theme.config file without variables.
 
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
@@ -15,15 +15,15 @@ Here is an example of a `theme.config` file without variables.
 </Theme>
 ```
 
-These are the attributes you can use in the Theme-node:
+These are the attributes you can use in the `Theme`-node:
 
-| Attribute   | Description                                                                   |
-| ----------- | ----------------------------------------------------------------------------- |
-| baseTheme   | Specifies which base theme to use.                                            |
-| title       | Defines the title of the theme.                                               |
-| description | Defines the description of the theme as it appears in the Theme Configurator. |
-| author      | Defines the author of the theme.                                              |
-| version     | Defines the version of the theme.                                             |
+| Attribute       | Description                                                                     |
+| --------------- | ------------------------------------------------------------------------------- |
+| **baseTheme**   | Specifies which base theme to use.                                              |
+| **title**       | Defines the title of the theme.                                                 |
+| **description** | Defines the description of the theme as it appears in the _Theme Configurator_. |
+| **author**      | Defines the author of the theme.                                                |
+| **version**     | Defines the version of the theme.                                               |
 
 In addition to the above attributes, a preview file must be stored to display the theme as a preview image in the theme configurator. This file must be located in the _wwwroot/images_ directory and be named `preview.png`. Any changes to `theme.config` will invalidate the cached stylesheet and cause Sass to recompile. As a result, changed variable values are applied right after a browser refresh at runtime, and the changes are immediately visible.
 
@@ -33,7 +33,7 @@ Theme variables are configurable values provided by a theme that can be customiz
 
 ### Usage in Sass
 
-Variables are made available to other Sass files by including the virtual Sass file _/.app/themevars.scss_. This file translates each theme variable into a Sass variable. To do this, use the following `Include` in your `theme.scss` file. This should be the first file included in `theme.scss` so that the variables are available in other included Sass files.
+Variables are made available to other Sass files by including the virtual Sass file _/.app/themevars.scss_. This file translates each theme variable into a Sass variable. To do this, use the following include in your `theme.scss` file. This should be the first file included in `theme.scss` so that the variables are available in other included Sass files.
 
 ```scss
 @import '/.app/themevars.scss'; 
@@ -81,14 +81,14 @@ Boolean	<Var name="inverse-menubar" type="Boolean">false</Var>
 Select	<Var name="shopbar-label" type="Select#brand-colors">warning</Var>
 ```
 
-To provide values through a select box, it is necessary to declare the selectable values outside the Vars node:
+To provide values through a select box, it is necessary to declare the selectable values outside the `Vars` node:
 
 ```xml
         ...
         </Vars>
         <Selects>
-        	<Select id="brand-colors">
-        	<Option>primary</Option>
+            <Select id="brand-colors">
+                <Option>primary</Option>
                 <Option>secondary</Option>
                 <Option>info</Option>
                 <Option>success</Option>
@@ -96,8 +96,8 @@ To provide values through a select box, it is necessary to declare the selectabl
                 <Option>danger</Option>
                 <Option>light</Option>
                 <Option>dark</Option>
-            </Select>
-        </Selects>
+        </Select>
+    </Selects>
 </Theme>
 ```
 
@@ -111,11 +111,11 @@ In `theme.config`, you can introduce your own variables for themes, or override 
 
 #### **Override variables**
 
-If you want to override variables defined in the base theme, simply save them in theme.config with the same name as the base theme variable and change the value accordingly.
+If you want to override variables defined in the base theme, simply declare them in theme.config with the same name as the base theme variable and change the value accordingly.
 
 Here is an example:
 
-If you inherited a Flex theme that has a border-radius variable set to `0.25rem`, you can set a new default value for this variable by adding the following entry to the Vars file in your `theme.config` file.
+If you inherited the _Flex_ theme that has a `border-radius` variable set to `0.25rem`, you can set a new default value for this variable by adding the following entry to the `Vars` node in your `theme.config` file.
 
 ```xml
 <Var name="border-radius" type="String">0.35rem</Var>
@@ -123,7 +123,7 @@ If you inherited a Flex theme that has a border-radius variable set to `0.25rem`
 
 #### **Introducing variables & making them configurable**
 
-New variables are added to the Vars node of `theme.config` exactly as described above. If they are to be changed by the end user, they must be defined in the `ConfigureTheme` Razor view. For this purpose, a Razor view named `ConfigureTheme.cshtml` is stored in the _Views/Shared/_ directory.
+New variables are added to the `Vars` node of `theme.config` exactly as described above. If they are to be changed by the end user, they must be defined in the `ConfigureTheme` Razor view. For this purpose, a Razor view named `ConfigureTheme.cshtml` is stored in the _Views/Shared/_ directory.
 
 Not only do you need to consider your own variables, but you also need to provide the means for the user to configure the variables of the base theme. The best way to do this is to copy the base theme file into your own theme and add your custom variables to the appropriate places.
 
@@ -133,7 +133,7 @@ We have written a helper function in `ConfigureTheme.cshtml` for the output of t
 ThemeVarEditor("login-box-bg");
 ```
 
-This function takes the name of the variable for which an editor is to be output. Optionally, a group name can be specified. If the group name is specified, a heading for the group of the current and all subsequent variables is placed in front of the editor. The last optional parameter the function accepts is a help text describing the use of the variable.
+This function takes the name of the variable for which an editor is to be generated. Optionally, a group name can be specified. If the group name is specified, a heading for the group of the current and all subsequent variables is placed in front of the editor. The last optional parameter the function accepts is a help text describing the use of the variable.
 
 The HTML helper `ThemeVarLabel` is used to render the label. The actual variable control is rendered by the HTML helper `ThemeVarEditor`. It determines the control to render based on the variable type (e.g. color picker for color type variables, dropdown box for select types & simple input elements for the rest).
 
