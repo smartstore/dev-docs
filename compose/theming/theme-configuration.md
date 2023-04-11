@@ -55,7 +55,7 @@ font-size: $my-var;
 
 ### Usage in Razor
 
-In Razor views, you can get the theme variables by using the View helper.
+You can use the `Display` helper to get access to theme variables in Razor views.
 
 ```cshtml
 <style>
@@ -125,9 +125,9 @@ If you inherited the _Flex_ theme that has a `border-radius` variable set to `0.
 
 New variables are added to the `Vars` node of `theme.config` exactly as described above. If they are to be changed by the end user, they must be defined in the `ConfigureTheme` Razor view. For this purpose, a Razor view named `ConfigureTheme.cshtml` is stored in the _Views/Shared/_ directory.
 
-Not only do you need to consider your own variables, but you also need to provide the means for the user to configure the variables of the base theme. The best way to do this is to copy the base theme file into your own theme and add your custom variables to the appropriate places.
+In addition to making your own variables configurable, you also need to make the variables of the base theme configurable. The best way to do this is to copy the base theme file into your own theme and add your custom variables to the appropriate places.
 
-We have written a helper function in `ConfigureTheme.cshtml` for the output of the controls, with which it is possible to render the editor for a variable in one line:
+We wrote a helper function in `ConfigureTheme.cshtml` for the output of the controls, with which it is possible to render the editor for a variable in one line:
 
 ```cshtml
 ThemeVarEditor("login-box-bg");
