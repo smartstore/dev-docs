@@ -84,13 +84,9 @@ To ensure compatibility with different browsers, Smartstore has a built-in CSS A
 
 By using CSS Autoprefixer, developers can rest assured that all CSS styles will display correctly in all major browsers. They can focus on designing the site without worrying about compatibility.
 
-### Cache
+### Cache & DiskCache
 
-Generated assets are cached in RAM and on disk. This keeps the whole process highly performant and delays page rendering by only a few milliseconds when regenerating CSS files. The cache is automatically invalidated when an included file changes.
-
-#### DiskCache
-
-This is done by using `DiskCache`. The big advantage is that the generated assets are preserved when the application is restarted. Without it the Sass parser would have to be run on each restart, delaying the entire startup process.
+Generated assets are cached in RAM and on disk. This keeps the whole process highly performant and delays page rendering by only a few milliseconds when regenerating CSS files. The cache is automatically invalidated when an included file changes, which is done using `DiskCache`. This caching method preserves the generated assets, so they don't need to be regenerated when the application is restarted. Without it, the Sass parser would have to run on each restart, which would delay the startup process.
 
 The cached files are located in the _App\_Data/Tenants/Default/BundleCache_ directory. `DiskCache` can be disabled programmatically by setting the `AssetCachingEnabled` property in [ThemeSettings](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Theming/Settings/ThemeSettings.cs) to `1`, or via the backend by disabling **Enable asset caching** in **Configuration / Themes / Settings**.
 
