@@ -222,7 +222,7 @@ private Task<(string ID, string DataHash)> CreateTransaction()
 {
     // TODO: create a transaction using API and get back its ID.
     var id = "1.de.4145.1-0303135329-211";
-    var hash = "1c05aa56405c447e6678b7f312
+    var hash = "1c05aa56405c447e6678b7f312";
     return Task.FromResult((id, hash));
 }
 ```
