@@ -8,10 +8,7 @@ description: Object mapping made easy
 
 Automatic object mapping is useful whenever you need to convert from type A to type B. Instead of manually assigning each member one at a time, an object mapper does this in a very generic way using reflection. For example, you can convert an entity type (such as `Product`) to a view model type (such as `ProductModel`) or vice-versa. Smartstore comes with object mapping utilities that are ultra-lightweight and fast.
 
-| Utility                                                                                                            | Description                                | Call                               |
-| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------ | ---------------------------------- |
-| [MiniMapper](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/ComponentModel/MiniMapper.cs)       | Very simple object mapper                  | `MiniMapper.Map(From, To)`         |
-| [MapperFactory](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/ComponentModel/MapperFactory.cs) | Advanced, customizable and flexible mapper | `MapperFactory.MapAsync(From, To)` |
+<table><thead><tr><th width="166.33333333333331">Utility</th><th width="194">Description</th><th>Call</th></tr></thead><tbody><tr><td><a href="https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/ComponentModel/MiniMapper.cs">MiniMapper</a></td><td>Very simple object mapper</td><td><code>MiniMapper.Map(From, To)</code></td></tr><tr><td><a href="https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/ComponentModel/MapperFactory.cs">MapperFactory</a></td><td>Advanced, customizable and flexible mapper</td><td><code>MapperFactory.MapAsync(From, To)</code></td></tr></tbody></table>
 
 ## MiniMapper
 
@@ -55,10 +52,9 @@ Use `MapperFactory` when:
 
 Upon initialization, `MapperFactory` automatically scans for all concrete `IMapper<TFrom, TTo>` classes in all loaded assemblies. Because the mapper is DI-enabled it can depend on any registered service.
 
-| Call                                    | Description                                           |
-| --------------------------------------- | ----------------------------------------------------- |
-| `MapperFactory.GetMapper<TFrom, TTo>()` | Resolve a mapper instance                             |
-| `Map*()`                                | Map object instances (dynamic parameters are allowed) |
+You can register multiple mappers for the same type pair without any conflicts. When a mapping operation is requested, the `MapperFactory` will combine all the registered mappers into a composite mapper. This composite mapper will internally delegate the object mapping to each individual mapper, ensuring that all the registered mappers contribute to the final mapping result.
+
+<table><thead><tr><th width="420">Call</th><th>Description</th></tr></thead><tbody><tr><td><code>MapperFactory.GetMapper&#x3C;TFrom, TTo>()</code></td><td>Resolve a mapper instance (either single, composite or generic)</td></tr><tr><td><code>GetRegisteredMapper&#x3C;TFrom, TTo>()</code></td><td>Resolve a mapper instance or return null if no mapper is registered for the given type pair.</td></tr><tr><td><code>Map*()</code></td><td>Map object instances (dynamic parameters are allowed)</td></tr></tbody></table>
 
 {% hint style="info" %}
 If no mapper is found for a specific mapping operation, a generic mapper is used, which internally delegates object mapping to `MiniMapper`.
