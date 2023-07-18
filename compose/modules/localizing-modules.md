@@ -1,4 +1,4 @@
-# 🥚 Localizing modules
+# 🐥 Localizing modules
 
 ## Overview
 
@@ -23,7 +23,7 @@ Resource files are simple XML files whose root node is the `Language` node. This
 ```xml
 <Language Name="Deutsch" IsDefault="true" IsRightToLeft="false">
     <LocaleResource Name="MyResource">
-        <Value>My Resource</Value>
+        <Value>My resource</Value>
     </LocaleResource>
 	...
 </Language>
@@ -45,7 +45,7 @@ If you don't want the `ResourceRootKey` to be applied, you can use the `AppendRo
 
 ```xml
 <LocaleResource Name="Plugins.MyOrg.MyModule.MyAlternateNamespace.MyResource" AppendRootKey="false">
-    <Value>My Resource</Value>
+    <Value>My resource</Value>
 </LocaleResource>
 ```
 
@@ -55,7 +55,7 @@ For `LocaleResource` nodes the use of child nodes is allowed, which in turn can 
 <LocaleResource Name="MyExtraNamespace">
     <Children>
         <LocaleResource Name="MyResource">
-            <Value>My Resource</Value>
+            <Value>My resource</Value>
         </LocaleResource>
     </Children>
 </LocaleResource>
@@ -67,7 +67,7 @@ Of course, if there are settings in a module, they need to be labeled. We have i
 
 ```xml
 <LocaleResource Name="Plugins.MyOrg.MyModule.MySetting">
-    <Value>My Setting</Value>
+    <Value>My setting</Value>
 </LocaleResource>
 ```
 
@@ -78,7 +78,7 @@ The localized value is assigned using the annotation of the property with the `L
 public bool IsActive { get; set; }
 ```
 
-If you now use the `smart-label` tag with the `asp-for` attribute in the Razor view of the configuration page, the value **My Setting** is automatically rendered as a label.
+If you now use the `smart-label` tag with the `asp-for` attribute in the Razor view of the configuration page, the value **My setting** is automatically rendered as a label.
 
 ```cshtml
 <smart-label asp-for="MySetting" />
@@ -110,7 +110,7 @@ Now, when you hover over the small question mark next to the setting, a hint app
 Alternatively, you can define the hint explicitly by using the `sm-hint` attribute in the `smart-label` tag.
 
 ```cshtml
-<smart-label asp-for="MySetting" sm-hint="Alternate way to set a explanation hint." />
+<smart-label asp-for="MySetting" sm-hint="Alternative way to set an explanation hint." />
 ```
 
 ## Enumerations
@@ -170,7 +170,42 @@ If a PageBuilder block is implemented in a module, you must store the label of t
 
 ```xml
 <LocaleResource Name="BlockMetadata.FriendlyName.MyBlock" AppendRootKey="false">
-    <Value>My Block</Value>
+    <Value>My block</Value>
+</LocaleResource>
+```
+
+## Permissions
+
+If a module implements its own `PermissionProvider`, the permission labels must be ordered according to the following convention.
+
+We'll use this sample `PermissionProvider` implementation. `Self` defines the namespace for all permissions used by the module.
+
+```csharp
+public static class MyModulePermissions
+{
+    public const string Self = "mymodule";
+    public const string Read = "mymodule.read";
+    public const string Update = "mymodule.update";
+    public const string Create = "mymodule.create";
+    public const string Delete = "mymodule.delete";
+
+    public const string AnotherPermission = "mymodule.anotherpermission";
+}
+```
+
+Use this code to localize the permission node of the module.
+
+```xml
+<LocaleResource Name="Plugins.Permissions.DisplayName.MyModule" AppendRootKey="false">
+    <Value>My module</Value>
+</LocaleResource>
+```
+
+There is no need to provide resources for common permissions such as `read`, `update`, `create`, and `delete`. They are resolved automatically unlike `anotherpermission`. Such permissions are localized as follows:
+
+```xml
+<LocaleResource Name="Plugins.Permissions.DisplayName.AnotherPermission" AppendRootKey="false">
+    <Value>Another permission</Value>
 </LocaleResource>
 ```
 
