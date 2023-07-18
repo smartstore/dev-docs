@@ -176,9 +176,7 @@ If a PageBuilder block is implemented in a module, you must store the label of t
 
 ## Permissions
 
-If a module implements its own `PermissionProvider`, the permission labels must be ordered according to the following convention.
-
-We'll use this sample `PermissionProvider` implementation. `Self` defines the namespace for all permissions used by the module.
+When a module implements its own `PermissionProvider`, the permission labels must be stored according to the following convention. We'll use this sample `PermissionProvider` implementation to illustrate.
 
 ```csharp
 public static class MyModulePermissions
@@ -193,7 +191,9 @@ public static class MyModulePermissions
 }
 ```
 
-Use this code to localize the permission node of the module.
+`Self` defines the namespace for all permissions used by the module. It also represents the main permission node of the module in the store backend, under which all other permissions are grouped.
+
+Use this code to localize that node.
 
 ```xml
 <LocaleResource Name="Plugins.Permissions.DisplayName.MyModule" AppendRootKey="false">
@@ -201,7 +201,7 @@ Use this code to localize the permission node of the module.
 </LocaleResource>
 ```
 
-There is no need to provide resources for common permissions such as `read`, `update`, `create`, and `delete`. They are resolved automatically unlike `anotherpermission`. Such permissions are localized as follows:
+There is no need to provide resources for common permissions such as `read`, `update`, `create`, and `delete`. They are resolved automatically, unlike special permissions such as `anotherpermission`, which are localized as follows:
 
 ```xml
 <LocaleResource Name="Plugins.Permissions.DisplayName.AnotherPermission" AppendRootKey="false">
