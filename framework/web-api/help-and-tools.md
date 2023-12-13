@@ -18,7 +18,7 @@ GET http://localhost:59318/docs/api
 
 ## Client test tool <a href="#helpandtools-clienttesttool" id="helpandtools-clienttesttool"></a>
 
-The Smartstore source code includes a Windows Forms application for testing the API. It is included in the source code package that can be downloaded from the [Smartstore Releases page](https://github.com/smartstore/Smartstore/releases). The client source code is open source. It can be found at [GitHub](https://github.com/smartstore/Smartstore) under **tools/Smartstore.WebApi.Client**.
+The Smartstore source code includes a Windows Forms application for testing the API. It is included in the source code package that can be downloaded from the [Smartstore Releases page](https://github.com/smartstore/Smartstore/releases). The client source code is open source. It can be found at [GitHub](https://github.com/smartstore/Smartstore) under **tools/Smartstore.WebApi.Client**. A simple JavaScript client is also available under **tools/Smartstore.WebApi.ClientJavaScript**.
 
 Alternatively, you can use [Postman](https://www.postman.com/) to submit requests to the API.
 
