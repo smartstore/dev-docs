@@ -59,7 +59,8 @@ internal class ProductComparePriceLabel : Migration, ILocaleResourcesProvider, I
 {
     // Implementing 'ILocaleResourcesProvider' or 'IDataSeeder<T>' is optional here
     
-    public bool RollbackOnFailure => false;
+    public DataSeederStage Stage => DataSeederStage.Early;
+    public bool AbortOnFailure => false;
     
     public override void Up()
     {
@@ -84,13 +85,7 @@ internal class ProductComparePriceLabel : Migration, ILocaleResourcesProvider, I
 ```
 {% endcode %}
 
-| Method or property                                                                   | Description                                                                                                                 |
-| ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
-| `IMigration.Up`                                                                      | Collects the _up_ migration expressions.                                                                                    |
-| `IMigration.Down`                                                                    | Collects the _down_ migration expressions.                                                                                  |
-| `IDataSeeder.RollbackOnFailure`                                                      | Gets a value indicating whether the migration should be completely rolled back if an error occurs during migration seeding. |
-| `IDataSeeder.SeedAsync`                                                              | Seeds any data in the database.                                                                                             |
-| <p><code>ILocaleResourcesProvider.</code><br><code>MigrateLocaleResources</code></p> | Seeds new or updated locale resources after a migration has been performed.                                                 |
+<table><thead><tr><th width="352">Method or property</th><th>Description</th></tr></thead><tbody><tr><td><code>IMigration.Up</code></td><td>Collects the <em>up</em> migration expressions.</td></tr><tr><td><code>IMigration.Down</code></td><td>Collects the <em>down</em> migration expressions.</td></tr><tr><td><code>IDataSeeder.Stage</code></td><td>Gets a value that indicates the stage at which migration seeding is performed. Possible values are <code>Early</code> and <code>Late</code>.</td></tr><tr><td><code>IDataSeeder.AbortOnFailure</code></td><td>Gets a value indicating whether the migration should be completely rolled back if an error occurs during migration seeding.</td></tr><tr><td><code>IDataSeeder.SeedAsync</code></td><td>Seeds any data in the database.</td></tr><tr><td><code>ILocaleResourcesProvider.</code><br><code>MigrateLocaleResources</code></td><td>Seeds new or updated locale resources after a migration has been performed.</td></tr></tbody></table>
 
 More examples can be found in the [DevTools](https://github.com/smartstore/Smartstore/tree/main/src/Smartstore.Modules/Smartstore.DevTools/Migrations) module. They are for illustrative purposes only and are therefore commented out so that they are not executed.
 
@@ -184,25 +179,39 @@ internal class Module : ModuleBase
         }
         catch (Exception ex)
         {
-            context.Logger.Error(ex, "ForumsSampleDataSeeder failed.");
+            context.Logger.Error(ex, "MyInstallationSampleDataSeeder failed.");
         }
     }
 }
 ```
 
+### When is seeding performed?
+
+Previously, migration seeding was always performed at application startup. This caused long-running seeders to fail after a timeout, resulting in the entire application startup being aborted.
+
+The `IDataSeeder.Stage` property allows the developer to decide when to perform seeding.
+
+* `Early`: Runs during application startup and is limited by timeout restrictions.
+* `Late`: Runs after the application starts, but before the first request. There are no timeout restrictions because we have reached the middleware phase.
+
+{% hint style="info" %}
+Structural migration is independent of this setting and is always performed at startup.
+{% endhint %}
+
+### Error handling
+
+The `AbortOnFailure` property of `IDataSeeder` can be used to control the behavior on unhandled exceptions. It behaves differently depending on the selected `Stage` setting.
+
+* `Early`: A rollback of the corresponding database migration is performed. The error is logged and the next seeder is executed.
+* `Late`: No rollback is performed. An error is thrown and no more seeders are executed.
+
+You should consider whether or not you can tolerate a failed seed. Depending on the application, it may not cause any problems, just a minor inconvenience.
+
 ### ModuleInstallationContext
 
 The data seeder obtains `ModuleInstallationContext` via its constructor. It contains context information about the installation process of the application or the module and has the following properties:
 
-| Property             | Description                                                                                                                                                                                                                                                                                               |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ApplicationContext` | The application context.                                                                                                                                                                                                                                                                                  |
-| `Scope`              | The request scoped container from which to resolve services.                                                                                                                                                                                                                                              |
-| `ModuleDescriptor`   | The descriptor of the module currently being installed.                                                                                                                                                                                                                                                   |
-| `SeedSampleData`     | A value indicating whether sample data should be seeded. During application installation, this reflects the choice made by the user in the installation wizard. During module installation, the value is always `null`; in this case, the module author should decide whether to seed sample data or not. |
-| `Culture`            | ISO code of the primary installation language. Usually only data representing this language is seeded.                                                                                                                                                                                                    |
-| `Stage`              | <p>Installation stage. Possible values are</p><ul><li><em>AppInstallation</em>: application is in installation stage.</li><li><em>ModuleInstallation</em>: application is installed and bootstrapped. The module should be installed by user request.</li></ul>                                           |
-| `Logger`             | Logger to use.                                                                                                                                                                                                                                                                                            |
+<table><thead><tr><th width="248">Property</th><th>Description</th></tr></thead><tbody><tr><td><code>ApplicationContext</code></td><td>The application context.</td></tr><tr><td><code>Scope</code></td><td>The request scoped container from which to resolve services.</td></tr><tr><td><code>ModuleDescriptor</code></td><td>The descriptor of the module currently being installed.</td></tr><tr><td><code>SeedSampleData</code></td><td>A value indicating whether sample data should be seeded. During application installation, this reflects the choice made by the user in the installation wizard. During module installation, the value is always <code>null</code>; in this case, the module author should decide whether to seed sample data or not.</td></tr><tr><td><code>Culture</code></td><td>ISO code of the primary installation language. Usually only data representing this language is seeded.</td></tr><tr><td><code>Stage</code></td><td><p>Installation stage. Possible values are</p><ul><li><em>AppInstallation</em>: application is in installation stage.</li><li><em>ModuleInstallation</em>: application is installed and bootstrapped. The module should be installed by user request.</li></ul></td></tr><tr><td><code>Logger</code></td><td>Logger to use.</td></tr></tbody></table>
 
 The [database migrator](database-migrations.md#database-migrator) publishes a `SeedingDbMigrationEvent` before each `IDataSeeder.SeedAsync` call and a `SeededDbMigrationEvent` after it.
 
@@ -210,20 +219,11 @@ The [database migrator](database-migrations.md#database-migrator) publishes a `S
 
 There are some tools available for frequently recurring migration tasks. Use `SmartDbContext.MigrateLocaleResourcesAsync` in your `SeedAsync` method to add, update or delete locale string resources. The action delegate provides a `LocaleResourcesBuilder` with following methods:
 
-| Method        | Description                                                     |
-| ------------- | --------------------------------------------------------------- |
-| `AddOrUpdate` | Adds or updates a locale resource.                              |
-| `Update`      | Updates an existing locale resource.                            |
-| `Delete`      | Deletes one or many locale resources in any language.           |
-| `DeleteFor`   | Deletes one or many locale resources in the specified language. |
+<table><thead><tr><th width="170">Method</th><th>Description</th></tr></thead><tbody><tr><td><code>AddOrUpdate</code></td><td>Adds or updates a locale resource.</td></tr><tr><td><code>Update</code></td><td>Updates an existing locale resource.</td></tr><tr><td><code>Delete</code></td><td>Deletes one or many locale resources in any language.</td></tr><tr><td><code>DeleteFor</code></td><td>Deletes one or many locale resources in the specified language.</td></tr></tbody></table>
 
 Use `SmartDbContext.MigrateSettingsAsync` to add or delete settings. The action delegate provides a `SettingsBuilder` with the following methods:
 
-| Method        | Description                                                                                           |
-| ------------- | ----------------------------------------------------------------------------------------------------- |
-| `Add`         | Adds a setting if it doesn't exist yet.                                                               |
-| `Delete`      | Deletes one or many setting records.                                                                  |
-| `DeleteGroup` | Deletes all setting records prefixed with the specified group name (usually the settings class name). |
+<table><thead><tr><th width="173">Method</th><th>Description</th></tr></thead><tbody><tr><td><code>Add</code></td><td>Adds a setting if it doesn't exist yet.</td></tr><tr><td><code>Delete</code></td><td>Deletes one or many setting records.</td></tr><tr><td><code>DeleteGroup</code></td><td>Deletes all setting records prefixed with the specified group name (usually the settings class name).</td></tr></tbody></table>
 
 {% hint style="info" %}
 Use the `TypeHelper` to build the name of a setting:
