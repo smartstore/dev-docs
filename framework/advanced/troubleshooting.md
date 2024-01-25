@@ -12,7 +12,7 @@ Postgre and MySQL are not affected by the large text problem.
 
 ## Offload embedded images
 
-This function converts Base64 images to actual images in combination with an enabled `UseSequentialDbDataReader`. To accomplish this, it does the following:
+This function converts embedded Base64 images to actual images in combination with an enabled `UseSequentialDbDataReader`. To accomplish this, it does the following:
 
 1. Scans long texts for Base64 encoded images.
 2. Extracts the images.
