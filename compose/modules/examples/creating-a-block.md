@@ -1,4 +1,4 @@
-# 🐣 Creating a Block
+# 🐥 Creating a Block
 
 A `Block` is used to quickly create content within the Page Builder. Smartstore has already implemented several blocks such as HTML output, images, iframes, product lists and many more. The possibilities for new blocks are endless.
 
@@ -242,7 +242,7 @@ else if (viewMode == StoryViewMode.Public)
     block.MyLocalVar += " - Running in Public-Mode";
 }
 
-return Task.FromResult(block);
+return block;
 ```
 
 Add the following to _Edit.cshtml_, _Preview.cshtml_ and _Public.cshtml_.
@@ -349,7 +349,7 @@ namespace MyOrg.HelloWorld.Blocks
                 block.MyLocalVar += " - Running in Public-Mode";
             }
 
-            return Task.FromResult(block);
+            return block;
         }
         
         protected override Task RenderCoreAsync(
