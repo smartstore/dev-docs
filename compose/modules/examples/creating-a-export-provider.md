@@ -28,7 +28,7 @@ namespace MyOrg.HelloWorld.Models
     public class ProfileConfigurationModel
     {
         [LocalizedDisplay("*NumberOfExportedRows")]
-        public string NumberOfExportedRows { get; set; } = 10;
+        public int NumberOfExportedRows { get; set; } = 10;
     }
 }
 ```
