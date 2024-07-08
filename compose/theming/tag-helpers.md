@@ -1,4 +1,4 @@
-# ✔ Tag Helpers
+# ✔️ Tag Helpers
 
 Tag Helpers are extensions of existing HTML tags. They can extend the functionality of a tag or even create completely new tags. Smartstore has created a lot of Tag Helpers to write simple and clear code and for better productivity.
 
@@ -311,6 +311,9 @@ It also supports these attributes:
 * `model`: Declare what model to use within the zone.
 * `replace-content`: Replace content, if at least one widget is rendered.
 * `remove-if-empty`: Remove the root zone tag, if it has no content. Default: `false`
+* `preview-disabled`: If true, the zone preview will not be rendered. This is important for script or style zones that should not be printed. Default: `false`
+* `preview-class`: Additional CSS classes for the span tag. For example, `position-absolute` to better control the layout flow.
+* `preview-style`: CSS style definitions. For example, to set an individual `max-width`.
 
 </details>
 
