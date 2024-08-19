@@ -6,13 +6,7 @@ In Smartstore, you can specify such expressions on data grid field level. Any te
 
 ## Examples
 
-| Example                                 | Result                                                                           |
-| --------------------------------------- | -------------------------------------------------------------------------------- |
-| banana joe                              | Contains "banana" or contains "joe"                                              |
-| banana and !\*.joe                      | Contains "banana" but does not match "\*.joe"                                    |
-| banana and (!\~"hello world" or !\*jim) | Contains "banana", but does not contain "hello world" or does not end with "jim" |
-| \*Leather and !(Sofa Jacket\*)          | Ends with "Leather", but does not starts with "Sofa" or "Jacket"                 |
-| (>=10 and <=100) or 1 or >1000          | Is between 10 and 100, or equals 1, or is greater than 1000                      |
+<table><thead><tr><th width="360">Example</th><th>Result</th></tr></thead><tbody><tr><td>banana joe</td><td>Contains "banana" or contains "joe"</td></tr><tr><td>banana and !*.joe</td><td>Contains "banana" but does not match "*.joe"</td></tr><tr><td>banana and (!~"hello world" or !*jim)</td><td>Contains "banana", but does not contain "hello world" or does not end with "jim"</td></tr><tr><td>*Leather and !(Sofa Jacket*)</td><td>Ends with "Leather", but does not starts with "Sofa" or "Jacket"</td></tr><tr><td>(>=10 and &#x3C;=100) or 1 or >1000</td><td>Is between 10 and 100, or equals 1, or is greater than 1000</td></tr></tbody></table>
 
 ## Terms
 
@@ -24,13 +18,4 @@ Multiple search words or phrases may be grouped in a fielded query by enclosing 
 
 ## Operators
 
-| = _or_ == | Equals (default when omitted on numeric terms)                           |
-| --------- | ------------------------------------------------------------------------ |
-| ! _or_ != | Not equals                                                               |
-| >         | Greater than                                                             |
-| >=        | Greater than or equal                                                    |
-| <         | Less than                                                                |
-| <=        | Less than or equal                                                       |
-| \~        | Contains (default when omitted on string terms)                          |
-| !\~       | Does not contain                                                         |
-| and, or   | Logical term combinators (case-insensitive). If omitted, "or" is default |
+<table data-header-hidden><thead><tr><th width="115"></th><th></th></tr></thead><tbody><tr><td>= <em>or</em> ==</td><td>Equals (default when omitted on numeric terms)</td></tr><tr><td>! <em>or</em> !=</td><td>Not equals</td></tr><tr><td>></td><td>Greater than</td></tr><tr><td>>=</td><td>Greater than or equal</td></tr><tr><td>&#x3C;</td><td>Less than</td></tr><tr><td>&#x3C;=</td><td>Less than or equal</td></tr><tr><td>~</td><td>Contains (default when omitted on string terms)</td></tr><tr><td>!~</td><td>Does not contain</td></tr><tr><td>and, or</td><td>Logical term combinators (case-insensitive). If omitted, "or" is default</td></tr></tbody></table>

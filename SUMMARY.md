@@ -82,6 +82,7 @@
   * [LinkResolver](framework/advanced/linkresolver.md)
   * [QR codes](framework/advanced/qr-codes.md)
   * [Native libraries](framework/advanced/native-libraries.md)
+  * [🐣 Cookie Consent](framework/advanced/cookie-consent.md)
   * [🐣 Troubleshooting](framework/advanced/troubleshooting.md)
 
 ## Compose
