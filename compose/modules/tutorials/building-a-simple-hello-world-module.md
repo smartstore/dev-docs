@@ -1,4 +1,4 @@
-# ✔ Building a simple "Hello World" module
+# ✔️ Building a simple "Hello World" module
 
 Before we start, please look at the introduction to [creating modules](../getting-started-with-modules.md). The basic files needed to create a module are already described there.
 
@@ -427,6 +427,18 @@ namespace MyOrg.HelloWorld.Models
 {% endcode %}
 
 The public view will be displayed when opening the URL: [http://localhost:59318/helloworld/publicInfo](http://localhost:59318/helloworld/publicInfo)&#x20;
+
+{% hint style="success" %}
+Feeling overwhelmed? Don't know why values are suddenly appearing all over the place? 😵
+
+Try debugging your project with breakpoints. Breakpoints are a powerful tool that allows you to stop the execution of your code at specific lines, giving you the ability to inspect what's happening at each step.
+
+By setting a breakpoint, the program will stop before that line of code is executed. From there, you can check the values of variables, step through the code line by line, and see how the state of the program changes over time. This can help you pinpoint where things might be going wrong, or simply give you a clearer understanding of how the code flows.
+
+To set a breakpoint in Visual Studio, simply click in the margin next to the line of code where you'd like to pause, or press **F9**. Once your project hits the breakpoint, you can use **F10** to step over any line of code or **F11** to step into methods.
+
+Debugging with breakpoints can save you a lot of time and frustration, and is a great way to build confidence in understanding how your module works from the inside out.
+{% endhint %}
 
 ## Conclusion
 
