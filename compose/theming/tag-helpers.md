@@ -61,9 +61,23 @@ It also supports the `sm-enabled` attribute.
 
 <details>
 
+<summary>ConsentScript Tag Helper</summary>
+
+The `ConsentScriptTagHelper` allows a script to be loaded immediately after cookie consent is given. Otherwise it is loaded after a page refresh.
+
+```cshtml
+<script sm-consent-type="Analytics">
+```
+
+* `sm-consent-type`: The type of cookie the user needs to accept.
+
+</details>
+
+<details>
+
 <summary>Honeypot Tag Helper</summary>
 
-The `HoneypotTagHelper` is Smartstore's cyber-security implementation of the [Honeypot](https://en.wikipedia.org/wiki/Honeypot\_\(computing\)) mechanism.
+The `HoneypotTagHelper` is Smartstore's cyber-security implementation of the [Honeypot](https://en.wikipedia.org/wiki/Honeypot_\(computing\)) mechanism.
 
 ```cshtml
 <honeypot />
@@ -216,6 +230,27 @@ The `IfTagHelper` adds a conditional attribute to the element. The output is sup
 ```cshtml
 <span sm-if="@Model.visible">Here I am!</span>
 ```
+
+</details>
+
+<details>
+
+<summary>MinifyTagHelper Tag Helper</summary>
+
+The `MinifyTagHelper` allows an inline script to be minified automatically, before being loaded. Default: `false`
+
+```cshtml
+<script sm-minify="true">
+```
+
+This should not be used if the script contains dynamic content like:
+
+* SessionId
+* A randomly generated ID
+* User related data
+* Model data
+
+The Tag-Helper has no effect in combination with the `src` attribute.
 
 </details>
 
@@ -435,6 +470,8 @@ The `PaginationTagHelper` adds [pagination](https://en.wikipedia.org/wiki/Pagina
 <pagination sm-list-items="Model.MySubscriptions" />
 ```
 
+Pass an `IPageable` object that should be _paged_, using the `sm-list-items` attribute.
+
 It also supports these attributes:
 
 * `sm-list-items`
@@ -588,6 +625,20 @@ The `HintTagHelper` displays the localised Hint of resource passed in `asp-for`.
 ```cshtml
 <div><span>John Smith</span><hint asp-for="Name" /></div>
 ```
+
+</details>
+
+<details>
+
+<summary>InputPassword Tag Helper</summary>
+
+The `InputPasswordTagHelper` adds the ability to toggle the visibility of a password input.
+
+```cshtml
+<input type="password" sm-enable-visibility-toggle="false"/>
+```
+
+* `sm-enable-visibility-toggle`: Displays an eye icon to toggle the visibility of the password. Default: `true`
 
 </details>
 
