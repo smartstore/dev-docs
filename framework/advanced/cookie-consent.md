@@ -35,7 +35,7 @@ There are several ways to add scripts that rely on cookie consent.
 
 ### Load scripts after approval
 
-Prior to version 5.2.0, these scripts could only be loaded after a page refresh if the user agreed.
+Prior to version 6.0.0, these scripts could only be loaded after a page refresh if the user agreed.
 
 #### Razor
 
