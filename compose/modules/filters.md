@@ -67,30 +67,71 @@ internal class Startup : StarterBase
 
 Now the filter will be applied to every `Action` in the entire project.
 
-### Conditions
+## Endpoint filter
 
-The rendered link in this example should only be displayed in the frontend. Instead of using the filter to control the output by querying different values from the current context, you can register the filter only for relevant controllers and actions using the `AddConditional` method.
+The `Add` method assigns filters to all endpoints, enabling them to run on all controllers and actions, and adds the filters to the global list. Therefore, each filter must decide whether to run on a controller or an action. Since all filters are evaluated at runtime, performance worsens as more filters are added.
 
-Since the link should be rendered in a global location such as the header, you should register the filter for each frontend action. All frontend controllers implement the base controller `PublicController`. This way, the condition for the filter execution can be to run on every `PublicController` action.
-
-A controller that doesn't implement the `PublicController` will never cause the filter to run in this example:
+To avoid cluttering the global filter list and evaluating each filter at runtime, it is better to use endpoint filters. Assigned to controllers and actions at startup, these filters are then removed from the global filter list via [EndpointFilterModelConvention](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Web.Common/Filters/EndpointFilterModelConvention.cs). This improves performance and makes the code more manageable.
 
 ```csharp
-o.Filters.AddConditional<MyFilter>(
-    context => context.ControllerIs<PublicController>());
+// Add a filter that is assigned to the PublicController.
+// Example: Add a widget to the frontend.
+o.Filters.AddEndpointFilter<MyFrontendFilter, PublicController>();
 ```
 
-Filters for specific controllers, like the `ProductController` in the frontend, can be registered in the same way. Since there is one `ProductController` for the frontend and one for the backend, an additional condition must be added to ensure that the correct controller is used.
+Unlike the `Add` method, endpoint filters are not limited to the global scope but can simulate the same behavior:
 
 ```csharp
-o.Filters.AddConditional<MyFilter>(
-    context => context.ControllerIs<ProductController>()
-    && context.ControllerIs<PublicController>());
+o.Filters.AddEndpointFilter<MyFilter, Controller>();
+// This is equivalent to:
+o.Filters.Add<MyFilter>();
 ```
 
-If only a specific action is needed to be filtered, the action name can be passed to the `AddConditional` method, using a lambda expression.
+Since every controller inherits from the `Controller` class, `MyFilter` will be assigned to each one upon startup.
+
+### ForAction and ForController
+
+The assignment can be specified further using the `ForAction` and `ForController` methods. For example, you can limit the filter to the `Confirm` action.
 
 ```csharp
-o.Filters.AddConditional<WidgetZoneFilter>(
-    context => context.ControllerIs<ProductController>(x => x.AskQuestion(1)));
+o.Filters.AddEndpointFilter<MyFilter, Controller>().ForAction("Confirm");
 ```
+
+This assigns the filter to the `Action` method instead of the controller, making it behave as if it were annotated with a filter attribute.
+
+### Examples
+
+There are multiple ways to assign filters to controllers and actions:
+
+```csharp
+// Add a filter that is assigned to the ProductDetails action for every product.
+// Example: Display alternate payment information beneath the offer-box.
+o.Filters.AddEndpointFilter<MyProductDetailFilter, ProductController>()
+    .ForAction(x => x.ProductDetails(0, null));
+
+// Add a filter that is assigned to specific frontend actions.
+// Example: Usage tracking for analytics.
+o.Filters.AddEndpointFilter<MyTrackingFilter, SearchController>()
+    .ForAction(x => x.InstantSearch(null))
+    .ForAction(x => x.Search(null));
+o.Filters.AddEndpointFilter<MyTrackingFilter, CatalogController>()
+    .ForAction(x => x.CompareProducts());
+```
+
+<mark style="color:purple;">**TODO**</mark><mark style="color:purple;">: Show the different ways of overloading the ForAction- and ForController-methods.</mark>
+
+### Conditional filtering
+
+One major advantage of the `AddEndpointFilter` method is that it supports conditional filtering. The `When` method allows you to assign filters to an endpoint. Whether the filters are executed depends on the condition, which is evaluated at runtime.
+
+{% hint style="info" %}
+Internally, the conditional filtering is performed by the `FilterProvider`. This approach replaces the obsolete `AddConditional` method, which performed the same function but kept the filter global.
+{% endhint %}
+
+#### Examples
+
+<mark style="color:purple;">**TODO**</mark><mark style="color:purple;">: Add examples for</mark> <mark style="color:purple;"></mark><mark style="color:purple;">`When()`</mark> <mark style="color:purple;"></mark><mark style="color:purple;">and</mark> <mark style="color:purple;"></mark><mark style="color:purple;">`WhenNonAjax()`</mark><mark style="color:purple;">.</mark>
+
+### So, which method should I use to register my filter? :person\_shrugging:
+
+If possible, use the `AddEndpointFilter` method to register your filter. Only use the `Add` method if your filter **must** be global and very flexible.
