@@ -104,21 +104,49 @@ This assigns the filter to the `Action` method instead of the controller, making
 There are multiple ways to assign filters to controllers and actions:
 
 ```csharp
+// Add a filter that is assigned to the PublicController.
+o.Filters.AddEndpointFilter<MyFrontendWidgetFilter, PublicController>();
+
+// Add a filter to the customer and identity frontend controllers.
+o.Filters.AddEndpointFilter<CustomerInfoFilter, PublicController>()
+    .ForController("Customer")
+    .ForController("Identity");
+
+// Alternatively written as:
+var _usedControllers = ["Customer", "Identity"];
+o.Filters.AddEndpointFilter<CustomerInfoFilter, PublicController>()
+    .ForController(x => _usedControllers.Contains(x.ControllerName));
+
+// Add a customer profile frontend filter.
+o.Filters.AddEndpointFilter<CustomerProfileFilter, PublicController>()
+    .ForController("Identity")
+    .ForAction("CustomerProfile");
+
+// Alternatively written as:
+o.Filters.AddEndpointFilter<CustomerProfileFilter, PublicController>()
+    .ForAction("Identity.CustomerProfile");
+
 // Add a filter that is assigned to the ProductDetails action for every product.
-// Example: Display alternate payment information beneath the offer-box.
-o.Filters.AddEndpointFilter<MyProductDetailFilter, ProductController>()
+o.Filters.AddEndpointFilter<MyPaymentMethodDisplayFilter, ProductController>()
     .ForAction(x => x.ProductDetails(0, null));
 
 // Add a filter that is assigned to specific frontend actions.
-// Example: Usage tracking for analytics.
 o.Filters.AddEndpointFilter<MyTrackingFilter, SearchController>()
     .ForAction(x => x.InstantSearch(null))
     .ForAction(x => x.Search(null));
 o.Filters.AddEndpointFilter<MyTrackingFilter, CatalogController>()
     .ForAction(x => x.CompareProducts());
-```
 
-<mark style="color:purple;">**TODO**</mark><mark style="color:purple;">: Show the different ways of overloading the ForAction- and ForController-methods.</mark>
+// Add a filter, validating the controller and action names yourself.
+o.Filters.AddEndpointFilter<MyLactoseFilter, AdminController>()
+    .ForAction(x =>
+    {
+        var controllerName = x.Controller.ControllerName;
+        var actionName = x.ActionName;
+        // This custom method returns a boolean.
+        return IsThisMethodDairyFree($"{controllerName}.{actionName}");
+    });
+```
 
 ### Conditional filtering
 
@@ -130,7 +158,24 @@ Internally, the conditional filtering is performed by the `FilterProvider`. This
 
 #### Examples
 
-<mark style="color:purple;">**TODO**</mark><mark style="color:purple;">: Add examples for</mark> <mark style="color:purple;"></mark><mark style="color:purple;">`When()`</mark> <mark style="color:purple;"></mark><mark style="color:purple;">and</mark> <mark style="color:purple;"></mark><mark style="color:purple;">`WhenNonAjax()`</mark><mark style="color:purple;">.</mark>
+```csharp
+// Add a filter if it is a certain request.
+o.Filters.AddEndpointFilter<MyRequestFilter, SmartController>()
+    .When(context => IsMySpecificRequest(context.HttpContext.Request));
+
+// Add a filter dependent on a setting.
+o.Filters.AddEndpointFilter<MyBusyFilter, MyController>()
+    .When(context => numberOfVisitors > _settings.MaxThreshold);
+
+// Do not add a filter if an AJAX request is being made.
+o.Filters.AddEndpointFilter<MyUserInteractionFilter, PublicController>()
+    .WhenNonAjax();
+
+// Do not add a filter if an AJAX GET request is being made.
+o.Filters.AddEndpointFilter<MySensitiveUserInputFilter, MyController>()
+    .ForAction("Edit")
+    .WhenNonAjaxGet();
+```
 
 ### So, which method should I use to register my filter? :person\_shrugging:
 
