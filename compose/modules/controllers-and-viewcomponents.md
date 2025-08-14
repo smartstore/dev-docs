@@ -1,6 +1,6 @@
 # 🐥 Controllers & ViewComponents
 
-Smartstore modules are pure MVC projects. This means that normal controller classes can be implemented using the MVC pattern. Since varying fields of application often require repetitive tasks, we have created base controllers following the [DRY principle](https://en.wikipedia.org/wiki/Don't\_repeat\_yourself). These take care of many tasks and can of course be used to implement your own controllers.
+Smartstore modules are pure MVC projects. This means that normal controller classes can be implemented using the MVC pattern. Since varying fields of application often require repetitive tasks, we have created base controllers following the [DRY principle](https://en.wikipedia.org/wiki/Don't_repeat_yourself). These take care of many tasks and can of course be used to implement your own controllers.
 
 The base controllers are located in the _Controllers_ directory of the Smartstore.Web.Common project. By including the most important attributes and implementing auxiliary methods, they keep controllers consistent and eliminate redundancy.
 
@@ -169,7 +169,7 @@ await SaveStoreMappingsAsync(myEntity, model.SelectedStoreIds);
 
 <summary>SaveAclMappingsAsync</summary>
 
-Please make sure you understand the [concept of ACL](https://en.wikipedia.org/wiki/Access-control\_list) before reading on.
+Please make sure you understand the [concept of ACL](https://en.wikipedia.org/wiki/Access-control_list) before reading on.
 
 Entities can implement the `IAclRestricted` interface, which allows the user to restrict displaying an entity to specific `CustomerRoles`. `IAclRestricted` requires the implementing entity to have the following property:
 
@@ -211,26 +211,13 @@ All previous examples can be applied to controllers based on the `AdminControlle
 
 The `AdminController` adds the following attributes:
 
-| Attribute                    | Description                                                                                                                                                                              |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Area("Admin")                | Specifies `Admin` as area of the controller.                                                                                                                                             |
-| AutoValidateAntiforgeryToken | An attribute that causes antiforgery token validation for all insecure HTTP methods. An antiforgery token is required for HTTP methods other than `GET`, `HEAD`, `OPTIONS`, and `TRACE`. |
-| AuthorizeAdmin               | Checks whether the current user has permission to access the administration backend.                                                                                                     |
-| ValidateAdminIpAddress       | Verifies that the IP address being used matches one of the addresses defined in `AdminAreaAllowedIpAddresses` from the `SecuritySettings`.                                               |
+<table><thead><tr><th width="273">Attribute</th><th>Description</th></tr></thead><tbody><tr><td>Area("Admin")</td><td>Specifies <code>Admin</code> as area of the controller.</td></tr><tr><td>AutoValidateAntiforgeryToken</td><td>An attribute that causes antiforgery token validation for all insecure HTTP methods. An antiforgery token is required for HTTP methods other than <code>GET</code>, <code>HEAD</code>, <code>OPTIONS</code>, and <code>TRACE</code>.</td></tr><tr><td>AuthorizeAdmin</td><td>Checks whether the current user has permission to access the administration backend.</td></tr><tr><td>ValidateAdminIpAddress</td><td>Verifies that the IP address being used matches one of the addresses defined in <code>AdminAreaAllowedIpAddresses</code> from the <code>SecuritySettings</code>.</td></tr></tbody></table>
 
 ## PublicController
 
 The `PublicController` implements the `SmartController` and adds the following attributes:
 
-| Attribute                                                                             | Description                                                                                                   |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| CookieConsent                                                                         | Checks if the visitor has already allowed the use of cookies and opens the `CookieManager` if not.            |
-| PreviewMode                                                                           | Enables the use of preview mode in the public store as long as preview mode is enabled in the backend.        |
-| CheckStoreClosed                                                                      | Checks if the store has been closed by the admin and returns a redirect result to the `StoreClosed` action.   |
-| AuthorizeShopAccess                                                                   | Checks whether the current user has permission to access the shop.                                            |
-| TrackActivity(Order = 100)                                                            | Saves current user activity information including the date, IP address and the visited page, in the database. |
-| CheckAffiliate(Order = 100)                                                           | Checks if a visiting customer was referred to the shop by an affiliate by analyzing the request query.        |
-| <p>SaveChanges(</p><p>    typeof(SmartDbContext),</p><p>    Order = int.MaxValue)</p> | Saves all pending changes in a `DbContext` instance to the database after an action method has been executed. |
+<table><thead><tr><th width="260">Attribute</th><th>Description</th></tr></thead><tbody><tr><td>CookieConsent</td><td>Checks if the visitor has already allowed the use of cookies and opens the <code>CookieManager</code> if not.</td></tr><tr><td>PreviewMode</td><td>Enables the use of preview mode in the public store as long as preview mode is enabled in the backend.</td></tr><tr><td>CheckStoreClosed</td><td>Checks if the store has been closed by the admin and returns a redirect result to the <code>StoreClosed</code> action.</td></tr><tr><td>AuthorizeShopAccess</td><td>Checks whether the current user has permission to access the shop.</td></tr><tr><td>TrackActivity(Order = 100)</td><td>Saves current user activity information including the date, IP address and the visited page, in the database.</td></tr><tr><td>CheckAffiliate(Order = 100)</td><td>Checks if a visiting customer was referred to the shop by an affiliate by analyzing the request query.</td></tr><tr><td><p>SaveChanges(</p><p>    typeof(SmartDbContext),</p><p>    Order = int.MaxValue)</p></td><td>Saves all pending changes in a <code>DbContext</code> instance to the database after an action method has been executed.</td></tr></tbody></table>
 
 ## ViewComponents
 

@@ -1,4 +1,4 @@
-# ✔ Creating a Widget provider
+# ✔️ Creating a Widget provider
 
 {% hint style="info" %}
 For a more in-depth view on widgets, zones and invokers, please refer to [widgets.md](../../../framework/content/widgets.md "mention").
@@ -245,7 +245,7 @@ namespace MyOrg.HelloWorld
 
 ## Adding the View
 
-1. Right click on the _Views_ **** folder of your module in the Solution Explorer.
+1. Right click on the _Views_ folder of your module in the Solution Explorer.
 2. Add a new folder. According to the guidelines we call it _Shared/Components/HelloWorld_.
 3. Place a new _Razor View_ called `Default.cshtml` in this folder.
 

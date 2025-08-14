@@ -1,4 +1,4 @@
-# ✔ Security
+# ✔️ Security
 
 ## Overview
 
@@ -25,7 +25,7 @@ Permissions are organized hierarchically in the form of a tree. A permission is 
 | Inherited allow    |  <img src="https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FDOZxBBKmB9QIuwBDsOtV%2Fuploads%2FEW9i1xSUgMz9tEPW8sNI%2Finherited-allowed.png?alt=media&#x26;token=9a6e78e0-4cca-4ba9-950a-8b4821afa0d8" alt="inherited allowed" data-size="original">  |
 | Inherited disallow | <img src="https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FDOZxBBKmB9QIuwBDsOtV%2Fuploads%2FShqZ28gckwbOQxY3x7ZL%2Finherited-disallow.png?alt=media&#x26;token=1bdd0e95-5e09-47ac-a199-c2dd92c9fea4" alt="inherited disallow" data-size="original"> |
 
-<figure><img src="../../.gitbook/assets/permission-tree.png" alt=""><figcaption><p>Example of a permissions tree (partial view)</p></figcaption></figure>
+<div align="center"><figure><img src="../../.gitbook/assets/permission-tree.png" alt=""><figcaption><p>Example of a permissions tree (partial view)</p></figcaption></figure></div>
 
 ## Authorization
 
@@ -133,12 +133,6 @@ Decorate an action method with the `ValidateCaptchaAttribute` to prevent malicio
 
 In addition to those already mentioned, there are a few other attributes with similar access-restricting functions.
 
-| Filter attribute            | Description                                                                                                     |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `AuthorizeAdmin` \*         | Checks whether the current user has the permission to access the administration backend.                        |
-| `AuthorizeShopAccess`       | Checks whether the current user has the permission to access the shop.                                          |
-| `DisallowRobot`             | Disallows robots to access an endpoint.                                                                         |
-| `RequireSsl`                | A marker filter indicating that the current request should be received over HTTPS (if the policies allow this). |
-| `ValidateAdminIpAddress` \* | Validates the IP address of the user requesting access and match it against a list of allowed IP addresses.     |
+<table><thead><tr><th width="287">Filter attribute</th><th>Description</th></tr></thead><tbody><tr><td><code>AuthorizeAdmin</code> *</td><td>Checks whether the current user has the permission to access the administration backend.</td></tr><tr><td><code>AuthorizeShopAccess</code></td><td>Checks whether the current user has the permission to access the shop.</td></tr><tr><td><code>DisallowRobot</code></td><td>Disallows robots to access an endpoint.</td></tr><tr><td><code>RequireSsl</code></td><td>A marker filter indicating that the current request should be received over HTTPS (if the policies allow this).</td></tr><tr><td><code>ValidateAdminIpAddress</code> *</td><td>Validates the IP address of the user requesting access and match it against a list of allowed IP addresses.</td></tr></tbody></table>
 
 \* if your controller inherits from `AdminController`, this attribute is automatically set and your controller is protected accordingly.

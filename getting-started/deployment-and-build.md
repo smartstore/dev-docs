@@ -2,7 +2,7 @@
 description: Instructions how to build Smartstore
 ---
 
-# ✔ Deployment & Build
+# ✔️ Deployment & Build
 
 There are two options to build Smartstore and several ways to build Docker images and containers.
 
@@ -55,7 +55,4 @@ Requires, that the application was previously built, is located in `build/artifa
 
 To create a ready-to-run Docker container including a database server run `compose.{DbSystem}.sh`.
 
-| command                  | Description                                                                                                                 |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
-| **compose.mysql.sh**     | Creates a composite Docker container including the **Smartstore** application image and the latest **MySql** image.         |
-| **compose.sqlserver.sh** | Creates a composite Docker container including the **Smartstore** application image and the latest **MS SQL Server** image. |
+<table><thead><tr><th width="229">command</th><th>Description</th></tr></thead><tbody><tr><td><strong>compose.mysql.sh</strong></td><td>Creates a composite Docker container including the <strong>Smartstore</strong> application image and the latest <strong>MySql</strong> image.</td></tr><tr><td><strong>compose.sqlserver.sh</strong></td><td>Creates a composite Docker container including the <strong>Smartstore</strong> application image and the latest <strong>MS SQL Server</strong> image.</td></tr></tbody></table>

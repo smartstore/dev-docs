@@ -1,4 +1,4 @@
-# ✔ DbContextScope
+# ✔️ DbContextScope
 
 An instance of `SmartDbContext` has a short lifetime. It is retrieved from the pool when an HTTP request begins and is returned to the pool at the end of the request. To change the configuration of the request scoped context you can...:
 
@@ -44,14 +44,4 @@ using (var scope = new DbContextScope(_db,
 
 When initializing a `DbContextScope` instance, any non-`null` value will change the corresponding option for the duration of the scope. The `db` parameter is the only one required.
 
-| Parameter             | Description                                                                                                                               |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `db`                  | The data context instance to create scope for.                                                                                            |
-| `autoDetectChanges`   | Toggles EF's automatic entity _change detection_ feature.                                                                                 |
-| `lazyLoading`         | Toggles EF's _lazy loading_ feature.                                                                                                      |
-| `forceNoTracking`     | If `true`, query results are not tracked, unless specified otherwise.                                                                     |
-| `deferCommit`         | Suppresses the execution of `SaveChanges` until the scope is disposed or `Commit` is called explicitly. The default is `false`.           |
-| `retainConnection`    | Opens a connection and retains it until the scope is closed. May increase load/save performance for large scopes. The default is `false`. |
-| `minHookImportance`   | Specifies the minimum hook importance level. Hooks below this level will not be executed.                                                 |
-| `cascadeDeleteTiming` | Sets the `CascadeDeleteTiming` option in EF's change tracker.                                                                             |
-| `deleteOrphansTiming` | Sets the `DeleteOrphansTiming` option in EF's change tracker.                                                                             |
+<table><thead><tr><th width="239">Parameter</th><th>Description</th></tr></thead><tbody><tr><td><code>db</code></td><td>The data context instance to create scope for.</td></tr><tr><td><code>autoDetectChanges</code></td><td>Toggles EF's automatic entity <em>change detection</em> feature.</td></tr><tr><td><code>lazyLoading</code></td><td>Toggles EF's <em>lazy loading</em> feature.</td></tr><tr><td><code>forceNoTracking</code></td><td>If <code>true</code>, query results are not tracked, unless specified otherwise.</td></tr><tr><td><code>deferCommit</code></td><td>Suppresses the execution of <code>SaveChanges</code> until the scope is disposed or <code>Commit</code> is called explicitly. The default is <code>false</code>.</td></tr><tr><td><code>retainConnection</code></td><td>Opens a connection and retains it until the scope is closed. May increase load/save performance for large scopes. The default is <code>false</code>.</td></tr><tr><td><code>minHookImportance</code></td><td>Specifies the minimum hook importance level. Hooks below this level will not be executed.</td></tr><tr><td><code>cascadeDeleteTiming</code></td><td>Sets the <code>CascadeDeleteTiming</code> option in EF's change tracker.</td></tr><tr><td><code>deleteOrphansTiming</code></td><td>Sets the <code>DeleteOrphansTiming</code> option in EF's change tracker.</td></tr></tbody></table>

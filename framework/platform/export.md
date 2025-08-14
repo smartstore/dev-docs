@@ -1,4 +1,4 @@
-# ✔ Export
+# ✔️ Export
 
 ## Overview
 
@@ -37,10 +37,7 @@ Set the property `FileExtension` to `null` if you do not want to export to files
 
 It is recommended to give your provider a friendly localized name and description using string resources and the localization XML files of your module:
 
-| Property to localize | String resource name                       | Example                                          |
-| -------------------- | ------------------------------------------ | ------------------------------------------------ |
-| Provider name        | Plugins.FriendlyName.\<ProviderSystemName> | Plugins.FriendlyName.Exports.MyCompanyProductCsv |
-| Provider description | Plugins.Description.\<ProviderSystemName>  | Plugins.Description.Exports.MyCompanyProductCsv  |
+<table><thead><tr><th width="209">Property to localize</th><th width="223">String resource name</th><th>Example</th></tr></thead><tbody><tr><td>Provider name</td><td>Plugins.FriendlyName.&#x3C;ProviderSystemName></td><td>Plugins.FriendlyName.Exports.MyCompanyProductCsv</td></tr><tr><td>Provider description</td><td>Plugins.Description.&#x3C;ProviderSystemName></td><td>Plugins.Description.Exports.MyCompanyProductCsv</td></tr></tbody></table>
 
 {% hint style="info" %}
 The description is displayed when adding a new export profile and selecting your provider.
@@ -311,47 +308,16 @@ Your partial view with the toolbar menu may look like this:
 
 #### All entity types
 
-| Property name | Type           | Description                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| \_Localized   | List\<dynamic> | <p>List of all localized values of all languages for an entity. <code>null</code> if the entity has no localized properties. Properties of an item are:</p><ul><li><em>Culture</em>: the language culture.</li><li><em>LocaleKey</em>: the key of the localized value (usually the property name of the entity).</li><li><em>LocaleValue</em>: the localized value.</li></ul> |
+<table><thead><tr><th width="167">Property name</th><th width="148">Type</th><th>Description</th></tr></thead><tbody><tr><td>_Localized</td><td>List&#x3C;dynamic></td><td><p>List of all localized values of all languages for an entity. <code>null</code> if the entity has no localized properties. Properties of an item are:</p><ul><li><em>Culture</em>: the language culture.</li><li><em>LocaleKey</em>: the key of the localized value (usually the property name of the entity).</li><li><em>LocaleValue</em>: the localized value.</li></ul></td></tr></tbody></table>
 
 #### Products
 
-| Property name                | Type                                 | Description                                                                                                                     |
-| ---------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| \_UniqueId                   | string                               | A unique ID consisting of product ID and attribute combination ID, if an attribute combination is exported as a product.        |
-| \_IsParent                   | bool                                 | A value indicating whether the product is a **parent** to exported attribute combinations, considered to be their **children**. |
-| \_AttributeCombinationId     | int                                  | The attribute combination ID, if exported as a product.                                                                         |
-| \_AttributeCombinationValues | IList\<ProductVariantAttributeValue> | A list of all attribute values if an attribute combination is exported as a product.                                            |
-| \_Brand                      | string                               | Name of the first assigned manufacturer.                                                                                        |
-| \_CategoryName               | string                               | Name of the first assigned category.                                                                                            |
-| \_CategoryPath               | string                               | The breadcrumb (path) of the first assigned category.                                                                           |
-| \_DetailUrl                  | string                               | URL to the product detail page.                                                                                                 |
-| \_Price                      | CalculatedPrice                      | The calculated product price.                                                                                                   |
-| \_BasePriceInfo              | string                               | Base price information of the product.                                                                                          |
-| \_MainPictureUrl             | string                               | Absolute URL of the product's main picture.                                                                                     |
-| \_MainPictureRelativeUrl     | string                               | Relative URL of the product's main picture.                                                                                     |
-| \_FreeShippingThreshold      | decimal?                             | Free shipping threshold taken from the projection settings.                                                                     |
-| \_ShippingCosts              | decimal?                             | Shipping costs or the projected costs, if the product price is greater or equal to the free shipping threshold.                 |
-| \_ShippingTime               | string                               | Delivery time name or projected time if none is specified for the product.                                                      |
-| \_ProductTemplateViewPath    | string                               | The view path of the assigned product template.                                                                                 |
+<table><thead><tr><th width="266">Property name</th><th width="153">Type</th><th>Description</th></tr></thead><tbody><tr><td>_UniqueId</td><td>string</td><td>A unique ID consisting of product ID and attribute combination ID, if an attribute combination is exported as a product.</td></tr><tr><td>_IsParent</td><td>bool</td><td>A value indicating whether the product is a <strong>parent</strong> to exported attribute combinations, considered to be their <strong>children</strong>.</td></tr><tr><td>_AttributeCombinationId</td><td>int</td><td>The attribute combination ID, if exported as a product.</td></tr><tr><td>_AttributeCombinationValues</td><td>IList&#x3C;ProductVariantAttributeValue></td><td>A list of all attribute values if an attribute combination is exported as a product.</td></tr><tr><td>_Brand</td><td>string</td><td>Name of the first assigned manufacturer.</td></tr><tr><td>_CategoryName</td><td>string</td><td>Name of the first assigned category.</td></tr><tr><td>_CategoryPath</td><td>string</td><td>The breadcrumb (path) of the first assigned category.</td></tr><tr><td>_DetailUrl</td><td>string</td><td>URL to the product detail page.</td></tr><tr><td>_Price</td><td>CalculatedPrice</td><td>The calculated product price.</td></tr><tr><td>_BasePriceInfo</td><td>string</td><td>Base price information of the product.</td></tr><tr><td>_MainPictureUrl</td><td>string</td><td>Absolute URL of the product's main picture.</td></tr><tr><td>_MainPictureRelativeUrl</td><td>string</td><td>Relative URL of the product's main picture.</td></tr><tr><td>_FreeShippingThreshold</td><td>decimal?</td><td>Free shipping threshold taken from the projection settings.</td></tr><tr><td>_ShippingCosts</td><td>decimal?</td><td>Shipping costs or the projected costs, if the product price is greater or equal to the free shipping threshold.</td></tr><tr><td>_ShippingTime</td><td>string</td><td>Delivery time name or projected time if none is specified for the product.</td></tr><tr><td>_ProductTemplateViewPath</td><td>string</td><td>The view path of the assigned product template.</td></tr></tbody></table>
 
 #### Customers
 
-| Property name               | Type           | Description                                                                                                                                              |
-| --------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| \_FullName                  | string         | Full customer name.                                                                                                                                      |
-| \_AvatarPictureUrl          | string         | Absolute URL of the avatar, if it exists.                                                                                                                |
-| \_RewardPointsBalance       | int            | Current reward point balance.                                                                                                                            |
-| \_HasNewsletterSubscription | bool           | A value indicating whether the customer is subscribed to the newsletter.                                                                                 |
-| \_GenericAttributes         | List\<dynamic> | List of associated generic attributes. Only _VatNumber_ and _ImpersonatedCustomerId_ are exported. The dynamic items are of the type `GenericAttribute`. |
+<table><thead><tr><th width="269">Property name</th><th width="147">Type</th><th>Description</th></tr></thead><tbody><tr><td>_FullName</td><td>string</td><td>Full customer name.</td></tr><tr><td>_AvatarPictureUrl</td><td>string</td><td>Absolute URL of the avatar, if it exists.</td></tr><tr><td>_RewardPointsBalance</td><td>int</td><td>Current reward point balance.</td></tr><tr><td>_HasNewsletterSubscription</td><td>bool</td><td>A value indicating whether the customer is subscribed to the newsletter.</td></tr><tr><td>_GenericAttributes</td><td>List&#x3C;dynamic></td><td>List of associated generic attributes. Only <em>VatNumber</em> and <em>ImpersonatedCustomerId</em> are exported. The dynamic items are of the type <code>GenericAttribute</code>.</td></tr></tbody></table>
 
 #### MediaFile
 
-| Property name      | Type   | Description                                                                                                         |
-| ------------------ | ------ | ------------------------------------------------------------------------------------------------------------------- |
-| \_FileName         | string | Name of the file.                                                                                                   |
-| \_RelativeUrl      | string | Relative URL.                                                                                                       |
-| \_ThumbImageUrl    | string | Absolute URL of the thumbnail.                                                                                      |
-| \_ImageUrl         | string | <p>Absolute URL of the image in the size shown on a detail page.</p><p>If not available, the thumbnail is used.</p> |
-| \_FullSizeImageUrl | string | Absolute URL of the full sized image.                                                                               |
+<table><thead><tr><th width="270">Property name</th><th width="146">Type</th><th>Description</th></tr></thead><tbody><tr><td>_FileName</td><td>string</td><td>Name of the file.</td></tr><tr><td>_RelativeUrl</td><td>string</td><td>Relative URL.</td></tr><tr><td>_ThumbImageUrl</td><td>string</td><td>Absolute URL of the thumbnail.</td></tr><tr><td>_ImageUrl</td><td>string</td><td><p>Absolute URL of the image in the size shown on a detail page.</p><p>If not available, the thumbnail is used.</p></td></tr><tr><td>_FullSizeImageUrl</td><td>string</td><td>Absolute URL of the full sized image.</td></tr></tbody></table>

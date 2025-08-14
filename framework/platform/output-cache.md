@@ -39,10 +39,7 @@ Clarification of the terminology relating to the [Donut Hole](output-cache.md#do
 
 A _cachable route_ represents the stringified route to a page or view component. It is the route identifier and structured as follows:
 
-| Element            | Route pattern                               | Example                                          |
-| ------------------ | ------------------------------------------- | ------------------------------------------------ |
-| **Full page**      | `[{Module}/]{ControllerShortName}/{Action}` | `Smartstore.Blog/Blog/List`, `Catalog/Category`  |
-| **View component** | `vc:[{Module}/]{ComponentShortName}`        | `vc:SearchBox`, `vc:Smartstore.Blog/BlogSummary` |
+<table><thead><tr><th width="181.33333333333331">Element</th><th width="231">Route pattern</th><th>Example</th></tr></thead><tbody><tr><td><strong>Full page</strong></td><td><code>[{Module}/]{ControllerShortName}/{Action}</code></td><td><code>Smartstore.Blog/Blog/List</code>, <code>Catalog/Category</code></td></tr><tr><td><strong>View component</strong></td><td><code>vc:[{Module}/]{ComponentShortName}</code></td><td><code>vc:SearchBox</code>, <code>vc:Smartstore.Blog/BlogSummary</code></td></tr></tbody></table>
 
 {% hint style="warning" %}
 **Module must be omitted** if the controller / component is part of the application core.

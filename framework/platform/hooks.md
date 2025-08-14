@@ -2,7 +2,7 @@
 description: Special pub/sub system for database save operations
 ---
 
-# ✔ Hooks
+# ✔️ Hooks
 
 ## Overview
 
@@ -228,14 +228,7 @@ internal class MyCacheInvalidatorHook : AsyncDbSaveHook<BaseEntity>
 
 `IHookedEntity` is passed to the hook handler method. It represents the entity entry that is being hooked and has the following properties:
 
-| Property          | Description                                                                                                                                                                                                                                                                                                     |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Entry`           | The underlying EF entity entry.                                                                                                                                                                                                                                                                                 |
-| `Entity`          | Instance of the hooked entity.                                                                                                                                                                                                                                                                                  |
-| `State`           | The **current** entity state.                                                                                                                                                                                                                                                                                   |
-| `InitialState`    | The entity state before the save operation. Use this in **PostSave** handlers.                                                                                                                                                                                                                                  |
-| `HasStateChanged` | Indicates whether the entity state has been changed in a **PreSave** handler.                                                                                                                                                                                                                                   |
-| `IsSoftDeleted`   | Indicates whether the entity is in _soft deleted_ state. This is the case if the entity is an instance of `ISoftDeletable` and the value of its `Deleted` property is `true` **AND** it has changed since being tracked. However, if the entity is not in _modified_ state, the snapshot comparison is omitted. |
+<table><thead><tr><th width="222">Property</th><th>Description</th></tr></thead><tbody><tr><td><code>Entry</code></td><td>The underlying EF entity entry.</td></tr><tr><td><code>Entity</code></td><td>Instance of the hooked entity.</td></tr><tr><td><code>State</code></td><td>The <strong>current</strong> entity state.</td></tr><tr><td><code>InitialState</code></td><td>The entity state before the save operation. Use this in <strong>PostSave</strong> handlers.</td></tr><tr><td><code>HasStateChanged</code></td><td>Indicates whether the entity state has been changed in a <strong>PreSave</strong> handler.</td></tr><tr><td><code>IsSoftDeleted</code></td><td>Indicates whether the entity is in <em>soft deleted</em> state. This is the case if the entity is an instance of <code>ISoftDeletable</code> and the value of its <code>Deleted</code> property is <code>true</code> <strong>AND</strong> it has changed since being tracked. However, if the entity is not in <em>modified</em> state, the snapshot comparison is omitted.</td></tr></tbody></table>
 
 #### Check for modified properties
 
@@ -243,11 +236,7 @@ You can check for modified properties If an entity is in the _Modified_ state. H
 
 Here are some `IHookedEntity` methods that deal with property checking.
 
-| Method                                                                        | Returns                                                                                                                                                                                                                                |
-| ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `IsPropertyModified(string propertyName)`                                     | A value indicating whether the given property has been modified.                                                                                                                                                                       |
-| `Entry.GetModifiedProperties()`                                               | A dictionary filled with modified properties for the specified entity. The key is the name of the modified property and the value is its ORIGINAL value, which was tracked when the entity was attached to the context the first time. |
-| `Entry.TryGetModifiedProperty(string propertyName, out object originalValue)` | The property value if the given property has been modified, or null if not.                                                                                                                                                            |
+<table><thead><tr><th width="341">Method</th><th>Returns</th></tr></thead><tbody><tr><td><code>IsPropertyModified(string propertyName)</code></td><td>A value indicating whether the given property has been modified.</td></tr><tr><td><code>Entry.GetModifiedProperties()</code></td><td>A dictionary filled with modified properties for the specified entity. The key is the name of the modified property and the value is its ORIGINAL value, which was tracked when the entity was attached to the context the first time.</td></tr><tr><td><code>Entry.TryGetModifiedProperty(string propertyName, out object originalValue)</code></td><td>The property value if the given property has been modified, or null if not.</td></tr></tbody></table>
 
 ### Abstract base class
 
@@ -339,11 +328,7 @@ E.g., the product import task, which is a long-running process, turns off the ex
 
 This is done by wrapping a `DbContextScope` around a unit of work. To customize your hook's importance, decorate your hook class with `ImportantAttribute`.
 
-| Value              | Description                                                                                                                                                                            |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Normal` (default) | The hook **can be ignored** during long running processes, such as imports. These usually are simple hooks that invalidate cache entries or clean up some resources.                   |
-| `Important`        | The hook is important and **should be running**, even during long running processes. Not running the hook **may** result in stale or invalid data.                                     |
-| `Essential`        | The hook instance **should always run** (e.g. _AuditHook_, which is even required during installation). Not running the hook will definitely result in stale data or throw exceptions. |
+<table><thead><tr><th width="184">Value</th><th>Description</th></tr></thead><tbody><tr><td><code>Normal</code> (default)</td><td>The hook <strong>can be ignored</strong> during long running processes, such as imports. These usually are simple hooks that invalidate cache entries or clean up some resources.</td></tr><tr><td><code>Important</code></td><td>The hook is important and <strong>should be running</strong>, even during long running processes. Not running the hook <strong>may</strong> result in stale or invalid data.</td></tr><tr><td><code>Essential</code></td><td>The hook instance <strong>should always run</strong> (e.g. <em>AuditHook</em>, which is even required during installation). Not running the hook will definitely result in stale data or throw exceptions.</td></tr></tbody></table>
 
 ### Specify execution order
 

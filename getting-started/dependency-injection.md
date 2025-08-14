@@ -1,4 +1,4 @@
-# 🐣 Dependency injection
+# ✔️ Dependency injection
 
 ## Overview
 
@@ -63,11 +63,7 @@ By convention the startup class of a module is called `Startup` and is located i
 
 The most common dependency scopes are:
 
-| Via ContainerBuilder     | Via IServiceCollection | Results in                                                                                                                                                                                                                   |
-| ------------------------ | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| InstancePerDependency    | AddTransient           | Every dependent component or call to `Resolve` gets a new, unique instance (default).                                                                                                                                        |
-| InstancePerLifetimeScope | AddScoped              | Every dependent component or call to `Resolve` within a single `ILifetimeScope` - usually the HTTP request - gets the same, shared instance. Dependent components in different lifetime scopes will get different instances. |
-| SingleInstance           | AddSingleton           | Every dependent component or call to `Resolve` gets the same, shared instance.                                                                                                                                               |
+<table><thead><tr><th width="247">Via ContainerBuilder</th><th width="202">Via IServiceCollection</th><th>Results in</th></tr></thead><tbody><tr><td>InstancePerDependency</td><td>AddTransient</td><td>Every dependent component or call to <code>Resolve</code> gets a new, unique instance (default).</td></tr><tr><td>InstancePerLifetimeScope</td><td>AddScoped</td><td>Every dependent component or call to <code>Resolve</code> within a single <code>ILifetimeScope</code> - usually the HTTP request - gets the same, shared instance. Dependent components in different lifetime scopes will get different instances.</td></tr><tr><td>SingleInstance</td><td>AddSingleton</td><td>Every dependent component or call to <code>Resolve</code> gets the same, shared instance.</td></tr></tbody></table>
 
 ### Special registrations
 

@@ -1,4 +1,4 @@
-# ✔ Web API in detail
+# ✔️ Web API in detail
 
 You can consume API services in a RESTful manner via HTTPS calls by using HTTPS methods:
 
@@ -18,25 +18,11 @@ A request body must be _UTF-8_ encoded.
 
 ## Request HTTP header fields
 
-| Name: value                                                     | Required |                                                                           Remarks                                                                           |
-| --------------------------------------------------------------- | -------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <p><strong>Accept</strong>:<br>application/json</p>             | yes      |                                                              Only _application/json_ is valid.                                                              |
-| <p><strong>Accept-Charset</strong>:<br>UTF-8</p>                | yes      |                                                                                                                                                             |
-| <p><strong>Authorization</strong>:<br>Basic &#x3C;key pair></p> | yes      |                                                           See [Authentication](authentication.md).                                                          |
-| <p><strong>Prefer</strong>:<br>return=representation</p>        | no       | Can be sent for PUT and PATCH requests if the API should answer with status code `200` and entity content response, otherwise `204 No Content` is returned. |
+<table><thead><tr><th width="215.33333333333331">Name: value</th><th width="103" align="center">Required</th><th>Remarks</th></tr></thead><tbody><tr><td><strong>Accept</strong>:<br>application/json</td><td align="center">yes</td><td>Only <em>application/json</em> is valid.</td></tr><tr><td><strong>Accept-Charset</strong>:<br>UTF-8</td><td align="center">yes</td><td></td></tr><tr><td><strong>Authorization</strong>:<br>Basic &#x3C;key pair></td><td align="center">yes</td><td>See <a href="authentication.md">Authentication</a>.</td></tr><tr><td><strong>Prefer</strong>:<br>return=representation</td><td align="center">no</td><td>Can be sent for PUT and PATCH requests if the API should answer with status code <code>200</code> and entity content response, otherwise <code>204 No Content</code> is returned.</td></tr></tbody></table>
 
 ## Response HTTP header fields
 
-| Name: example value                                                                           | Description                                                                                                                                                                |
-| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <p><strong>Smartstore-Api-AppVersion</strong>:<br>5.1.0.0</p>                                 | Smartstore version used by the store.                                                                                                                                      |
-| <p><strong>Smartstore-Api-Version</strong>:<br>1 5.0</p>                                      | The highest API version supported by the server (unsigned integer) and the version of the installed API module (floating-point value).                                     |
-| <p><strong>Smartstore-Api-MaxTop</strong>:<br>120</p>                                         | The maximum value for OData `$top` query option. The default value is `120` and is configurable by store owner.                                                            |
-| <p><strong>Smartstore-Api-Date</strong>:<br>2022-11-11T14:35:33.7772907Z</p>                  | The current server date and time in _ISO-8601 UTC_.                                                                                                                        |
-| <p><strong>Smartstore-Api-CustomerId</strong>:<br>1234</p>                                    | The customer identifier of the authenticated API user. Returned only if authentication is successful.                                                                      |
-| <p><strong>Smartstore-Api-AuthResultId</strong>:<br>5</p>                                     | <p>The ID of the reason why the request was denied. Returned only if the authentication failed.</p><p>See <a href="authentication.md">authentication</a>.</p>              |
-| <p><strong>Smartstore-Api-AuthResultDesc</strong>:<br>UserDisabled</p>                        | <p>A short description of the reason why the request was denied. Returned only if the authentication failed.</p><p>See <a href="authentication.md">authentication</a>.</p> |
-| <p><strong>WWW-Authenticate</strong>:<br>Basic realm="Smartstore.WebApi", charset="UTF-8"</p> | The name of the failed authentication method.                                                                                                                              |
+<table><thead><tr><th width="327.3333333333333">Name: example value</th><th>Description</th></tr></thead><tbody><tr><td><strong>Smartstore-Api-AppVersion</strong>:<br>5.1.0.0</td><td>Smartstore version used by the store.</td></tr><tr><td><strong>Smartstore-Api-Version</strong>:<br>1 5.0</td><td>The highest API version supported by the server (unsigned integer) and the version of the installed API module (floating-point value).</td></tr><tr><td><strong>Smartstore-Api-MaxTop</strong>:<br>120</td><td>The maximum value for OData <code>$top</code> query option. The default value is <code>120</code> and is configurable by store owner.</td></tr><tr><td><strong>Smartstore-Api-Date</strong>:<br>2022-11-11T14:35:33.7772907Z</td><td>The current server date and time in <em>ISO-8601 UTC</em>.</td></tr><tr><td><strong>Smartstore-Api-CustomerId</strong>:<br>1234</td><td>The customer identifier of the authenticated API user. Returned only if authentication is successful.</td></tr><tr><td><strong>Smartstore-Api-AuthResultId</strong>:<br>5</td><td><p>The ID of the reason why the request was denied. Returned only if the authentication failed.</p><p>See <a href="authentication.md">authentication</a>.</p></td></tr><tr><td><strong>Smartstore-Api-AuthResultDesc</strong>:<br>UserDisabled</td><td><p>A short description of the reason why the request was denied. Returned only if the authentication failed.</p><p>See <a href="authentication.md">authentication</a>.</p></td></tr><tr><td><strong>WWW-Authenticate</strong>:<br>Basic realm="Smartstore.WebApi", charset="UTF-8"</td><td>The name of the failed authentication method.</td></tr></tbody></table>
 
 ## Query options
 
@@ -52,12 +38,7 @@ For example, imagine you want to add a German address, but you don't have the ID
 
 The API can fulfill the following properties:
 
-| Entity property   | Expected query value                      | Query string example             |
-| ----------------- | ----------------------------------------- | -------------------------------- |
-| **Country**       | The two or three letter ISO country code. | SmApiFulfill**Country**=USA      |
-| **StateProvince** | The abbreviation of a state or province.  | SmApiFulfill**StateProvince**=CA |
-| **Language**      | The culture of a language.                | SmApiFulfill**Language**=de-DE   |
-| **Currency**      | The ISO code of a currency.               | SmApiFulfill**Currency**=EUR     |
+<table><thead><tr><th width="170.33333333333331">Entity property</th><th width="295">Expected query value</th><th>Query string example</th></tr></thead><tbody><tr><td><strong>Country</strong></td><td>The two or three letter ISO country code.</td><td>SmApiFulfill<strong>Country</strong>=USA</td></tr><tr><td><strong>StateProvince</strong></td><td>The abbreviation of a state or province.</td><td>SmApiFulfill<strong>StateProvince</strong>=CA</td></tr><tr><td><strong>Language</strong></td><td>The culture of a language.</td><td>SmApiFulfill<strong>Language</strong>=de-DE</td></tr><tr><td><strong>Currency</strong></td><td>The ISO code of a currency.</td><td>SmApiFulfill<strong>Currency</strong>=EUR</td></tr></tbody></table>
 
 {% hint style="warning" %}
 `SmApiFulfill` sets the relationship only if none exists yet. An existing relationship cannot be modified with this option.

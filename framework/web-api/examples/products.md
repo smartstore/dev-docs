@@ -1,4 +1,4 @@
-# ✔ Products
+# ✔️ Products
 
 ### **Get a product with name "iPhone"**
 
@@ -60,7 +60,7 @@ POST http://localhost:59318/odata/v1/Products(1)/ProductManufacturers(12)
 ```
 
 {% hint style="info" %}
-* The request body is optional but sending the content type header with _application/json_ is required otherwise `404 Not Found` is returned_._
+* The request body is optional but sending the content type header with _application/json_ is required otherwise `404 Not Found` is returne&#x64;_._
 * Use the DELETE method to remove an assignment.
 * Omit the category / manufacturer identifier if you want to remove all related assignments for a product.
 * It doesn't matter if one of the assignments already exists. The Web API automatically ensures that a product has no duplicate category or manufacturer assignments.

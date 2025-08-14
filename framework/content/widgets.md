@@ -2,7 +2,7 @@
 description: Inject content into zones
 ---
 
-# ✔ Widgets
+# ✔️ Widgets
 
 ## Overview
 
@@ -213,11 +213,7 @@ internal class CookieConsentFilter : IResultFilter
 }
 ```
 
-| Method           | Description                                                                                                   |
-| ---------------- | ------------------------------------------------------------------------------------------------------------- |
-| `RegisterWidget` | Registers a custom widget for widget zones. The zones can also be passed as an array or a regular expression. |
-| `HasWidgets`     | Checks whether a zone contains at least one injected widget.                                                  |
-| `GetWidgets`     | Enumerates all injected widgets in a given zone.                                                              |
+<table><thead><tr><th width="225">Method</th><th>Description</th></tr></thead><tbody><tr><td><code>RegisterWidget</code></td><td>Registers a custom widget for widget zones. The zones can also be passed as an array or a regular expression.</td></tr><tr><td><code>HasWidgets</code></td><td>Checks whether a zone contains at least one injected widget.</td></tr><tr><td><code>GetWidgets</code></td><td>Enumerates all injected widgets in a given zone.</td></tr></tbody></table>
 
 ## Static widgets (aka widget providers)
 

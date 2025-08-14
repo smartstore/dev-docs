@@ -1,4 +1,4 @@
-# 🐣 Creating a Domain entity
+# 🐥 Creating a Domain entity
 
 Domain entities provide a way to add your own tables to the Smartstore database. In this tutorial, you will add a simple notification system to your [Hello World](../tutorials/building-a-simple-hello-world-module.md) module.
 
@@ -19,16 +19,13 @@ A simple notification might have the following properties:
 
 Here is what the table might look like:
 
-| Id | Author | Published                   | Messaage                           |
-| -- | ------ | --------------------------- | ---------------------------------- |
-| 1  | 543    | 2022-12-12 11:48:08.9937258 | Hello World!                       |
-| 2  | 481    | 2022-12-13 19:02:55.7695421 | What a beautiful day it is :smile: |
+<table><thead><tr><th width="81">Id</th><th width="93">Author</th><th width="271">Published</th><th>Messaage</th></tr></thead><tbody><tr><td>1</td><td>543</td><td>2022-12-12 11:48:08.9937258</td><td>Hello World!</td></tr><tr><td>2</td><td>481</td><td>2022-12-13 19:02:55.7695421</td><td>What a beautiful day it is <span data-gb-custom-inline data-tag="emoji" data-code="1f604">😄</span></td></tr></tbody></table>
 
 ### Create the Domain entity
 
 #### Overview
 
-The _domain_ object is an abstract data structure that has all the properties of the entity it describes. _Entity Framework_ automates the mapping between domain __ objects and database tables.
+The _domain_ object is an abstract data structure that has all the properties of the entity it describes. _Entity Framework_ automates the mapping between domain objects and database tables.
 
 Specify the table name and the indexes using [Code First Data Annotations](https://learn.microsoft.com/en-us/ef/ef6/modeling/code-first/data-annotations) and add the properties that represent your database columns.
 

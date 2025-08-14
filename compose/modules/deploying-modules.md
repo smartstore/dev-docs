@@ -1,4 +1,4 @@
-# 🥚 Deploying modules
+# 🐥 Deploying modules
 
 ## Deploying modules
 

@@ -2,7 +2,7 @@
 description: Entities and O/R Mapping
 ---
 
-# ✔ Domain
+# ✔️ Domain
 
 ## Overview
 
@@ -16,7 +16,7 @@ The domain tier contains all entity classes that are mapped to database tables. 
 * [Customer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Identity/Domain/Customer.cs)
 * [MediaFile](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Content/Media/Domain/MediaFile.cs)
 
-An entity class is a "Plain old CLR object" ([POCO](https://en.wikipedia.org/wiki/Plain\_old\_CLR\_object)). It usually represents one database table, with each property typically representing one column in the table.
+An entity class is a "Plain old CLR object" ([POCO](https://en.wikipedia.org/wiki/Plain_old_CLR_object)). It usually represents one database table, with each property typically representing one column in the table.
 
 {% hint style="info" %}
 You can establish any relationship between entities (1:1, 1:n, n:m)
@@ -128,28 +128,8 @@ The following types declare some properties your entity must implement in order 
 
 ### Interfaces
 
-| Name                 | Characteristic                           |
-| -------------------- | ---------------------------------------- |
-| **IAclRestricted**   | Has access restrictions                  |
-| **IAttributeAware**  | Has some raw attributes                  |
-| **IAuditable**       | Has auditing properties                  |
-| **IDiscountable**    | Has applicable discounts                 |
-| **IDisplayedEntity** | Is displayed somehow in UI               |
-| **IDisplayOrder**    | Is orderable                             |
-| **ILocalizedEntity** | Is localizable                           |
-| **INamedEntity**     | Has a conceptual name                    |
-| **IMergedData**      | Has mergeable data                       |
-| **IPagingOptions**   | Has data paging options (page size etc.) |
-| **IRulesContainer**  | Is a container for other rules           |
-| **ISlugSupported**   | Supports SEO slugs                       |
-| **ISoftDeletable**   | Is soft deletable                        |
-| **IStoreRestricted** | Supports store mapping                   |
-| **ITransient**       | Supports transiency                      |
+<table><thead><tr><th width="247">Name</th><th>Characteristic</th></tr></thead><tbody><tr><td><strong>IAclRestricted</strong></td><td>Has access restrictions</td></tr><tr><td><strong>IAttributeAware</strong></td><td>Has some raw attributes</td></tr><tr><td><strong>IAuditable</strong></td><td>Has auditing properties</td></tr><tr><td><strong>IDiscountable</strong></td><td>Has applicable discounts</td></tr><tr><td><strong>IDisplayedEntity</strong></td><td>Is displayed somehow in UI</td></tr><tr><td><strong>IDisplayOrder</strong></td><td>Is orderable</td></tr><tr><td><strong>ILocalizedEntity</strong></td><td>Is localizable</td></tr><tr><td><strong>INamedEntity</strong></td><td>Has a conceptual name</td></tr><tr><td><strong>IMergedData</strong></td><td>Has mergeable data</td></tr><tr><td><strong>IPagingOptions</strong></td><td>Has data paging options (page size etc.)</td></tr><tr><td><strong>IRulesContainer</strong></td><td>Is a container for other rules</td></tr><tr><td><strong>ISlugSupported</strong></td><td>Supports SEO slugs</td></tr><tr><td><strong>ISoftDeletable</strong></td><td>Is soft deletable</td></tr><tr><td><strong>IStoreRestricted</strong></td><td>Supports store mapping</td></tr><tr><td><strong>ITransient</strong></td><td>Supports transiency</td></tr></tbody></table>
 
 ### Abstract base classes
 
-| Name                     | Characteristic                                                                                              |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| **EntityWithAttributes** | Has generic attributes (see [generic-attributes.md](../framework/advanced/generic-attributes.md "mention")) |
-| **EntityWithDiscounts**  | Has applicable discounts                                                                                    |
-| **CustomerContent**      | Represents content entered by customer                                                                      |
+<table><thead><tr><th width="253">Name</th><th>Characteristic</th></tr></thead><tbody><tr><td><strong>EntityWithAttributes</strong></td><td>Has generic attributes (see <a data-mention href="../framework/advanced/generic-attributes.md">generic-attributes.md</a>)</td></tr><tr><td><strong>EntityWithDiscounts</strong></td><td>Has applicable discounts</td></tr><tr><td><strong>CustomerContent</strong></td><td>Represents content entered by customer</td></tr></tbody></table>

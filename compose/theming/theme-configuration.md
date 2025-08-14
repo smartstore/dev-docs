@@ -17,13 +17,7 @@ Here is an example of a theme.config file without variables.
 
 These are the attributes you can use in the `Theme`-node:
 
-| Attribute       | Description                                                                     |
-| --------------- | ------------------------------------------------------------------------------- |
-| **baseTheme**   | Specifies which base theme to use.                                              |
-| **title**       | Defines the title of the theme.                                                 |
-| **description** | Defines the description of the theme as it appears in the _Theme Configurator_. |
-| **author**      | Defines the author of the theme.                                                |
-| **version**     | Defines the version of the theme.                                               |
+<table><thead><tr><th width="200">Attribute</th><th>Description</th></tr></thead><tbody><tr><td><strong>baseTheme</strong></td><td>Specifies which base theme to use.</td></tr><tr><td><strong>title</strong></td><td>Defines the title of the theme.</td></tr><tr><td><strong>description</strong></td><td>Defines the description of the theme as it appears in the <em>Theme Configurator</em>.</td></tr><tr><td><strong>author</strong></td><td>Defines the author of the theme.</td></tr><tr><td><strong>version</strong></td><td>Defines the version of the theme.</td></tr></tbody></table>
 
 In addition to the above attributes, a preview file must be stored to display the theme as a preview image in the theme configurator. This file must be located in the _wwwroot/images_ directory and be named `preview.png`. Any changes to `theme.config` will invalidate the cached stylesheet and cause Sass to recompile. As a result, changed variable values are applied right after a browser refresh at runtime, and the changes are immediately visible.
 

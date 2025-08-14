@@ -1,4 +1,4 @@
-# ✔ Caching
+# ✔️ Caching
 
 ## Overview
 
@@ -38,10 +38,7 @@ Because of the unified API, you must be careful with object types. Your cached o
 
 To resolve the primary memory or distributed store explicitly, without relying on the composite multi-level manager, use the [ICacheFactory](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore/Caching/ICacheFactory.cs) service. There are two methods that resolve an instance of `ICacheManager`.
 
-| Method                  | Description                                                                                                                                                       |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GetMemoryCache()`      | The instance only interacts with the current implementation of `IMemoryCacheStore`.                                                                               |
-| `GetDistributedCache()` | The instance only interacts with the current `IDistributedCacheStore` implementation. If no distributed store exists, a memory store manager is returned instead. |
+<table><thead><tr><th width="264">Method</th><th>Description</th></tr></thead><tbody><tr><td><code>GetMemoryCache()</code></td><td>The instance only interacts with the current implementation of <code>IMemoryCacheStore</code>.</td></tr><tr><td><code>GetDistributedCache()</code></td><td>The instance only interacts with the current <code>IDistributedCacheStore</code> implementation. If no distributed store exists, a memory store manager is returned instead.</td></tr></tbody></table>
 
 #### Implementing a custom cache store
 
@@ -104,15 +101,9 @@ Almost all cache access methods have asynchronous overloads.
 
 ### Glob patterns
 
-Some cache methods support [glob patterns](https://en.wikipedia.org/wiki/Glob\_\(programming\)) in order to match keys. Smartstore supports the following patterns:
+Some cache methods support [glob patterns](https://en.wikipedia.org/wiki/Glob_\(programming\)) in order to match keys. Smartstore supports the following patterns:
 
-| Wildcard   | Description                                         | Example        | Matches                                  | Doesn’t match               |
-| ---------- | --------------------------------------------------- | -------------- | ---------------------------------------- | --------------------------- |
-| **?**      | Matches any single character.                       | h**?**llo      | _h**e**llo_, _h**a**llo_ or _h**x**llo_  | _h**ao**llo_ or _hllo_      |
-| **\***     | Matches any string of characters.                   | h**\***llo     | _hllo_ or _h**eeao**llo_                 | _hlo_ or _llo_              |
-| **\[abc]** | Matches any bracketed character.                    | h**\[ae]**llo  | _h**e**llo_ and _h**a**llo_              | _h**i**llo_ or _h**ae**llo_ |
-| **\[^a]**  | Matches any non-bracketed character.                | h**\[^e]**llo  | _h**a**llo_ and _h**b**llo_              | _h**e**llo_                 |
-| **\[a-z]** | Matches any character in the given character range. | h**\[a-c]**llo | _h**a**llo_, _h**b**llo_ and _h**c**llo_ | _h**e**llo_ or _h**i**llo_  |
+<table><thead><tr><th width="115">Wildcard</th><th width="166">Description</th><th width="107">Example</th><th>Matches</th><th>Doesn’t match</th></tr></thead><tbody><tr><td><strong>?</strong></td><td>Matches any single character.</td><td>h<strong>?</strong>llo</td><td><em>h<strong>e</strong>llo</em>, <em>h<strong>a</strong>llo</em> or <em>h<strong>x</strong>llo</em></td><td><em>h<strong>ao</strong>llo</em> or <em>hllo</em></td></tr><tr><td><strong>*</strong></td><td>Matches any string of characters.</td><td>h<strong>*</strong>llo</td><td><em>hllo</em> or <em>h<strong>eeao</strong>llo</em></td><td><em>hlo</em> or <em>llo</em></td></tr><tr><td><strong>[abc]</strong></td><td>Matches any bracketed character.</td><td>h<strong>[ae]</strong>llo</td><td><em>h<strong>e</strong>llo</em> and <em>h<strong>a</strong>llo</em></td><td><em>h<strong>i</strong>llo</em> or <em>h<strong>ae</strong>llo</em></td></tr><tr><td><strong>[^a]</strong></td><td>Matches any non-bracketed character.</td><td>h<strong>[^e]</strong>llo</td><td><em>h<strong>a</strong>llo</em> and <em>h<strong>b</strong>llo</em></td><td><em>h<strong>e</strong>llo</em></td></tr><tr><td><strong>[a-z]</strong></td><td>Matches any character in the given character range.</td><td>h<strong>[a-c]</strong>llo</td><td><em>h<strong>a</strong>llo</em>, <em>h<strong>b</strong>llo</em> and <em>h<strong>c</strong>llo</em></td><td><em>h<strong>e</strong>llo</em> or <em>h<strong>i</strong>llo</em></td></tr></tbody></table>
 
 ### Expiration policy
 

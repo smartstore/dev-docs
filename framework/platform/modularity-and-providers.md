@@ -1,4 +1,4 @@
-# ✔ Modularity & Providers
+# ✔️ Modularity & Providers
 
 ## Providers
 
@@ -8,17 +8,7 @@ Each of these provider interfaces is derived from the marker interface [IProvide
 
 ### Metadata
 
-| Name                 | Implement                 | Description                                                                                                                                                                  |
-| -------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **FriendlyName**     | FriendlyNameAttribute     | The English name of the provider. Localizable by using resource key _Plugins.FriendlyName.\<ProviderSystemName>_                                                             |
-| **Description**      | FriendlyNameAttribute     | The English description of the provider. Localizable by using resource key _Plugins.Description.\<ProviderSystemName>_                                                       |
-| **DisplayOrder**     | OrderAttribute            | The display order in the providers list.                                                                                                                                     |
-| **DependentWidgets** | DependentWidgetsAttribute | Widgets which are automatically (de)activated when the provider gets (de)activated. Useful in scenarios where separate widgets are responsible for displaying provider data. |
-| **ExportFeatures**   | ExportFeaturesAttribute   | Data processing types supported by an export provider.                                                                                                                       |
-| **IsConfigurable**   | IConfigurable             | A value indicating whether the provider is [configurable](modularity-and-providers.md#configuration).                                                                        |
-| **IsEditable**       | IUserEditable             | A value indicating whether the metadata is editable by the user.                                                                                                             |
-| **IsHidden**         | IsHiddenAttribute         | A value indicating whether the provider is hidden. A hidden provider can only be used programmatically but not by the user through the user interface.                       |
-| **SystemName \***    | SystemNameAttribute       | Unique SystemName of the provider, e.g. _Payments.AmazonPay._                                                                                                                |
+<table><thead><tr><th width="202">Name</th><th width="219">Implement</th><th>Description</th></tr></thead><tbody><tr><td><strong>FriendlyName</strong></td><td>FriendlyNameAttribute</td><td>The English name of the provider. Localizable by using resource key <em>Plugins.FriendlyName.&#x3C;ProviderSystemName></em></td></tr><tr><td><strong>Description</strong></td><td>FriendlyNameAttribute</td><td>The English description of the provider. Localizable by using resource key <em>Plugins.Description.&#x3C;ProviderSystemName></em></td></tr><tr><td><strong>DisplayOrder</strong></td><td>OrderAttribute</td><td>The display order in the providers list.</td></tr><tr><td><strong>DependentWidgets</strong></td><td>DependentWidgetsAttribute</td><td>Widgets which are automatically (de)activated when the provider gets (de)activated. Useful in scenarios where separate widgets are responsible for displaying provider data.</td></tr><tr><td><strong>ExportFeatures</strong></td><td>ExportFeaturesAttribute</td><td>Data processing types supported by an export provider.</td></tr><tr><td><strong>IsConfigurable</strong></td><td>IConfigurable</td><td>A value indicating whether the provider is <a href="modularity-and-providers.md#configuration">configurable</a>.</td></tr><tr><td><strong>IsEditable</strong></td><td>IUserEditable</td><td>A value indicating whether the metadata is editable by the user.</td></tr><tr><td><strong>IsHidden</strong></td><td>IsHiddenAttribute</td><td>A value indicating whether the provider is hidden. A hidden provider can only be used programmatically but not by the user through the user interface.</td></tr><tr><td><strong>SystemName *</strong></td><td>SystemNameAttribute</td><td>Unique SystemName of the provider, e.g. <em>Payments.AmazonPay.</em></td></tr></tbody></table>
 
 {% hint style="info" %}
 A provider can be activated or deactivated using the provider list. For example, a deactivated payment provider does not appear in the checkout payment method list.

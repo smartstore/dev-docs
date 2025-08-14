@@ -76,7 +76,7 @@ Smartstore's built-in file watcher keeps track of all changes made to the includ
 
 ### Autoprefixer
 
-[Vendor prefixes](https://developer.mozilla.org/en-US/docs/Glossary/Vendor\_Prefix) are a part of CSS that is added to certain properties and values. They enable experimental, non-standard features in different browsers. For example, the `-webkit-` prefix is used for properties and values supported by WebKit browsers (Google, Safari, etc.), and Mozilla Firefox uses the `-moz-` prefix.
+[Vendor prefixes](https://developer.mozilla.org/en-US/docs/Glossary/Vendor_Prefix) are a part of CSS that is added to certain properties and values. They enable experimental, non-standard features in different browsers. For example, the `-webkit-` prefix is used for properties and values supported by WebKit browsers (Google, Safari, etc.), and Mozilla Firefox uses the `-moz-` prefix.
 
 Without using a tool like CSS Autoprefixer, you would have to take care of adding the correct prefixes yourself. This can be tedious and error-prone.
 
@@ -128,12 +128,7 @@ For more information, see [Font Awesome](https://fontawesome.com/icons).
 
 Font Awesome icons have light, regular, and solid variants. The displayed variant is specified by a CSS class (.fa, .fas, .far, or .fal), which sets the corresponding `font-weight` value. The `font-weight` values for the variant classes are defined by `$icon-font-weight-default` and `$icon-font-variants`. Changing these values has no effect when using the free version of Font Awesome.
 
-| Variant           | Class   | Sass variable                   | font-weight |
-| ----------------- | ------- | ------------------------------- | ----------- |
-| Fallback to Solid | fa      | $icon-font-weight-default       | 900         |
-| Solid             | fa**s** | $icon-font-variants\["solid"]   | 900         |
-| Regular           | fa**r** | $icon-font-variants\["regular"] | 400         |
-| Light             | fa**l** | $icon-font-variants\["light"]   | 300         |
+<table><thead><tr><th width="182">Variant</th><th width="87.33333333333331">Class</th><th width="342">Sass variable</th><th>font-weight</th></tr></thead><tbody><tr><td>Fallback to Solid</td><td>fa</td><td>$icon-font-weight-default</td><td>900</td></tr><tr><td>Solid</td><td>fa<strong>s</strong></td><td>$icon-font-variants["solid"]</td><td>900</td></tr><tr><td>Regular</td><td>fa<strong>r</strong></td><td>$icon-font-variants["regular"]</td><td>400</td></tr><tr><td>Light</td><td>fa<strong>l</strong></td><td>$icon-font-variants["light"]</td><td>300</td></tr></tbody></table>
 
 #### Font Awesome Free
 

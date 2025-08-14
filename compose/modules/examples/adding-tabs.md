@@ -1,4 +1,4 @@
-# 🐣 Adding tabs
+# 🐥 Adding tabs
 
 _Smartstore_ uses tabs in different places in the backend and frontend. The `TabTagHelper` is used for this exact purpose.
 
@@ -63,14 +63,7 @@ The event message stores the tab id in `TabStripName`. The tab of interest has t
 
 Using the event message’s `TabFactory`, you can inject a new tab.
 
-| Method                 | Description                                                                   |
-| ---------------------- | ----------------------------------------------------------------------------- |
-| **Text**               | The text of the tab item that appears in the tab strip                        |
-| **Name**               | Unique name/id of tab item                                                    |
-| **Icon**               | The icon of the tab                                                           |
-| **LinkHtmlAttributes** | HTML attributes to be added to the tab's link                                 |
-| **Action**             | The MVC `action` that should be invoked to display the tab                    |
-| **Ajax**               | Specifies whether the tab content should be lazy loaded via Ajax when clicked |
+<table><thead><tr><th width="198">Method</th><th>Description</th></tr></thead><tbody><tr><td><strong>Text</strong></td><td>The text of the tab item that appears in the tab strip</td></tr><tr><td><strong>Name</strong></td><td>Unique name/id of tab item</td></tr><tr><td><strong>Icon</strong></td><td>The icon of the tab</td></tr><tr><td><strong>LinkHtmlAttributes</strong></td><td>HTML attributes to be added to the tab's link</td></tr><tr><td><strong>Action</strong></td><td>The MVC <code>action</code> that should be invoked to display the tab</td></tr><tr><td><strong>Ajax</strong></td><td>Specifies whether the tab content should be lazy loaded via Ajax when clicked</td></tr></tbody></table>
 
 ## Adding an action
 

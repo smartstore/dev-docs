@@ -2,7 +2,7 @@
 description: Start and initialize the application
 ---
 
-# ✔ Bootstrapping
+# ✔️ Bootstrapping
 
 ## Overview
 
@@ -16,7 +16,7 @@ During the application startup, the following actions take place:
 * The HTTP request **pipeline** is configured.
 * Route **endpoints** are mapped.
 
-In a traditional ASP.NET Core application, these actions are performed in `Program.cs` (or `Startup.cs` in earlier versions of ASP.NET), but this is no option for Smartstore because external modules need to hook into the bootstrapping process. This is where modular **** _Starters_ come into play.
+In a traditional ASP.NET Core application, these actions are performed in `Program.cs` (or `Startup.cs` in earlier versions of ASP.NET), but this is no option for Smartstore because external modules need to hook into the bootstrapping process. This is where modular _Starters_ come into play.
 
 ## Modular starters
 
@@ -216,9 +216,4 @@ There is no need to register an initializer in the DI, as all types implementing
 
 ### Smartstore built-in initializers
 
-| Initializer                                                                                                                                                              | Description                                                                                                                            |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| [ApplicationDatabasesInitializer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Data/Bootstrapping/ApplicationDatabasesInitializer.cs)          | <p>Initializes the application database(s).</p><p>It’s the very first initializer to run.</p>                                          |
-| [TaskSchedulerInitializer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Scheduling/Bootstrapping/TaskSchedulerInitializer.cs)         | <p>Activates the web scheduler after checking for valid hostnames.</p><p>Returns a warning if no scheduler or store is registered.</p> |
-| [InstallPermissionsInitializer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Security/Bootstrapping/InstallPermissionsInitializer.cs) | Checks for new permission records and seeds them.                                                                                      |
-| [ModulesInitializer](https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Modularity/ModulesInitializer.cs)                                   | Among other things, it detects and refreshes changed module locale resources.                                                          |
+<table><thead><tr><th width="286">Initializer</th><th>Description</th></tr></thead><tbody><tr><td><a href="https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Data/Bootstrapping/ApplicationDatabasesInitializer.cs">ApplicationDatabasesInitializer</a></td><td><p>Initializes the application database(s).</p><p>It’s the very first initializer to run.</p></td></tr><tr><td><a href="https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Scheduling/Bootstrapping/TaskSchedulerInitializer.cs">TaskSchedulerInitializer</a></td><td><p>Activates the web scheduler after checking for valid hostnames.</p><p>Returns a warning if no scheduler or store is registered.</p></td></tr><tr><td><a href="https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Security/Bootstrapping/InstallPermissionsInitializer.cs">InstallPermissionsInitializer</a></td><td>Checks for new permission records and seeds them.</td></tr><tr><td><a href="https://github.com/smartstore/Smartstore/blob/main/src/Smartstore.Core/Platform/Modularity/ModulesInitializer.cs">ModulesInitializer</a></td><td>Among other things, it detects and refreshes changed module locale resources.</td></tr></tbody></table>
