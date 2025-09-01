@@ -6,10 +6,10 @@ The rules engine lets administrators target entities such as discounts, categori
 
 ## Key concepts
 
-- **Rule set** – container that groups multiple rules with a logical operator (`AND`/`OR`). Each rule set has a `RuleScope` so it only applies to matching providers (for example `Cart` or `Customer`).
+- **Rule set** – container that groups multiple rules rules with a logical operator (`AND` by default). Each rule set has a `RuleScope` so it only applies to matching providers (for example `Cart` or `Customer`).
 - **Rule** – single condition composed of an operator and a value. Rules reference a descriptor that defines the data type and allowed operators.
 - **Rule provider** – component that supplies rule descriptors for a specific scope and converts stored rule data into executable expressions.
-- **Options provider** – delivers select list values (e.g., available customer roles) used by the rule editor when a descriptor requires lookup data.
+- **Options provider** – delivers select list values (e.g. available customer roles) used by the rule editor when a descriptor requires lookup data.
 
 ## Attaching rule sets
 
@@ -18,13 +18,13 @@ Many domain entities, including discounts, categories and payment methods, imple
 ## Creating a custom rule provider
 
 ```csharp
-public class ZipCodeRuleProvider : RuleProviderBase
+public class ZipCodeRuleProvider : RuleProviderBase, IMyZipCodeRuleProvider
 {
-    public ZipCodeRuleProvider() : base(RuleScope.Cart) { }
+    public ZipCodeRuleProvider() : base(MyRuleScopeId) { }
 
     protected override Task<IEnumerable<RuleDescriptor>> LoadDescriptorsAsync()
     {
-        var descriptor = new CartRuleDescriptor
+        var descriptor = new MyRuleDescriptor
         {
             Name = "ZipCode",
             DisplayName = T("Admin.Rules.ZipCode"),
@@ -55,8 +55,9 @@ The provider advertises a single `ZipCode` descriptor. `ConvertRuleAsync` binds 
 Use `IRuleService` to create an expression group and the matching provider to evaluate it:
 
 ```csharp
-var group = await _ruleService.CreateExpressionGroupAsync(ruleSetId, _cartRuleProvider);
-var matches = await _cartRuleProvider.RuleMatchesAsync(new[] { group }, LogicalRuleOperator.And);
+IRuleProvider provider = _ruleProviderFactory.GetProvider(MyRuleScopeId);
+RuleExpression expression = await _ruleService.CreateExpressionGroupAsync(ruleSetId, _cartRuleProvider);
+bool matches = await ((IMyZipCodeRuleProvider)provider).RuleMatchesAsync([expression], LogicalRuleOperator.And);
 ```
 
-If `matches` is `true` the entity associated with the rule set applies in the current context.
+If `matches` is `true` the entity associated with the rule set match the rule conditions.
