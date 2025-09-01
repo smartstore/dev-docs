@@ -19,6 +19,8 @@ The physical blob for a `MediaFile` is managed by an `IMediaStorageProvider`. Tw
 
 Providers implement `IMediaSender`/`IMediaReceiver` so media can be moved between backends. `MediaStorageConfiguration` determines which provider is active and the `MediaMover` service performs migrations.
 
+You can specify which provider to use in the `MediaSettings`.
+
 ## Working with media
 
 `IMediaService` offers high level operations for everyday tasks:
