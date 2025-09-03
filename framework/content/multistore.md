@@ -5,7 +5,7 @@ description: Running multiple storefronts from a single Smartstore installation
 # Multistore
 
 ## Overview
-Smartstore can host several independent stores using one database and application instance. Each store can have its own host name, theme, languages, currencies and catalog scope. Admins manage stores under **Configuration → Stores** and assign a primary domain to each one. Incoming requests are mapped to the matching store. If no match is found the first store becomes the default.
+Smartstore can host several independent stores using one database and application instance. Each store has its own host name, theme, languages, currencies and catalog scope. Admins manage stores under **Configuration → Stores** and assign a primary domain to each one. Incoming requests are mapped to the matching store. If no match is found the first store becomes the default.
 
 ## IIS host mapping
 To expose multiple stores on a single Windows server:
@@ -48,6 +48,38 @@ await _settingService.SaveSettingAsync(settings, x => x.SomeValue, storeId);
 ```
 
 When `storeId` is `0`, the value applies to all stores.
+
+You can also inject any settings class via Dependency Injection. The container automatically resolves the instance for the active store so no explicit `storeId` is necessary:
+
+```csharp
+public class CheckoutService
+{
+    private readonly OrderSettings _settings;
+
+    public CheckoutService(OrderSettings settings)
+    {
+        _settings = settings; // values already match the current store
+    }
+}
+```
+
+MVC controller actions can load and persist settings automatically through the `LoadSetting` and `SaveSetting` filters. Decorate a GET action with `[LoadSetting]` to resolve settings and `[SaveSetting]` on the POST action to store updates for the selected store scope:
+
+```csharp
+[LoadSetting]
+public IActionResult Configure(MySettings settings, int storeScope) => View(settings);
+
+[HttpPost, SaveSetting]
+public IActionResult Configure(MySettings settings, int storeScope)
+{
+    if (!ModelState.IsValid)
+        return View(settings);
+
+    return RedirectToAction(nameof(Configure));
+}
+```
+
+See the [configuration guide](../platform/configuration.md) for more details on these attributes.
 
 ## Store mapping
 Content entities (categories, manufacturers, topics, etc.) often implement `IStoreMappingSupported` so they can be limited to particular stores. Use `IStoreMappingService` to authorize access:
