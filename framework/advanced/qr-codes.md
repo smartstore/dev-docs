@@ -6,22 +6,24 @@ Smartstore ships with a lightweight barcode subsystem capable of producing QR co
 
 The encoder understands multiple symbologies:
 
-- `QRCode` – used for bank transfers and generic 2D codes
-- `EAN`
-- `UPC-A`
-- `UPC-E`
-- `Aztec`
-- `Codabar`
-- `Code128`
-- `Code39`
-- `Code93`
-- `DataMatrix`
-- `KixCode`
-- `PDF417`
-- `RoyalMail`
-- `TwoToFive`
+* `QRCode` – used for bank transfers and generic 2D codes
+* `EAN`
+* `UPC-A`
+* `UPC-E`
+* `Aztec`
+* `Codabar`
+* `Code128`
+* `Code39`
+* `Code93`
+* `DataMatrix`
+* `KixCode`
+* `PDF417`
+* `RoyalMail`
+* `TwoToFive`
 
 You can try each format in the admin barcode tester at `/admin/barcodetester/`.
+
+<figure><img src="../../.gitbook/assets/barcodetester.png" alt=""><figcaption></figcaption></figure>
 
 ## Encoding data
 
