@@ -1,4 +1,4 @@
-# 🧱 Page Builder & Blocks
+# Page Builder & Blocks
 
 ## Overview
 Smartstore's Page Builder lets editors compose "stories" by arranging content blocks on a responsive grid. Each story is stored in the database and rendered into the configured [widget zone](/framework/content/widgets#zones). Blocks encapsulate pieces of content such as HTML snippets, images or product listings. Blocks can be dragged, configured and reordered in the Page Builder UI.
