@@ -1,9 +1,11 @@
 # Shipment
 
 ## Overview
+
 Shipping covers the calculation of shipping rates before checkout and the handling of physical shipments after an order is placed. `IShippingService` orchestrates shipping rate computation providers that implement `IShippingRateComputationMethod`. Providers can return a `ShipmentTracker` to expose tracking links. Shipments themselves are attached to orders and contain a collection of `ShipmentItem` rows that specify which order items and quantities are dispatched.
 
 ## Loading shipping options
+
 To present the customer with possible shipping methods, create a `ShippingOptionRequest` from the cart and shipping address and then resolve rates through `GetShippingOptionsAsync`:
 
 ```csharp
@@ -21,7 +23,8 @@ foreach (var option in response.ShippingOptions)
 
 `ShippingOptionResponse` may carry warnings when a provider cannot return rates. Use `LoadEnabledShippingProviders` to enumerate providers and `GetAllShippingMethodsAsync` to list configured methods for administration screens.
 
-## Implementing a shipping provider
+## Implementing a shipping rate provider
+
 Custom shipping logic lives in modules that register a class implementing `IShippingRateComputationMethod`:
 
 ```csharp
@@ -46,6 +49,7 @@ public class FixedRateProvider : IShippingRateComputationMethod
 Register the provider in the module’s `Startup` and package it like the implementation in `src/Smartstore.Modules/Smartstore.Shipping`.
 
 ## Working with shipments
+
 After payment, orders can be split into one or more shipments. Use `IOrderProcessingService` to create and update them:
 
 ```csharp
