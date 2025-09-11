@@ -81,8 +81,6 @@ var payload = new WiFiPayload("ShopWifi", "secret");
 var code = _encoder.EncodeBarcode(payload);
 ```
 
-The encoder always uses error correction level **Quartile** (25% tolerance). You can implement a custom `IBarcodeEncoder` to change the `EccLevel` if another tolerance is required.
-
 ## Rendering options
 
 Both SVG and image generation accept option classes for coloring and sizing:
