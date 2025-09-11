@@ -26,7 +26,7 @@ var aboutUrl = await Url.TopicAsync("AboutUs");
 ```
 
 ## Widget mode
-When *Render as widget* is enabled, Smartstore turns the topic into a `TopicWidget` and injects it into each listed [widget zone](/framework/content/widgets#zones). Wrapper options (`WidgetWrapContent`, `WidgetShowTitle`, `WidgetBordered`) control presentation, while `Priority` defines sort order within the zone.
+When *Render as widget* is enabled, Smartstore turns the topic into a `TopicWidget` and injects it into each listed [widget zone](../../framework/content/widgets#zones). Wrapper options (`WidgetWrapContent`, `WidgetShowTitle`, `WidgetBordered`) control presentation, while `Priority` defines sort order within the zone.
 
 ## Programmatic access
 Topics reside in `SmartDbContext.Topics`. Use `TopicQueryExtensions.ApplyStandardFilter()` to respect publication, store and ACL settings when querying:
