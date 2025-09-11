@@ -26,6 +26,9 @@ A topic with a saved slug renders as a standalone page handled by `TopicControll
 
 ```csharp
 builder.Item("About us", i => i.Url("topic:AboutUs"));
+```
+
+```
 var aboutUrl = await Url.TopicAsync("AboutUs");
 ```
 
