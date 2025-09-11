@@ -22,7 +22,7 @@ Embed a topic in any view with the `TopicBlock` view component:
 @await Component.InvokeAsync("TopicBlock", new { systemName = "AboutUs" })
 ```
 
-A topic with a saved slug renders as a standalone page handled by `TopicController.TopicDetails`. Menus and other components can link to it via the [link resolver](linkresolver/):
+A topic with a saved slug renders as a standalone page handled by `TopicController.TopicDetails`. Menus and other components can link to it via the [link resolver](../advanced/linkresolver.md):
 
 ```csharp
 builder.Item("About us", i => i.Url("topic:AboutUs"));
@@ -31,7 +31,7 @@ var aboutUrl = await Url.TopicAsync("AboutUs");
 
 ## Widget mode
 
-When _Render as widget_ is enabled, Smartstore turns the topic into a `TopicWidget` and injects it into each listed [widget zone](widgets.md). Wrapper options (`WidgetWrapContent`, `WidgetShowTitle`, `WidgetBordered`) control presentation, while `Priority` defines sort order within the zone.
+When _Render as widget_ is enabled, Smartstore turns the topic into a `TopicWidget` and injects it into each listed [widget zone](widgets.md#zones). Wrapper options (`WidgetWrapContent`, `WidgetShowTitle`, `WidgetBordered`) control presentation, while `Priority` defines sort order within the zone.
 
 ## Programmatic access
 
