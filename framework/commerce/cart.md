@@ -48,7 +48,7 @@ Payment providers with `PaymentMethodType.Button` can render express checkout bu
 
 ## Migration and events
 
-When an anonymous user signs in the system migrates the temporary cart and migrates it to the cart of the logged in user by calling `MigrateCartAsync` and publishing a `MigrateShoppingCartEvent`. `ValidatingCartEvent` allows modules to intercept the cart before checkout and redirect the customer if necessary. During order summary generation `RenderingOrderTotalsEvent` offers another hook to augment totals.
+When an anonymous user signs in, the system migrates the temporary cart to the logged in user's cart by calling `MigrateCartAsync` and publishing a `MigrateShoppingCartEvent`. `ValidatingCartEvent` allows modules to intercept the cart before checkout and redirect the customer if necessary. During order summary generation `RenderingOrderTotalsEvent` offers another hook to augment totals.
 
 ## Related features
 
