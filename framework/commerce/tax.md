@@ -38,7 +38,7 @@ public async Task<Money> GetGrossPriceAsync(Product product, decimal netPrice)
 
 ### Display and formatting
 
-To append legal suffixes such as “incl. VAT” use `ITaxService.ApplyTaxFormat` and its shipping/payment variants. Suffix visibility and whether prices include tax are governed by `TaxSettings.DisplayTaxSuffix` and `TaxSettings.PricesIncludeTax` and must be passed to the method `ITaxService.ApplyTaxFormat`.
+To append legal suffixes such as “incl. VAT” use `ITaxService.ApplyTaxFormat` and its shipping/payment variants. Suffix visibility and whether prices include tax are governed by `TaxSettings.DisplayTaxSuffix` and `TaxSettings.PricesIncludeTax` and must be passed to the method `ITaxService.ApplyTaxFormat` to take effect.
 
 ### VAT numbers and exemptions
 
